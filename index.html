@@ -31,7 +31,6 @@
             border-radius: 1rem 1rem 0 0;
             box-shadow: 0 2px 15px -5px rgba(0, 0, 0, 0.1);
         }
-        /* ⭐ D3 차트 관련 스타일 제거 완료 */
         #block_explorer_iframe {
             width: 100%;
             height: 150px;
@@ -214,15 +213,15 @@
         let transactionID = 18; 
         const maxNodes = 10001;
         let authenticatedUser = null;                   
-        const MOCK_PUBLIC_KEY_SHORT = 'Q06'; // SDK 인증 시 username 뒤에 붙여서 사용 (ID/PK 구분 목적)
+        const MOCK_PUBLIC_KEY_SHORT = 'Q06'; // Used to distinguish ID/PK after SDK authentication
         const KYC_ID = '1'; // '1' for Human (Taxed) | '2' or higher for Machine (Exempt)
         const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org'; 
 
         // --- Public Tax & Economy Variables ---
         const PUBLIC_TAX_RATE = 0.05; // 5% Public Tax 
         const FIXED_FEE = 0.01; // Fixed Fee (0.01 Pi)
-        let publicTaxPool = 0.0; // T3 공공세 적립 풀
-        const MIN_T3_POOL_FOR_EXECUTION = 1.0; // AI가 자율 집행을 결정하는 최소 임계값 (1.0 Pi)
+        let publicTaxPool = 0.0; // T3 Public Tax Accumulation Pool
+        const MIN_T3_POOL_FOR_EXECUTION = 1.0; // Minimum threshold (1.0 Pi) for AI to autonomously decide execution
         // ----------------------------------------------------
 
         // --- Utility Functions ---        
@@ -232,7 +231,7 @@
 
             messageBox.textContent = message;
             messageBox.style.opacity = 1;
-            messageBox.style.transform = 'translateX(-50%) scale(1)';                                    
+            messageBox.style.transform = 'translateX(-50%) scale(1)';                        
             
             if (isSuccess === 'warning') {
                 messageBox.style.backgroundColor = '#f59e0b'; // Amber for warning/signal
@@ -240,19 +239,14 @@
                 messageBox.style.backgroundColor = '#4CAF50'; 
             } else {
                 messageBox.style.backgroundColor = '#F44336'; 
-            }                               
+            }                         
             setTimeout(() => {
                 messageBox.style.transform = 'translateX(-50%) scale(0)';
             }, 3000);
         }
         
         function updatePublicTaxDisplay() {
-            // ⭐ D3 차트 영역이 제거되었으므로, 해당 요소를 업데이트하는 코드는 제거하거나 주석 처리
-            // const taxElement = document.getElementById('public_tax_display');
-            // if (taxElement) {
-            //     taxElement.textContent = `Public Tax Pool: ${publicTaxPool.toFixed(4)} Pi`;
-            // }
-            // Tax Pool 값은 콘솔 또는 레저에서 확인 가능하도록 유지합니다.
+            // Placeholder: Not displayed on the UI, but kept for logic.
         }
 
         function startSCPAnimation(scType) {
@@ -261,46 +255,46 @@
 
             scpStatusElement.style.opacity = 1;
             const consensusSteps = [31, 314, 3141, maxNodes]; 
-            let stepIndex = 0;                                
+            let stepIndex = 0;                          
             showMessage(`AI selected ${scType}. Starting MOCKED SCP Consensus...`, true); 
 
             const interval = setInterval(() => {
                 const currentCount = consensusSteps[stepIndex];
-                scpStatusElement.textContent = `SCP Consensus: ${currentCount}/${maxNodes} Nodes`;                                        
+                scpStatusElement.textContent = `SCP Consensus: ${currentCount}/${maxNodes} Nodes`;                     
                 stepIndex++;
                 if (stepIndex >= consensusSteps.length) {
                     clearInterval(interval);
                     scpStatusElement.textContent = `SCP Consensus: 10001/${maxNodes} Nodes (Finalized)`;
                 }
-            }, 500);              
-        }                        
+            }, 500);          
+        }            
         
-        // ⭐ [통합] SDK 미완료 결제 콜백 함수 (필수)
+        // ⭐ [Integrated] Pi SDK Incomplete Payment Callback (Required)
         function onIncompletePaymentFound(payment) {
             showMessage(`⚡ Incomplete Payment found: ${payment.identifier}`, 'warning');
-            // 실제 앱이라면 여기서 미완료 결제에 대한 보상을 처리해야 합니다.
+            // A real app would handle compensation for incomplete payments here.
         }
 
-        // --- MOCKED Pi SDK Functions (-> SDK Integrated) ---                
+        // --- Pi SDK Functions (Integrated) ---            
         window.piAuthenticate = async function() {
             try {
                 if (!window.Pi) {
-                    showMessage("❌ Pi SDK 로드 실패 또는 Pi 브라우저 환경이 아닙니다.", false);
+                    showMessage("❌ Pi SDK failed to load or not in Pi Browser environment.", false);
                     return;
                 }
                 const scopes = ['username', 'payments'];
-                // ⭐ [통합] 실제 Pi 인증 호출
+                // ⭐ [Integrated] Actual Pi Authentication Call
                 const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
                 
-                // 인증 성공 시, SDK가 제공하는 user.username을 사용자의 ID로 설정합니다.
-                // KYC_ID 첫 글자를 사용하기 위해 user.username을 앞에 붙입니다. (username: '1xxxxxxx')
+                // On success, set the user's ID using the SDK-provided username.
+                // Prepending the username (user.username + '_Q06') for ID/PK distinction in the ledger.
                 authenticatedUser = user.username + '_' + MOCK_PUBLIC_KEY_SHORT; 
                 
                 showMessage(`✅ Pi ID: ${user.username} authenticated successfully (SDK).`, true);
                 document.getElementById('login_button').disabled = true;
                 document.getElementById('payment_button').disabled = false;
             } catch (err) {
-                showMessage("❌ Pi 인증 실패 (SDK): " + err, false);
+                showMessage("❌ Pi Authentication Failed (SDK): " + err, false);
             }
         }
 
@@ -313,7 +307,7 @@
             const amount = parseFloat(document.getElementById('piAmount').value);
             const taskType = document.getElementById('taskType').value; 
 
-            const minRequiredAmount = 0.0101;                                  
+            const minRequiredAmount = 0.0101;                       
             if (isNaN(amount) || amount < minRequiredAmount) { 
                 showMessage(`Pi Amount must be greater than or equal to ${minRequiredAmount.toFixed(4)} Pi (0.0101/n logic).`, false);
                 return;
@@ -322,7 +316,7 @@
             showMessage(`💰 Pi Payment request ($${amount.toFixed(4)}$ Pi) sent. Waiting for completion...`, 'warning');
 
             try {
-                // ⭐ [통합] 실제 Pi 결제 요청 호출
+                // ⭐ [Integrated] Actual Pi Payment Request Call
                 const payment = await Pi.createPayment({
                     amount: amount,
                     memo: "AI Smart Contract Execution: T-Governance-Model",
@@ -333,35 +327,34 @@
                     }
                 });
 
-                // 결제가 Pi Wallet에서 완료되면 (SDK 콜백)
+                // Payment completed in Pi Wallet (SDK callback)
                 if (payment && payment.identifier) {
                     showMessage(`✅ Payment finalized: ${payment.identifier}. Starting SC logic...`, true);
                     
-                    // ⭐ 결제 완료 후 사용자님의 SC 로직을 실행
+                    // ⭐ Execute the user's SC logic after successful payment
                     runSimulation(taskType, amount); 
                 }
 
             } catch (err) {
-                // 사용자가 결제를 취소하거나 오류가 발생한 경우
-                showMessage("⚠️ Pi 결제 오류/취소 (SDK): " + err, false);
-            }              
-        }        
+                // User canceled the payment or an error occurred
+                showMessage("⚠️ Pi Payment Error/Cancellation (SDK): " + err, false);
+            }          
+        }       
 
-        // --- 1st SC AI Logic: T3 Collection (Accumulation) ---             
+        // --- 1st SC AI Logic: T3 Collection (Accumulation) ---           
         function runSimulation(taskType, piAmount) {
-            const amount = piAmount || parseFloat(document.getElementById('piAmount').value);                                           
+            const amount = piAmount || parseFloat(document.getElementById('piAmount').value);                          
             
             // 1. ID Check and T3 Conditional Calculation
             const senderName = authenticatedUser;
-            // SDK는 username을 반환하므로, 첫 글자는 KYC ID와 유사하게 1(인간)로 가정합니다.
-            // 실제 ID와 무관하게 로직 시연을 위해 1로 가정하거나, 필요하다면 하드코딩된 KYC_ID 변수 사용 가능.
+            // SDK returns a username, assuming the first character is 1 (Human) for demonstration.
             const senderIDPrefix = parseInt(senderName.charAt(0)); 
             
             let workCost = 0;
             let publicTax = 0;
             let scDisplay = '';
 
-            if (senderIDPrefix === 1 || KYC_ID === '1') { // SDK username이 1로 시작하거나, Mock용 KYC_ID가 1일 경우 (Human)
+            if (senderIDPrefix === 1 || KYC_ID === '1') { // If SDK username starts with '1' or Mock KYC_ID is '1' (Human)
                 // ID starts with '1' (Human): Public Tax (T3) is charged.
                 workCost = (amount - FIXED_FEE) / (1 + PUBLIC_TAX_RATE);
                 publicTax = workCost * PUBLIC_TAX_RATE;
@@ -380,27 +373,27 @@
             }
             updatePublicTaxDisplay(); 
             
-            // 2. Smart Contract Selection (Based on Work Cost)                    
+            // 2. Smart Contract Selection (Based on Work Cost)           
             let scType = workCost >= 2.0 ? '2nd SC (Market)' : '1st SC (Survival)';
 
             startSCPAnimation(scType); 
-            const ledger = document.getElementById('smart_contract_ledger');                                            
-            // Main Transaction ID                    
+            const ledger = document.getElementById('smart_contract_ledger');                           
+            // Main Transaction ID            
             transactionID++;
-            const mainID = transactionID;                                           
+            const mainID = transactionID;                                
             const subAmountNet = (workCost / 2.0).toFixed(5);
             
-            const currentTime = new Date().toLocaleTimeString();                    
+            const currentTime = new Date().toLocaleTimeString();          
 
             // AI Simulation: 20% Failure Rate
             const getAIResult = () => (Math.random() < 0.2) ? 'FAILURE' : 'SUCCESS';
             const subResult1 = getAIResult(); 
             const subResult2 = getAIResult(); 
-                       
+                        
             // 3. Main Transaction (User calling the SC)
             if (scType.includes('1st SC')) {
                 scDisplay = scDisplay.replace('1st SC', scType); 
-            }                                            
+            }                         
             let newRowMain = ledger.insertRow();
             newRowMain.innerHTML = `
                 <td class="px-2 py-2 text-xs font-bold">${mainID}</td>
@@ -410,7 +403,7 @@
                 <td class="px-2 py-2 text-xs font-bold">${amount.toFixed(4)}</td>
                 <td class="px-2 py-2 text-xs">${taskType}</td> 
                 <td class="px-2 py-2 text-xs">CALLED</td>
-            `;                    
+            `;                       
 
             // 4. Ledger Entry: Fixed Fee
             transactionID++; 
@@ -423,7 +416,7 @@
                 <td class="px-2 py-2 text-xs font-bold text-red-700">-${FIXED_FEE.toFixed(4)}</td>
                 <td class="px-2 py-2 text-xs">Network Op</td>
                 <td class="px-2 py-2 text-xs">COLLECTED</td>
-            `;                    
+            `;                       
 
             // 5. Ledger Entry: Public Tax (T3 Accumulation)
             transactionID++; 
@@ -439,7 +432,7 @@
                 <td class="px-2 py-2 text-xs font-bold ${taxColor}">-${publicTax.toFixed(4)}</td>
                 <td class="px-2 py-2 text-xs">Public Fund</td>
                 <td class="px-2 py-2 text-xs">ACCUMULATED</td>
-            `;                    
+            `;                       
 
             // --- 6 & 7. Sub Transactions (AI1/AI2/AI3 Activity - T4) ---
             
@@ -460,7 +453,7 @@
                 <td class="px-2 py-2 text-xs font-bold ${ai1AmountColor}">+${subAmountNet}</td>
                 <td class="px-2 py-2 text-xs">${taskType} Process</td>
                 <td class="px-2 py-2 text-xs font-bold ${ai1ScCodeColor}">${ai1ScCode}</td>
-            `;                    
+            `;                       
 
             // AI2 Activity (Failure Report + AI3 Replacement Logic)
             const isAi2Failed = subResult2 === 'FAILURE';
@@ -477,7 +470,7 @@
                     <td class="px-2 py-2 text-xs font-bold text-red-700">${subResult2}</td>
                 `;
                 transactionID++; 
-            }                    
+            }                          
 
             const ai2Recipient = isAi2Failed ? 'AI3 (Replacement/Success)' : 'AI2 (1/2 Net T4)';
             const ai2ScCode = isAi2Failed ? 'SUCCESS (By AI3)' : subResult2;
@@ -502,7 +495,7 @@
             if (publicTaxPool >= MIN_T3_POOL_FOR_EXECUTION) {
                 executeT3ExpenditureMock();
             }
-        }            
+        }          
 
         // --- NEW Logic: T3 Expenditure and Veto Trigger MOCK (System-Driven) ---
         window.executeT3ExpenditureMock = function() {
@@ -525,7 +518,7 @@
                 if (isVetoed) {
                     showMessage(`T3 Expenditure VETOED! Core Team intervened. Fund remains in pool.`, false);
                 } else {
-                    // Transfer confirmed (30초 응답 없음 -> 자동 실행)
+                    // Transfer confirmed (Auto-execution after 30 seconds without veto)
                     publicTaxPool -= expenditureAmount;
                     updatePublicTaxDisplay();
                     showMessage(`T3 Expenditure APPROVED (Auto-Executed after 30s No Veto). $${expenditureAmount.toFixed(4)} spent for AI Evolution/Upgrade.`, true);
@@ -549,7 +542,7 @@
         // --- Ledger Download Function ---
         function downloadLedger() {
             const table = document.getElementById('ledger_table');
-            let csv = [];                                             
+            let csv = [];                          
             // 1. Get Headers
             const headerRow = table.querySelector('thead tr');
             let row = [];
@@ -571,10 +564,10 @@
             // 3. Download the CSV
             const csvString = csv.join('\n');
             const BOM = "\uFEFF"; 
-            const finalCsvData = BOM + csvString;                    
+            const finalCsvData = BOM + csvString;             
             const blob = new Blob([finalCsvData], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');                    
+            const link = document.createElement('a');                
             
             link.setAttribute('href', url);
             link.setAttribute('download', 'pi_governance_ledger.csv');
@@ -588,17 +581,16 @@
 
         // --- DOM Content Loaded Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            updatePublicTaxDisplay();                                            
+            updatePublicTaxDisplay();                          
 
-            // ⭐ [통합] Pi SDK 초기화 (Sandbox 모드 필수)
+            // ⭐ [Integrated] Pi SDK Initialization (Sandbox Mode Required)
             if (window.Pi) {
                 Pi.init({ version: "2.0", sandbox: true });
                 showMessage("✅ Pi SDK initialized (sandbox mode)", true);
             } else {
-                // Pi 브라우저가 아닌 일반 브라우저에서 실행 시 로그인/결제 불가 경고
-                showMessage("❌ Pi SDK 로드 실패 또는 Pi 브라우저 환경이 아닙니다. SDK 기능 시연 불가.", false);
+                // Warning if run in a regular browser (SDK functions will fail)
+                showMessage("❌ Pi SDK failed to load or not in Pi Browser environment. SDK features cannot be demonstrated.", false);
             }
-            // ⭐ D3.js 차트 초기화 로직 제거 완료
         });
         </script>
 </body>
