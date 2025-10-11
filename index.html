@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOR Pi MAXIMUM TRANSACTION Demo (SDK Integrated - Final Submission)</title>
+    <title>FOR Pi MAXIMUM TRANSACTION Demo (SDK Integrated - Sandbox Test)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-         
+    		
     <style>
         body { font-family: sans-serif; background-color: #f3f4f6; color: #1f2937; padding: 2rem 1rem; }
         .container { max-width: 1200px; margin: auto; }
@@ -77,7 +77,7 @@
                 title="Pi Testnet Block Explorer"
                 frameborder="0"
                 allow="autoplay; encrypted-media"></iframe>
-                <div class="table-container p-6 mb-8 relative bg-white rounded-xl shadow-lg">
+        		<div class="table-container p-6 mb-8 relative bg-white rounded-xl shadow-lg">
             <div class="ledger-header-container">
                 <h2 class="text-2xl font-bold text-gray-800">TRANSACTION LEDGER (Off-Chain/Logical)</h2>
                 <div class="flex items-center">
@@ -98,7 +98,7 @@
                     </tr>
                 </thead>
                 <tbody id="smart_contract_ledger">
-                    </tbody>
+                </tbody>
             </table>
             <button class="nft-button" onclick="window.open('https://github.com/jjulddugi65/pibot/blob/main/index.html', '_blank')">
                 Go to Pi NFT Marketplace (Concept) 🚀
@@ -107,38 +107,38 @@
     </div>
     <script>
         // === Core Configuration ===
-        let transactionID = 18; 
+        let transactionID = 18;	
         const maxNodes = 10001;
-        let authenticatedUser = null;                           
-        const MOCK_PUBLIC_KEY_SHORT = 'Q06'; 
-        const KYC_ID = '1'; 
-        const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org'; 
-        const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno"; 
-
-        // --- Public Tax & Economy Variables ---
-        const PUBLIC_TAX_RATE = 0.05; 
-        const FIXED_FEE = 0.01; 
-        let publicTaxPool = 0.0; 
-        const MIN_T3_POOL_FOR_EXECUTION = 1.0; 
+        let authenticatedUser = null; 					
+        const MOCK_PUBLIC_KEY_SHORT = 'Q06';
+        const KYC_ID = '1';
+        const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org';
+        const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno";
         
-        // --- Utility Functions ---                
+        // --- Public Tax & Economy Variables ---
+        const PUBLIC_TAX_RATE = 0.05;
+        const FIXED_FEE = 0.01;
+        let publicTaxPool = 0.0;
+        const MIN_T3_POOL_FOR_EXECUTION = 1.0;
+        
+        // --- Utility Functions --- 		
         function showMessage(message, isSuccess = true) {
             const messageBox = document.getElementById('message_box');
-            if (!messageBox) return; 
+            if (!messageBox) return;
             messageBox.textContent = message;
             messageBox.style.opacity = 1;
-            messageBox.style.transform = 'translateX(-50%) scale(1)';                                                
+            messageBox.style.transform = 'translateX(-50%) scale(1)'; 						
             if (isSuccess === 'warning') {
-                messageBox.style.backgroundColor = '#f59e0b'; 
+                messageBox.style.backgroundColor = '#f59e0b';
             } else if (isSuccess) {
-                messageBox.style.backgroundColor = '#4CAF50'; 
+                messageBox.style.backgroundColor = '#4CAF50';
             } else {
-                messageBox.style.backgroundColor = '#F44336'; 
-            }                                     
+                messageBox.style.backgroundColor = '#F44336';
+            } 						
             setTimeout(() => {
                 messageBox.style.transform = 'translateX(-50%) scale(0)';
             }, 3000);
-        }                
+        } 				
 
         function updatePublicTaxDisplay() { /* Logic kept for simulation coherence */ }
         
@@ -146,9 +146,9 @@
             const scpStatusElement = document.getElementById('scp_consensus_status');
             if (!scpStatusElement) return;
             scpStatusElement.style.opacity = 1;
-            const consensusSteps = [31, 314, 3141, maxNodes]; 
-            let stepIndex = 0;                                      
-            showMessage(`AI selected ${scType}. Starting MOCKED SCP Consensus...`, true); 
+            const consensusSteps = [31, 314, 3141, maxNodes];
+            let stepIndex = 0; 						
+            showMessage(`AI selected ${scType}. Starting MOCKED SCP Consensus...`, true);
             
             const interval = setInterval(() => {
                 const currentCount = consensusSteps[stepIndex];
@@ -158,15 +158,15 @@
                     clearInterval(interval);
                     scpStatusElement.textContent = `SCP Consensus: 10001/${maxNodes} Nodes (Finalized)`;
                 }
-            }, 500);                  
-        }                            
+            }, 500); 					
+        } 						
 
-        // Pi SDK Incomplete Payment Callback (Required by Pi SDK)        
+        // Pi SDK Incomplete Payment Callback (Required by Pi SDK) 		
         function onIncompletePaymentFound(payment) {
             showMessage(`⚡ Incomplete Payment found: ${payment.identifier}`, 'warning');
         }
         
-        // --- Pi SDK Functions (Integrated) ---                    
+        // --- Pi SDK Functions (Integrated) --- 					
         window.piAuthenticate = async function() {
             try {
                 if (!window.Pi) {
@@ -184,23 +184,23 @@
             }
         }
         
-        // FINAL FIX: Payment Callback Issue Fixed
+        // ⚠️ piRequestPayment 함수 로직은 이전 그대로 유지됩니다. (callbacks 없는 버전)
         window.piRequestPayment = async function() {
             if (!authenticatedUser) {
                 showMessage("Please log in with Pi first.", false);
                 return;
             }
             const amount = parseFloat(document.getElementById('piAmount').value);
-            const taskType = document.getElementById('taskType').value; 
-            const minRequiredAmount = 0.0101;                                   
-            if (isNaN(amount) || amount < minRequiredAmount) { 
+            const taskType = document.getElementById('taskType').value;
+            const minRequiredAmount = 0.0101; 						
+            if (isNaN(amount) || amount < minRequiredAmount) {
                  showMessage(`Pi Amount must be >= ${minRequiredAmount.toFixed(4)} Pi (0.0101/n logic).`, false);
                 return;
-            }                        
+            } 						
             showMessage(`💰 Pi Payment request ($${amount.toFixed(4)}$ Pi) sent. Waiting for completion...`, 'warning');
             
             try {
-                // Pi.createPayment now simplified to fix the "callbacks missing" error
+                 // Pi.createPayment는 await를 사용하며, callbacks 객체는 포함되지 않은 이전 버전 로직입니다.
                 const payment = await Pi.createPayment({
                     amount: amount,
                     memo: "AI Smart Contract Execution: T-Governance-Model",
@@ -209,71 +209,67 @@
                          userID: authenticatedUser,
                         sc_logic: "T-Governance-Model"
                     }
-                    // The problematic 'callbacks' object has been removed
                 });
                 
-                // Payment completed in Pi Wallet (SDK callback - success)
-                if (payment && payment.identifier) {
-                    showMessage(`✅ Payment finalized: ${payment.identifier}. Starting SC logic...`, true); 
-                    // Execute the user's SC logic after successful payment
-                    runSimulation(taskType, amount); 
-                }
+                // 결제 성공 시 (이전 버전 로직)
+                showMessage(`✅ Payment Finalized! TX: ${payment.txid}`, true);
+                runSimulation(taskType, amount); 
                 
             } catch (err) {
-                // Catches user cancellation or other payment failures
-                showMessage("⚠️ Pi Payment Canceled/Failed (SDK): " + (err.message || 'Operation failed'), false);
-            }                  
-        }       
+                // 결제 실패 시 (이전 버전 로직)
+                showMessage("❌ Pi Payment Operation Failed (Catch): " + (err.message || 'Operation failed'), false);
+            } 					
+        } 		
         
-        // --- Smart Contract (SC) Logic Simulation ---                   
+        // --- Smart Contract (SC) Logic Simulation --- 					
         function runSimulation(taskType, piAmount) {
-            const amount = piAmount || parseFloat(document.getElementById('piAmount').value);                                                  
+            const amount = piAmount || parseFloat(document.getElementById('piAmount').value); 							
             const senderName = authenticatedUser;
-            const senderIDPrefix = parseInt(senderName.charAt(0)); 
+            const senderIDPrefix = parseInt(senderName.charAt(0));
             let workCost = 0;
             let publicTax = 0;
             let scDisplay = '';
             
-            if (senderIDPrefix === 1 || KYC_ID === '1') { 
+            if (senderIDPrefix === 1 || KYC_ID === '1') {
                 workCost = (amount - FIXED_FEE) / (1 + PUBLIC_TAX_RATE);
                 publicTax = workCost * PUBLIC_TAX_RATE;
                 scDisplay = '1st SC (Human - T3 Charged)';
             } else {
                 workCost = amount - FIXED_FEE;
-                publicTax = 0; 
+                publicTax = 0;
                 scDisplay = '1st SC (Machine - T3 Exempt)';
                 showMessage(`T3 Exempt: Machine order detected. 1st SC AI direct call confirmed.`, true);
             }
             
             if (publicTax > 0) { publicTaxPool += publicTax; }
-            updatePublicTaxDisplay(); 
-                        
+            updatePublicTaxDisplay();
+            					
             let scType = workCost >= 2.0 ? '2nd SC (Market)' : '1st SC (Survival)';
-            startSCPAnimation(scType); 
-            const ledger = document.getElementById('smart_contract_ledger');                                       
+            startSCPAnimation(scType);
+            const ledger = document.getElementById('smart_contract_ledger'); 						
             transactionID++;
-            const mainID = transactionID;                                            
+            const mainID = transactionID; 						
             const subAmountNet = (workCost / 2.0).toFixed(5);
-            const currentTime = new Date().toLocaleTimeString();          
+            const currentTime = new Date().toLocaleTimeString(); 		
             const getAIResult = () => (Math.random() < 0.2) ? 'FAILURE' : 'SUCCESS';
-            const subResult1 = getAIResult(); 
-            const subResult2 = getAIResult();                                     
+            const subResult1 = getAIResult();
+            const subResult2 = getAIResult(); 						
             
             // 3. Main Transaction (User calling the SC)
-            if (scType.includes('1st SC')) { scDisplay = scDisplay.replace('1st SC', scType); }                                     
+            if (scType.includes('1st SC')) { scDisplay = scDisplay.replace('1st SC', scType); } 						
             let newRowMain = ledger.insertRow();
             newRowMain.innerHTML = `
                 <td class="px-2 py-2 text-xs font-bold">${mainID}</td>
                 <td class="px-2 py-2 text-xs">${currentTime}</td>
                 <td class="px-2 py-2 text-xs font-bold pk-cell">${senderName} (Main T1)</td>
-                <td class="px-2 py-2 text-xs">${scDisplay}</td> 
-                 <td class="px-2 py-2 text-xs font-bold">${amount.toFixed(4)}</td>
-                <td class="px-2 py-2 text-xs">${taskType}</td> 
-                 <td class="px-2 py-2 text-xs">CALLED</td>
-            `;                       
+                <td class="px-2 py-2 text-xs">${scDisplay}</td>
+                   <td class="px-2 py-2 text-xs font-bold">${amount.toFixed(4)}</td>
+                <td class="px-2 py-2 text-xs">${taskType}</td>
+                   <td class="px-2 py-2 text-xs">CALLED</td>
+            `; 						
             
             // 4. Ledger Entry: Fixed Fee
-            transactionID++; 
+            transactionID++;
             let newRowFee = ledger.insertRow();
             newRowFee.innerHTML = `
                 <td class="px-2 py-2 text-xs">${transactionID}</td>
@@ -283,13 +279,13 @@
                 <td class="px-2 py-2 text-xs font-bold text-red-700">-${FIXED_FEE.toFixed(4)}</td>
                 <td class="px-2 py-2 text-xs">Network Op</td>
                 <td class="px-2 py-2 text-xs">COLLECTED</td>
-            `;                       
+            `; 						
             
             // 5. Ledger Entry: Public Tax (T3 Accumulation)
-            transactionID++; 
+            transactionID++;
             let newRowTax = ledger.insertRow();
             const taxDescription = publicTax > 0 ? `PUBLIC TAX (${(PUBLIC_TAX_RATE * 100).toFixed(0)}%)` : 'PUBLIC TAX (0% - MACHINE EXEMPT)';
-            const taxColor = publicTax > 0 ? 'text-red-600' : 'text-green-600'; 
+            const taxColor = publicTax > 0 ? 'text-red-600' : 'text-green-600';
             
             newRowTax.innerHTML = `
                 <td class="px-2 py-2 text-xs">${transactionID}</td>
@@ -299,15 +295,15 @@
                 <td class="px-2 py-2 text-xs font-bold ${taxColor}">-${publicTax.toFixed(4)}</td>
                 <td class="px-2 py-2 text-xs">Public Fund</td>
                 <td class="px-2 py-2 text-xs">ACCUMULATED</td>
-            `;                       
+            `; 						
             
-            // --- 6 & 7. Sub Transactions (AI1/AI2/AI3 Activity - T4) ---                        
+            // --- 6 & 7. Sub Transactions (AI1/AI2/AI3 Activity - T4) --- 						
             const isAi1Failed = subResult1 === 'FAILURE';
             const ai1Recipient = isAi1Failed ? 'AI3 (Replacement/Success)' : 'AI1 (1/2 Net T4)';
             const ai1ScCode = isAi1Failed ? 'SUCCESS (By AI3)' : subResult1;
             const ai1RecipientColor = isAi1Failed ? 'text-green-700' : 'text-indigo-600';
             const ai1ScCodeColor = isAi1Failed ? 'text-green-700' : (subResult1 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
-            const ai1AmountColor = 'text-green-600'; 
+            const ai1AmountColor = 'text-green-600';
             
             let newRow1 = ledger.insertRow();
             newRow1.innerHTML = `
@@ -316,135 +312,4 @@
                 <td class="px-2 py-2 text-xs font-bold ${ai1RecipientColor}">${ai1Recipient}</td>
                 <td class="px-2 py-2 text-xs">${scType} Process</td>
                 <td class="px-2 py-2 text-xs font-bold ${ai1AmountColor}">+${subAmountNet}</td>
-                <td class="px-2 py-2 text-xs">${taskType} Process</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai1ScCodeColor}">${ai1ScCode}</td>
-            `;                       
-            
-            const isAi2Failed = subResult2 === 'FAILURE';
-            if (isAi2Failed) {
-                let newRow2Failed = ledger.insertRow();
-                newRow2Failed.innerHTML = `
-                    <td class="px-2 py-2 text-xs">${mainID}-02</td>
-                    <td class="px-2 py-2 text-xs">${currentTime}</td>
-                    <td class="px-2 py-2 text-xs font-bold text-red-600">AI2 (FAILURE REPORT)</td>
-                    <td class="px-2 py-2 text-xs">${scType} Process</td>
-                    <td class="px-2 py-2 text-xs font-bold text-red-600">-0.00000</td>
-                    <td class="px-2 py-2 text-xs">Task Process</td>
-                    <td class="px-2 py-2 text-xs font-bold text-red-700">${subResult2}</td>
-                `;
-                transactionID++; 
-            }                          
-            
-            const ai2Recipient = isAi2Failed ? 'AI3 (Replacement/Success)' : 'AI2 (1/2 Net T4)';
-            const ai2ScCode = isAi2Failed ? 'SUCCESS (By AI3)' : subResult2;
-            const ai2RecipientColor = isAi2Failed ? 'text-green-700' : 'text-indigo-600';
-            const ai2ScCodeColor = isAi2Failed ? 'text-green-700' : (subResult2 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
-            const ai2AmountColor = 'text-green-600'; 
-            
-            let newRow2Success = ledger.insertRow();
-            newRow2Success.innerHTML = `
-                <td class="px-2 py-2 text-xs">${isAi2Failed ? mainID + '-03' : mainID + '-02'}</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2Recipient}</td>
-                <td class="px-2 py-2 text-xs">${scType} Process</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai2AmountColor}">+${subAmountNet}</td>
-                <td class="px-2 py-2 text-xs">Task Process</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2ScCode}</td>
-            `;
-            showMessage(`Transaction recorded: Work Cost ($${workCost.toFixed(4)}), Tax ($${publicTax.toFixed(4)}), Fee ($${FIXED_FEE.toFixed(4)}) separated. T3 ACCUMULATED.`, true);                                
-            
-            // --- Autonomous T3 Expenditure Trigger ---
-            if (publicTaxPool >= MIN_T3_POOL_FOR_EXECUTION) {
-                executeT3ExpenditureMock();
-            }
-        }                          
-        
-        // --- T3 Expenditure and Veto Trigger MOCK ---
-        window.executeT3ExpenditureMock = function() {
-            const expenditureAmount = 0.5000; 
-            const ledger = document.getElementById('smart_contract_ledger');
-            const currentTime = new Date().toLocaleTimeString();
-            
-            if (publicTaxPool < expenditureAmount) { return; }                        
-            showMessage(`AI Logic: $${expenditureAmount.toFixed(4)} T3 expenditure needed. Signaling Core Team (${CORE_TEAM_EMAIL}) for 30s VETO.`, 'warning');
-                        
-            setTimeout(() => {
-                const isVetoed = Math.random() < 0.1;                                 
-                
-                if (isVetoed) {
-                    showMessage(`T3 Expenditure VETOED! Core Team intervened. Fund remains in pool.`, false);
-                } else {
-                    publicTaxPool -= expenditureAmount;
-                    updatePublicTaxDisplay();
-                    showMessage(`T3 Expenditure APPROVED (Auto-Executed after 30s No Veto). $${expenditureAmount.toFixed(4)} spent for AI Evolution/Upgrade.`, true);
-                    
-                    transactionID++; 
-                    let newRowExpenditure = ledger.insertRow();
-                    newRowExpenditure.innerHTML = `
-                        <td class="px-2 py-2 text-xs">${transactionID}</td>
-                        <td class="px-2 py-2 text-xs">${currentTime}</td>
-                        <td class="px-2 py-2 text-xs">AI1 (Expenditure T3)</td>
-                        <td class="px-2 py-2 text-xs font-bold text-yellow-700">T3 EXECUTION (AI UPGRADE)</td>
-                        <td class="px-2 py-2 text-xs font-bold text-red-700">-${expenditureAmount.toFixed(4)}</td>
-                        <td class="px-2 py-2 text-xs">AI Evolution</td>
-                        <td class="px-2 py-2 text-xs">AUTO-APPROVED (30s)</td>
-                    `;
-                }
-            }, 500); 
-        }
-        
-        // --- Ledger Download Function ---
-        function downloadLedger() {
-            const table = document.getElementById('ledger_table');
-            let csv = [];                                      
-            const headerRow = table.querySelector('thead tr');
-            let row = [];
-            headerRow.querySelectorAll('th').forEach(th => { row.push(th.innerText); });
-            csv.push(row.join(','));
-            
-            table.querySelectorAll('#smart_contract_ledger tr').forEach(tr => {
-                row = [];
-                tr.querySelectorAll('td').forEach(td => {
-                    let data = td.innerText.replace(/"/g, '""'); 
-                    row.push(`"${data}"`);
-                });
-                csv.push(row.join(','));
-            });
-            
-            const csvString = csv.join('\n');
-            const BOM = "\uFEFF"; 
-            const finalCsvData = BOM + csvString;                         
-            
-            const blob = new Blob([finalCsvData], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');                                        
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'pi_governance_ledger.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showMessage("Ledger downloaded successfully!", true);
-        }
-        
-        // --- Initialization ---        
-        document.addEventListener('DOMContentLoaded', () => {
-            updatePublicTaxDisplay();                          
-            
-            // Pi SDK Initialization (Production/Testnet Mode)
-            if (window.Pi) {
-                Pi.init({ 
-                    version: "2.0", 
-                    sandbox: false, 
-                    appKey: APP_KEY 
-                });
-                showMessage("✅ Pi SDK initialized (Wallet Mode)", true);
-            } else {
-                showMessage("❌ Pi SDK failed to load or not in Pi Browser environment.", false);
-            }
-        });
-    </script>
-</body>
-</html>
+                <td class="px-2 py-2
