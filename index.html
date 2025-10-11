@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FOR Pi MAXIMUM TRANSACTION (Full SDK Integrated)</title>
+  <title>FOR Pi MAXIMUM TRANSACTION (Verified Build)</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind & Pi SDK -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
   <style>
@@ -162,7 +163,7 @@
         showMsg(`✅ Authenticated: ${user.username}`);
         document.getElementById("btnPay").disabled = false;
       } catch (e) {
-        showMsg(`❌ Auth failed: ${e}`, false);
+        showMsg(`❌ Auth failed: ${e.message}`, false);
       }
     };
 
@@ -192,7 +193,7 @@
           },
         });
       } catch (e) {
-        showMsg(`❌ Payment failed: ${e}`, false);
+        showMsg(`❌ Payment failed: ${e.message}`, false);
       }
     };
 
