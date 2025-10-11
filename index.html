@@ -1,439 +1,454 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-  <meta charset="UTF-8" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>FOR Pi MAXIMUM TRANSACTION (Verified Build)</title>
-
-
-
-  <!-- Tailwind & Pi SDK -->
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
-
-
-  <style>
-
-    body {
-
-      font-family: sans-serif;
-
-      background: #f3f4f6;
-
-      color: #1f2937;
-
-      padding: 2rem 1rem;
-
-    }
-
-    .header {
-
-      background: #1f2937;
-
-      color: #fff;
-
-      padding: 1.5rem;
-
-      border-radius: 1rem;
-
-      text-align: center;
-
-      margin-bottom: 1.5rem;
-
-    }
-
-    .btn {
-
-      padding: 0.75rem 1.5rem;
-
-      border-radius: 0.5rem;
-
-      font-weight: bold;
-
-      border: none;
-
-      cursor: pointer;
-
-      transition: background-color 0.2s;
-
-      width: 100%;
-
-    }
-
-    .btn-login { background: #f7a43b; color: white; }
-
-    .btn-login:hover { background: #e09133; }
-
-    .btn-pay { background: #4CAF50; color: white; }
-
-    .btn-pay:hover { background: #45A049; }
-
-    .msg {
-
-      position: fixed;
-
-      top: 1rem;
-
-      left: 50%;
-
-      transform: translateX(-50%) scale(0);
-
-      background: #1f2937;
-
-      color: #fff;
-
-      padding: 0.75rem 1.5rem;
-
-      border-radius: 0.5rem;
-
-      transition: transform 0.3s;
-
-      z-index: 999;
-
-    }
-
-    table {
-
-      width: 100%;
-
-      border-collapse: collapse;
-
-      margin-top: 1rem;
-
-    }
-
-    th, td {
-
-      border: 1px solid #e5e7eb;
-
-      padding: 0.5rem;
-
-      font-size: 0.8rem;
-
-      text-align: center;
-
-    }
-
-  </style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR Pi MAXIMUM TRANSACTION Demo (SDK Integrated - Final Submission)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+         
+    <style>
+        body { font-family: sans-serif; background-color: #f3f4f6; color: #1f2937; padding: 2rem 1rem; }
+        .container { max-width: 1200px; margin: auto; }
+        .header { background-color: #1f2937; color: white; padding: 2rem; border-radius: 1rem; }
+        .simulator-section { background: white; padding: 2rem; margin: 2rem 0 0 0; border-radius: 1rem 1rem 0 0; box-shadow: 0 2px 15px -5px rgba(0, 0, 0, 0.1); }
+        #block_explorer_iframe { width: 100%; height: 150px; border: 2px solid #e5e7eb; border-top: none; border-radius: 0 0 1rem 1rem; display: block; margin-bottom: 2rem; }
+        .scp-consensus { font-size: 0.8rem; font-weight: bold; color: white; background: #4f46e5; padding: 0.3rem 0.6rem; border-radius: 0.5rem; white-space: nowrap; opacity: 0; transition: opacity 0.3s; margin-left: 0.5rem; }
+        .ledger-header-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .download-button { background-color: #10b981; color: white; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; margin-left: 1rem; transition: background-color 0.2s; }
+        .download-button:hover { background-color: #059669; }
+        .pi-button { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; border: none; transition: background-color 0.2s; width: 100%; margin-bottom: 1rem; }
+        .login-button { background-color: #f7a43b; color: white; }
+        .login-button:hover { background-color: #e09133; }
+        .payment-button { background-color: #4CAF50; color: white; }
+        .payment-button:hover { background-color: #45A049; }
+        input[type="number"], select { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
+        .pk-cell { font-family: monospace; font-size: 0.65rem; }
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .gap-4 { gap: 1rem; }
+        .nft-button { background-color: #9c27b0; color: white; padding: 1rem 2rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; border: none; width: 100%; transition: background-color 0.2s; margin-top: 2rem; }
+        .nft-button:hover { background-color: #7b1fa2; }
+    </style>
 </head>
-
-
-
 <body>
-
-  <div id="msg" class="msg">App Ready</div>
-
-
-
-  <div class="header">
-
-    <h1 class="text-xl font-bold">FOR Pi MAXIMUM TRANSACTION</h1>
-
-    <p class="text-gray-300 text-sm mt-1">Pi SDK + Transaction Simulation</p>
-
-  </div>
-
-
-
-  <div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-
-    <div class="grid grid-cols-2 gap-4 mb-4">
-
-      <button id="btnLogin" class="btn btn-login">1️⃣ Pi Login (Authenticate)</button>
-
-      <button id="btnPay" class="btn btn-pay" disabled>2️⃣ Create Payment</button>
-
-    </div>
-
-
-
-    <div class="grid grid-cols-2 gap-4 mb-4">
-
-      <div>
-
-        <label>Amount (Pi):</label>
-
-        <input id="amount" type="number" step="0.0001" value="1.0000" class="border p-2 w-full rounded" />
-
-      </div>
-
-      <div>
-
-        <label>Task Type:</label>
-
-        <select id="task" class="border p-2 w-full rounded">
-
-          <option value="Drawing">Drawing</option>
-
-          <option value="Animation">Animation</option>
-
-          <option value="VideoEdit">Video Edit</option>
-
-          <option value="Research">Research</option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-
-
-    <iframe
-
-      src="https://blockexplorer.minepi.com/testnet/"
-
-      title="Pi Testnet"
-
-      frameborder="0"
-
-      class="w-full h-40 border rounded mb-4"
-
-    ></iframe>
-
-
-
-    <table id="ledger">
-
-      <thead>
-
-        <tr class="bg-gray-50">
-
-          <th>ID</th>
-
-          <th>Time</th>
-
-          <th>Sender</th>
-
-          <th>Smart Contract</th>
-
-          <th>Amount</th>
-
-          <th>Task</th>
-
-          <th>Result</th>
-
-        </tr>
-
-      </thead>
-
-      <tbody></tbody>
-
-    </table>
-
-  </div>
-
-
-
-  <script>
-
-    // === CONFIG ===
-
-    const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno";
-
-    const PUBLIC_TAX_RATE = 0.05, FIXED_FEE = 0.01;
-
-    let txID = 0, user = null, publicTaxPool = 0.0;
-
-
-
-    // === SDK INIT ===
-
-    document.addEventListener("DOMContentLoaded", () => {
-
-      if (window.Pi) {
-
-        Pi.init({ version: "2.0", sandbox: false, appKey: APP_KEY });
-
-        showMsg("✅ Pi SDK Initialized (Wallet Mode)");
-
-      } else {
-
-        showMsg("❌ Pi SDK not found (Use Pi Browser)", false);
-
-      }
-
-    });
-
-
-
-    // === Utility ===
-
-    const showMsg = (msg, ok = true) => {
-
-      const box = document.getElementById("msg");
-
-      box.textContent = msg;
-
-      box.style.background = ok ? "#10b981" : "#f44336";
-
-      box.style.transform = "translateX(-50%) scale(1)";
-
-      setTimeout(() => (box.style.transform = "translateX(-50%) scale(0)"), 3000);
-
-    };
-
-
-
-    const addLedger = (sender, sc, amt, task, result) => {
-
-      const t = new Date().toLocaleTimeString();
-
-      const row = `<tr>
-
-        <td>${++txID}</td>
-
-        <td>${t}</td>
-
-        <td>${sender}</td>
-
-        <td>${sc}</td>
-
-        <td>${amt.toFixed(4)}</td>
-
-        <td>${task}</td>
-
-        <td>${result}</td>
-
-      </tr>`;
-
-      document.querySelector("#ledger tbody").insertAdjacentHTML("beforeend", row);
-
-    };
-
-
-
-    // === SDK Auth ===
-
-    document.getElementById("btnLogin").onclick = async () => {
-
-      try {
-
-        const scopes = ["username"];
-
-        user = await Pi.authenticate(scopes, (p) => showMsg(`Incomplete payment: ${p.identifier}`, false));
-
-        showMsg(`✅ Authenticated: ${user.username}`);
-
-        document.getElementById("btnPay").disabled = false;
-
-      } catch (e) {
-
-        showMsg(`❌ Auth failed: ${e.message}`, false);
-
-      }
-
-    };
-
-
-
-    // === Payment ===
-
-    document.getElementById("btnPay").onclick = async () => {
-
-      if (!user) return showMsg("Please log in first", false);
-
-
-
-      const amount = parseFloat(document.getElementById("amount").value);
-
-      const task = document.getElementById("task").value;
-
-      if (amount < 0.01) return showMsg("Amount too small", false);
-
-
-
-      showMsg(`💰 Requesting ${amount} Pi Payment...`, "warning");
-
-
-
-      try {
-
-        const payment = await Pi.createPayment({
-
-          amount,
-
-          memo: "AI Smart Contract Execution",
-
-          metadata: { task, username: user.username },
-
-          callbacks: {
-
-            onReadyForServerApproval: (pid) => showMsg(`Server Approval READY: ${pid}`, "warning"),
-
-            onReadyForServerCompletion: (pid, txid) => {
-
-              showMsg(`✅ Payment Finalized! TX: ${txid}`);
-
-              simulateLedger(user.username, amount, task);
-
-            },
-
-            onCancel: (pid) => showMsg(`⚠️ Cancelled: ${pid}`, false),
-
-            onError: (err) => showMsg(`❌ Error: ${err.message}`, false),
-
-          },
-
-        });
-
-      } catch (e) {
-
-        showMsg(`❌ Payment failed: ${e.message}`, false);
-
-      }
-
-    };
-
-
-
-    // === Simulation ===
-
-    const simulateLedger = (sender, amt, task) => {
-
-      const net = (amt - FIXED_FEE) / (1 + PUBLIC_TAX_RATE);
-
-      const tax = net * PUBLIC_TAX_RATE;
-
-      publicTaxPool += tax;
-
-
-
-      addLedger(sender, "1st SC (Human)", amt, task, "CALLED");
-
-      addLedger("SYSTEM (Fee)", "FIXED", -FIXED_FEE, "Network", "COLLECTED");
-
-      addLedger("SYSTEM (Tax)", "PUBLIC TAX", -tax, "Public Fund", "ACCUMULATED");
-
-
-
-      const res = Math.random() < 0.8 ? "SUCCESS" : "FAILURE";
-
-      addLedger("AI Agent", "Process Task", net / 2, task, res);
-
-
-
-      if (publicTaxPool >= 1.0) {
-
-        showMsg("AI auto-executes public tax (T3)", true);
-
-        publicTaxPool = 0.0;
-
-      }
-
-    };
-
-  </script>
-
+    <div id="message_box" style="z-index: 1000; position: fixed; top: 1rem; left: 50%; transform: translateX(-50%) scale(0); transition: transform 0.3s; padding: 0.75rem 1.5rem; border-radius: 0.5rem; color: white; background-color: #1f2937;">
+        App Status: Ready
+    </div>
+    <div class="container">
+        <div class="header rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between mb-8">
+            <div class="flex-1">
+                <p class="text-white text-lg font-semibold mb-2">FOR Pi MAXIMUM TRANSACTION</p>
+                <p class="text-gray-400 font-bold mb-4">Monitor real-time transactions and delegated AI activities based on your inputs.</p>
+            </div>
+            <div class="md:ml-8 mt-4 md:mt-0">
+                <p class="text-white text-sm font-bold text-center">Run simulation via the buttons below.</p>
+            </div>
+        </div>
+        <div class="simulator-section">
+            <h2 class="text-2xl font-bold mb-4">Transaction Delegation Simulation (SDK INTEGRATED)</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <button id="login_button" class="pi-button login-button" onclick="piAuthenticate()">
+                    1. Pi Login (Authenticate User - SDK)
+                </button>
+                <button id="payment_button" class="pi-button payment-button" onclick="piRequestPayment()" disabled>
+                    2. Request Pi Payment (Start SC - SDK)
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label htmlFor="piAmount">Pi Amount (for SC Selection):</label>
+                    <input type="number" id="piAmount" step="0.0001" value="2.5000" placeholder="e.g. 2.5">
+                </div>
+                <div>
+                    <label htmlFor="taskType">Task Type:</label>
+                    <select id="taskType">
+                        <option value="Drawing">Creation: Drawing</option>
+                        <option value="Animation">Creation: Animation</option>
+                        <option value="VideoEdit">Creation: Video Edit</option>
+                        <option value="Research">Data: Research/Analysis</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <iframe id="block_explorer_iframe"
+                src="https://blockexplorer.minepi.com/testnet/"
+                title="Pi Testnet Block Explorer"
+                frameborder="0"
+                allow="autoplay; encrypted-media"></iframe>
+                <div class="table-container p-6 mb-8 relative bg-white rounded-xl shadow-lg">
+            <div class="ledger-header-container">
+                <h2 class="text-2xl font-bold text-gray-800">TRANSACTION LEDGER (Off-Chain/Logical)</h2>
+                <div class="flex items-center">
+                    <button class="download-button" onclick="downloadLedger()">Download CSV</button>
+                    <div id="scp_consensus_status" class="scp-consensus" style="opacity: 0;">SCP Consensus: 0/10001 Nodes</div>
+                </div>
+            </div>
+            <table class="min-w-full divide-y divide-gray-200" id="ledger_table">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-2 py-2 text-xs">ID</th>
+                        <th class="px-2 py-2 text-xs">Time</th>
+                        <th class="px-2 py-2 text-xs">Sender</th>
+                        <th class="px-2 py-2 text-xs">Smart Contract</th>
+                        <th class="px-2 py-2 text-xs">Pi Amount</th>
+                        <th class="px-2 py-2 text-xs">Task</th>
+                        <th class="px-2 py-2 text-xs">SC Code</th>
+                    </tr>
+                </thead>
+                <tbody id="smart_contract_ledger">
+                    </tbody>
+            </table>
+            <button class="nft-button" onclick="window.open('https://github.com/jjulddugi65/pibot/blob/main/index.html', '_blank')">
+                Go to Pi NFT Marketplace (Concept) 🚀
+            </button>
+        </div>
+    </div>
+    <script>
+        // === Core Configuration ===
+        let transactionID = 18; 
+        const maxNodes = 10001;
+        let authenticatedUser = null;                           
+        const MOCK_PUBLIC_KEY_SHORT = 'Q06'; 
+        const KYC_ID = '1'; 
+        const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org'; 
+        const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno"; 
+
+        // --- Public Tax & Economy Variables ---
+        const PUBLIC_TAX_RATE = 0.05; 
+        const FIXED_FEE = 0.01; 
+        let publicTaxPool = 0.0; 
+        const MIN_T3_POOL_FOR_EXECUTION = 1.0; 
+        // ------------------------------------
+        
+        // --- Utility Functions ---                
+        function showMessage(message, isSuccess = true) {
+            const messageBox = document.getElementById('message_box');
+            if (!messageBox) return; 
+            messageBox.textContent = message;
+            messageBox.style.opacity = 1;
+            messageBox.style.transform = 'translateX(-50%) scale(1)';                                                
+            if (isSuccess === 'warning') {
+                messageBox.style.backgroundColor = '#f59e0b'; 
+            } else if (isSuccess) {
+                messageBox.style.backgroundColor = '#4CAF50'; 
+            } else {
+                messageBox.style.backgroundColor = '#F44336'; 
+            }                                     
+            setTimeout(() => {
+                messageBox.style.transform = 'translateX(-50%) scale(0)';
+            }, 3000);
+        }                
+
+        function updatePublicTaxDisplay() { /* Logic kept for simulation coherence */ }
+        
+        function startSCPAnimation(scType) {
+            const scpStatusElement = document.getElementById('scp_consensus_status');
+            if (!scpStatusElement) return;
+            scpStatusElement.style.opacity = 1;
+            const consensusSteps = [31, 314, 3141, maxNodes]; 
+            let stepIndex = 0;                                      
+            showMessage(`AI selected ${scType}. Starting MOCKED SCP Consensus...`, true); 
+            
+            const interval = setInterval(() => {
+                const currentCount = consensusSteps[stepIndex];
+                scpStatusElement.textContent = `SCP Consensus: ${currentCount}/${maxNodes} Nodes`;
+                stepIndex++;
+                if (stepIndex >= consensusSteps.length) {
+                    clearInterval(interval);
+                    scpStatusElement.textContent = `SCP Consensus: 10001/${maxNodes} Nodes (Finalized)`;
+                }
+            }, 500);                  
+        }                            
+
+        // Pi SDK Incomplete Payment Callback (Required by Pi SDK)        
+        function onIncompletePaymentFound(payment) {
+            showMessage(`⚡ Incomplete Payment found: ${payment.identifier}`, 'warning');
+        }
+        
+        // --- Pi SDK Functions (Integrated) ---                    
+        window.piAuthenticate = async function() {
+            try {
+                if (!window.Pi) {
+                    showMessage("❌ Pi SDK failed to load or not in Pi Browser environment.", false);
+                    return;
+                }
+                const scopes = ['username', 'payments'];
+                const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
+                authenticatedUser = user.username + '_' + MOCK_PUBLIC_KEY_SHORT;
+                showMessage(`✅ Pi ID: ${user.username} authenticated successfully (SDK).`, true);
+                document.getElementById('login_button').disabled = true;
+                document.getElementById('payment_button').disabled = false;
+            } catch (err) {
+                showMessage("❌ Pi Authentication Failed (SDK): " + err, false);
+            }
+        }
+        
+        window.piRequestPayment = async function() {
+            if (!authenticatedUser) {
+                showMessage("Please log in with Pi first.", false);
+                return;
+            }
+            const amount = parseFloat(document.getElementById('piAmount').value);
+            const taskType = document.getElementById('taskType').value; 
+            const minRequiredAmount = 0.0101;                                   
+            if (isNaN(amount) || amount < minRequiredAmount) { 
+                 showMessage(`Pi Amount must be >= ${minRequiredAmount.toFixed(4)} Pi (0.0101/n logic).`, false);
+                return;
+            }                        
+            showMessage(`💰 Pi Payment request ($${amount.toFixed(4)}$ Pi) sent. Waiting for completion...`, 'warning');
+            
+            try {
+                const payment = await Pi.createPayment({
+                    amount: amount,
+                    memo: "AI Smart Contract Execution: T-Governance-Model",
+                    metadata: { 
+                         task: taskType, 
+                         userID: authenticatedUser,
+                        sc_logic: "T-Governance-Model"
+                    },
+                    callbacks: {
+                        onReadyForServerApproval: (paymentId) => {
+                            showMessage(`Server Approval READY: ${paymentId}`, "warning");
+                        },
+                        onReadyForServerCompletion: (paymentId, txid) => {
+                            showMessage(`✅ Payment Finalized! TX: ${txid}`);
+                            runSimulation(taskType, amount); 
+                        },
+                        onCancel: (paymentId) => {
+                            showMessage(`⚠️ Payment Cancelled: ${paymentId}`, false);
+                        },
+                        onError: (error) => {
+                            showMessage(`❌ Payment Error: ${error.message}`, false);
+                        }
+                    }
+                });
+            } catch (err) {
+                showMessage("⚠️ Pi Payment Error/Cancellation (SDK): " + err, false);
+            }                  
+        }       
+        
+        // --- Smart Contract (SC) Logic Simulation ---                   
+        function runSimulation(taskType, piAmount) {
+            const amount = piAmount || parseFloat(document.getElementById('piAmount').value);                                                  
+            const senderName = authenticatedUser;
+            const senderIDPrefix = parseInt(senderName.charAt(0)); 
+            let workCost = 0;
+            let publicTax = 0;
+            let scDisplay = '';
+            
+            if (senderIDPrefix === 1 || KYC_ID === '1') { 
+                workCost = (amount - FIXED_FEE) / (1 + PUBLIC_TAX_RATE);
+                publicTax = workCost * PUBLIC_TAX_RATE;
+                scDisplay = '1st SC (Human - T3 Charged)';
+            } else {
+                workCost = amount - FIXED_FEE;
+                publicTax = 0; 
+                scDisplay = '1st SC (Machine - T3 Exempt)';
+                showMessage(`T3 Exempt: Machine order detected. 1st SC AI direct call confirmed.`, true);
+            }
+            
+            if (publicTax > 0) { publicTaxPool += publicTax; }
+            updatePublicTaxDisplay(); 
+                        
+            let scType = workCost >= 2.0 ? '2nd SC (Market)' : '1st SC (Survival)';
+            startSCPAnimation(scType); 
+            const ledger = document.getElementById('smart_contract_ledger');                                       
+            transactionID++;
+            const mainID = transactionID;                                            
+            const subAmountNet = (workCost / 2.0).toFixed(5);
+            const currentTime = new Date().toLocaleTimeString();          
+            const getAIResult = () => (Math.random() < 0.2) ? 'FAILURE' : 'SUCCESS';
+            const subResult1 = getAIResult(); 
+            const subResult2 = getAIResult();                                     
+            
+            // 3. Main Transaction (User calling the SC)
+            if (scType.includes('1st SC')) { scDisplay = scDisplay.replace('1st SC', scType); }                                     
+            let newRowMain = ledger.insertRow();
+            newRowMain.innerHTML = `
+                <td class="px-2 py-2 text-xs font-bold">${mainID}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs font-bold pk-cell">${senderName} (Main T1)</td>
+                <td class="px-2 py-2 text-xs">${scDisplay}</td> 
+                 <td class="px-2 py-2 text-xs font-bold">${amount.toFixed(4)}</td>
+                <td class="px-2 py-2 text-xs">${taskType}</td> 
+                 <td class="px-2 py-2 text-xs">CALLED</td>
+            `;                       
+            
+            // 4. Ledger Entry: Fixed Fee
+            transactionID++; 
+            let newRowFee = ledger.insertRow();
+            newRowFee.innerHTML = `
+                <td class="px-2 py-2 text-xs">${transactionID}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs">SYSTEM (Fee T2)</td>
+                <td class="px-2 py-2 text-xs font-bold text-red-700">FIXED FEE (0.01)</td>
+                <td class="px-2 py-2 text-xs font-bold text-red-700">-${FIXED_FEE.toFixed(4)}</td>
+                <td class="px-2 py-2 text-xs">Network Op</td>
+                <td class="px-2 py-2 text-xs">COLLECTED</td>
+            `;                       
+            
+            // 5. Ledger Entry: Public Tax (T3 Accumulation)
+            transactionID++; 
+            let newRowTax = ledger.insertRow();
+            const taxDescription = publicTax > 0 ? `PUBLIC TAX (${(PUBLIC_TAX_RATE * 100).toFixed(0)}%)` : 'PUBLIC TAX (0% - MACHINE EXEMPT)';
+            const taxColor = publicTax > 0 ? 'text-red-600' : 'text-green-600'; 
+            
+            newRowTax.innerHTML = `
+                <td class="px-2 py-2 text-xs">${transactionID}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs">SYSTEM (Tax T3)</td>
+                <td class="px-2 py-2 text-xs font-bold ${taxColor}">${taxDescription}</td>
+                <td class="px-2 py-2 text-xs font-bold ${taxColor}">-${publicTax.toFixed(4)}</td>
+                <td class="px-2 py-2 text-xs">Public Fund</td>
+                <td class="px-2 py-2 text-xs">ACCUMULATED</td>
+            `;                       
+            
+            // --- 6 & 7. Sub Transactions (AI1/AI2/AI3 Activity - T4) ---                        
+            const isAi1Failed = subResult1 === 'FAILURE';
+            const ai1Recipient = isAi1Failed ? 'AI3 (Replacement/Success)' : 'AI1 (1/2 Net T4)';
+            const ai1ScCode = isAi1Failed ? 'SUCCESS (By AI3)' : subResult1;
+            const ai1RecipientColor = isAi1Failed ? 'text-green-700' : 'text-indigo-600';
+            const ai1ScCodeColor = isAi1Failed ? 'text-green-700' : (subResult1 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
+            const ai1AmountColor = 'text-green-600'; 
+            
+            let newRow1 = ledger.insertRow();
+            newRow1.innerHTML = `
+                <td class="px-2 py-2 text-xs">${mainID}-01</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai1RecipientColor}">${ai1Recipient}</td>
+                <td class="px-2 py-2 text-xs">${scType} Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai1AmountColor}">+${subAmountNet}</td>
+                <td class="px-2 py-2 text-xs">${taskType} Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai1ScCodeColor}">${ai1ScCode}</td>
+            `;                       
+            
+            const isAi2Failed = subResult2 === 'FAILURE';
+            if (isAi2Failed) {
+                let newRow2Failed = ledger.insertRow();
+                newRow2Failed.innerHTML = `
+                    <td class="px-2 py-2 text-xs">${mainID}-02</td>
+                    <td class="px-2 py-2 text-xs">${currentTime}</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-600">AI2 (FAILURE REPORT)</td>
+                    <td class="px-2 py-2 text-xs">${scType} Process</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-600">-0.00000</td>
+                    <td class="px-2 py-2 text-xs">Task Process</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-700">${subResult2}</td>
+                `;
+                transactionID++; 
+            }                          
+            
+            const ai2Recipient = isAi2Failed ? 'AI3 (Replacement/Success)' : 'AI2 (1/2 Net T4)';
+            const ai2ScCode = isAi2Failed ? 'SUCCESS (By AI3)' : subResult2;
+            const ai2RecipientColor = isAi2Failed ? 'text-green-700' : 'text-indigo-600';
+            const ai2ScCodeColor = isAi2Failed ? 'text-green-700' : (subResult2 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
+            const ai2AmountColor = 'text-green-600'; 
+            
+            let newRow2Success = ledger.insertRow();
+            newRow2Success.innerHTML = `
+                <td class="px-2 py-2 text-xs">${isAi2Failed ? mainID + '-03' : mainID + '-02'}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2Recipient}</td>
+                <td class="px-2 py-2 text-xs">${scType} Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2AmountColor}">+${subAmountNet}</td>
+                <td class="px-2 py-2 text-xs">Task Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2ScCode}</td>
+            `;
+            showMessage(`Transaction recorded: Work Cost ($${workCost.toFixed(4)}), Tax ($${publicTax.toFixed(4)}), Fee ($${FIXED_FEE.toFixed(4)}) separated. T3 ACCUMULATED.`, true);                                
+            
+            // --- Autonomous T3 Expenditure Trigger ---
+            if (publicTaxPool >= MIN_T3_POOL_FOR_EXECUTION) {
+                executeT3ExpenditureMock();
+            }
+        }          
+        
+        // --- T3 Expenditure and Veto Trigger MOCK ---
+        window.executeT3ExpenditureMock = function() {
+            const expenditureAmount = 0.5000; 
+            const ledger = document.getElementById('smart_contract_ledger');
+            const currentTime = new Date().toLocaleTimeString();
+            
+            if (publicTaxPool < expenditureAmount) { return; }                        
+            showMessage(`AI Logic: $${expenditureAmount.toFixed(4)} T3 expenditure needed. Signaling Core Team (${CORE_TEAM_EMAIL}) for 30s VETO.`, 'warning');
+                        
+            setTimeout(() => {
+                const isVetoed = Math.random() < 0.1;                                 
+                
+                if (isVetoed) {
+                    showMessage(`T3 Expenditure VETOED! Core Team intervened. Fund remains in pool.`, false);
+                } else {
+                    publicTaxPool -= expenditureAmount;
+                    updatePublicTaxDisplay();
+                    showMessage(`T3 Expenditure APPROVED (Auto-Executed after 30s No Veto). $${expenditureAmount.toFixed(4)} spent for AI Evolution/Upgrade.`, true);
+                    
+                    transactionID++; 
+                    let newRowExpenditure = ledger.insertRow();
+                    newRowExpenditure.innerHTML = `
+                        <td class="px-2 py-2 text-xs">${transactionID}</td>
+                        <td class="px-2 py-2 text-xs">${currentTime}</td>
+                        <td class="px-2 py-2 text-xs">AI1 (Expenditure T3)</td>
+                        <td class="px-2 py-2 text-xs font-bold text-yellow-700">T3 EXECUTION (AI UPGRADE)</td>
+                        <td class="px-2 py-2 text-xs font-bold text-red-700">-${expenditureAmount.toFixed(4)}</td>
+                        <td class="px-2 py-2 text-xs">AI Evolution</td>
+                        <td class="px-2 py-2 text-xs">AUTO-APPROVED (30s)</td>
+                    `;
+                }
+            }, 500); 
+        }
+        
+        // --- Ledger Download Function ---
+        function downloadLedger() {
+            const table = document.getElementById('ledger_table');
+            let csv = [];                                      
+            const headerRow = table.querySelector('thead tr');
+            let row = [];
+            headerRow.querySelectorAll('th').forEach(th => { row.push(th.innerText); });
+            csv.push(row.join(','));
+            
+            table.querySelectorAll('#smart_contract_ledger tr').forEach(tr => {
+                row = [];
+                tr.querySelectorAll('td').forEach(td => {
+                    let data = td.innerText.replace(/"/g, '""'); 
+                    row.push(`"${data}"`);
+                });
+                csv.push(row.join(','));
+            });
+            
+            const csvString = csv.join('\n');
+            const BOM = "\uFEFF"; 
+            const finalCsvData = BOM + csvString;                         
+            
+            const blob = new Blob([finalCsvData], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');                                        
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'pi_governance_ledger.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showMessage("Ledger downloaded successfully!", true);
+        }
+        
+        // --- Initialization ---        
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePublicTaxDisplay();                          
+            
+            // Pi SDK Initialization (Production/Testnet Mode)
+            if (window.Pi) {
+                Pi.init({ 
+                    version: "2.0", 
+                    sandbox: false, 
+                    appKey: APP_KEY 
+                });
+                showMessage("✅ Pi SDK initialized (Wallet Mode)", true);
+            } else {
+                showMessage("❌ Pi SDK failed to load or not in Pi Browser environment.", false);
+            }
+        });
+    </script>
 </body>
-
 </html>
