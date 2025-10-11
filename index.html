@@ -73,10 +73,10 @@
             </div>
         </div>
         <iframe id="block_explorer_iframe"
-                src="https://blockexplorer.minepi.com/testnet/"
-                title="Pi Testnet Block Explorer"
-                frameborder="0"
-                allow="autoplay; encrypted-media"></iframe>
+            src="https://blockexplorer.minepi.com/testnet/"
+            title="Pi Testnet Block Explorer"
+            frameborder="0"
+            allow="autoplay; encrypted-media"></iframe>
         		<div class="table-container p-6 mb-8 relative bg-white rounded-xl shadow-lg">
             <div class="ledger-header-container">
                 <h2 class="text-2xl font-bold text-gray-800">TRANSACTION LEDGER (Off-Chain/Logical)</h2>
@@ -195,7 +195,7 @@
             const taskType = document.getElementById('taskType').value;
             const minRequiredAmount = 0.0101; 						
             if (isNaN(amount) || amount < minRequiredAmount) {
-                 showMessage(`Pi Amount must be >= ${minRequiredAmount.toFixed(4)} Pi (0.0101/n logic).`, false);
+                showMessage(`Pi Amount must be >= ${minRequiredAmount.toFixed(4)} Pi (0.0101/n logic).`, false);
                 return;
             } 						
             showMessage(`💰 Pi Payment request ($${amount.toFixed(4)}$ Pi) sent. Waiting for completion...`, 'warning');
@@ -205,9 +205,9 @@
                 Pi.createPayment({
                     amount: amount,
                     memo: "AI Smart Contract Execution: T-Governance-Model",
-                    metadata: { 
-                         task: taskType, 
-                         userID: authenticatedUser,
+                    metadata: {	
+                        task: taskType,	
+                        userID: authenticatedUser,
                         sc_logic: "T-Governance-Model"
                     },
                     callbacks: {
@@ -215,7 +215,7 @@
                         onReadyForServerApproval: (paymentId) => {
                             showMessage(`Server Approval READY: ${paymentId}. Starting SC logic...`, true);
                             // 해커톤 시뮬레이션: 서버 승인 로직 없이 바로 시뮬레이션 시작으로 우회
-                            runSimulation(taskType, amount); 
+                            runSimulation(taskType, amount);	
                         },
                         // 2. Wallet에서 트랜잭션 완료 후, 서버에 최종 완료 처리를 요청하는 콜백 (필수)
                         onReadyForServerCompletion: (paymentId, txid) => {
@@ -279,9 +279,9 @@
                 <td class="px-2 py-2 text-xs">${currentTime}</td>
                 <td class="px-2 py-2 text-xs font-bold pk-cell">${senderName} (Main T1)</td>
                 <td class="px-2 py-2 text-xs">${scDisplay}</td>
-                   <td class="px-2 py-2 text-xs font-bold">${amount.toFixed(4)}</td>
+                <td class="px-2 py-2 text-xs font-bold">${amount.toFixed(4)}</td>
                 <td class="px-2 py-2 text-xs">${taskType}</td>
-                   <td class="px-2 py-2 text-xs">CALLED</td>
+                <td class="px-2 py-2 text-xs">CALLED</td>
             `; 						
             
             // 4. Ledger Entry: Fixed Fee
@@ -328,7 +328,7 @@
                 <td class="px-2 py-2 text-xs font-bold ${ai1RecipientColor}">${ai1Recipient}</td>
                 <td class="px-2 py-2 text-xs">${scType} Process</td>
                 <td class="px-2 py-2 text-xs font-bold ${ai1AmountColor}">+${subAmountNet}</td>
-                <td class="px-2 py-2 text-xs">${taskType} Process</td>
+                <td class="px-2 py-2 text-xs">Task Process</td>
                 <td class="px-2 py-2 text-xs font-bold ${ai1ScCodeColor}">${ai1ScCode}</td>
             `; 						
             
@@ -435,18 +435,18 @@
             showMessage("✅ Ledger downloaded successfully.", true);
         } 						
         
-        // --- Initialization (최종 수정: sandbox: false 활성화) --- 		
+        // --- Initialization (최종 수정: sandbox: true 활성화) --- 		
         document.addEventListener('DOMContentLoaded', () => {
             updatePublicTaxDisplay(); 						
             
-            // 🛑 최종 수정: sandbox: false (메인넷 인증을 위해 필수)
+            // ⭐️ 최종 수정: 테스트넷 App Key에 맞춰 sandbox: true로 재설정
             if (window.Pi) {
                 Pi.init({ 
                     version: "2.0", 
-                    sandbox: false, // ⬅️ 이 부분을 FALSE로 변경했습니다.
+                    sandbox: true, // ⬅️ TRUE로 변경 (테스트넷 키에 맞춰야 성공함)
                     appKey: APP_KEY 
                 });
-                showMessage("✅ Pi SDK initialized (Production Mode for Auth)", true);
+                showMessage("✅ Pi SDK initialized (Testnet Mode for Auth)", true);
             } else {
                 showMessage("❌ Pi SDK failed to load or not in Pi Browser environment.", false);
             }
