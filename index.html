@@ -1,223 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FOR Pi MAXIMUM TRANSACTION Demo</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
-<style>
-    body { font-family: sans-serif; background-color: #f3f4f6; color: #1f2937; padding: 2rem 1rem; }
-    .container { max-width: 1200px; margin: auto; }
-    .header { background-color: #1f2937; color: white; padding: 2rem; border-radius: 1rem; }
-    .simulator-section { background: white; padding: 2rem; margin: 2rem 0 0 0; border-radius: 1rem 1rem 0 0; box-shadow: 0 2px 15px -5px rgba(0, 0, 0, 0.1); }
-    #block_explorer_iframe { width: 100%; height: 150px; border: 2px solid #e5e7eb; border-top: none; border-radius: 0 0 1rem 1rem; display: block; margin-bottom: 2rem; }
-    .scp-consensus { font-size: 0.8rem; font-weight: bold; color: white; background: #4f46e5; padding: 0.3rem 0.6rem; border-radius: 0.5rem; white-space: nowrap; opacity: 0; transition: opacity 0.3s; margin-left: 0.5rem; }
-    .ledger-header-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .download-button { background-color: #10b981; color: white; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; margin-left: 1rem; transition: background-color 0.2s; }
-    .download-button:hover { background-color: #059669; }
-    .pi-button { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; border: none; transition: background-color 0.2s; width: 100%; margin-bottom: 1rem; }
-    .login-button { background-color: #f7a43b; color: white; }
-    .login-button:hover { background-color: #e09133; }
-    .payment-button { background-color: #4CAF50; color: white; }
-    .payment-button:hover { background-color: #45A049; }
-    input[type="number"], select { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
-    .pk-cell { font-family: monospace; font-size: 0.65rem; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR Pi MAXIMUM TRANSACTION Demo (SDK Integrated - Final Submission)</title>
+    
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    		
+    <style>
+        body { font-family: sans-serif; background-color: #f3f4f6; color: #1f2937; padding: 2rem 1rem; }
+        .container { max-width: 1200px; margin: auto; }
+        .header { background-color: #1f2937; color: white; padding: 2rem; border-radius: 1rem; }
+        .simulator-section { background: white; padding: 2rem; margin: 2rem 0 0 0; border-radius: 1rem 1rem 0 0; box-shadow: 0 2px 15px -5px rgba(0, 0, 0, 0.1); }
+        #block_explorer_iframe { width: 100%; height: 150px; border: 2px solid #e5e7eb; border-top: none; border-radius: 0 0 1rem 1rem; display: block; margin-bottom: 2rem; }
+        .scp-consensus { font-size: 0.8rem; font-weight: bold; color: white; background: #4f46e5; padding: 0.3rem 0.6rem; border-radius: 0.5rem; white-space: nowrap; opacity: 0; transition: opacity 0.3s; margin-left: 0.5rem; }
+        .ledger-header-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .download-button { background-color: #10b981; color: white; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; margin-left: 1rem; transition: background-color 0.2s; }
+        .download-button:hover { background-color: #059669; }
+        .pi-button { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; border: none; transition: background-color 0.2s; width: 100%; margin-bottom: 1rem; }
+        .login-button { background-color: #f7a43b; color: white; }
+        .login-button:hover { background-color: #e09133; }
+        .payment-button { background-color: #4CAF50; color: white; }
+        .payment-button:hover { background-color: #45A049; }
+        input[type="number"], select { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
+        .pk-cell { font-family: monospace; font-size: 0.65rem; }
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .gap-4 { gap: 1rem; }
+        .nft-button { background-color: #9c27b0; color: white; padding: 1rem 2rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; border: none; width: 100%; transition: background-color 0.2s; margin-top: 2rem; }
+        .nft-button:hover { background-color: #7b1fa2; }
+    </style>
 </head>
 <body>
-<div id="message_box" style="z-index:1000; position:fixed; top:1rem; left:50%; transform:translateX(-50%) scale(0); transition: transform 0.3s; padding:0.75rem 1.5rem; border-radius:0.5rem; color:white; background-color:#1f2937;">
-    App Status: Ready
-</div>
-
-<div class="container">
-    <div class="header mb-8">
-        <h1 class="text-2xl font-bold">FOR Pi MAXIMUM TRANSACTION</h1>
-        <p class="text-gray-400">Monitor real-time transactions (Testnet)</p>
+    <div id="message_box" style="z-index: 1000; position: fixed; top: 1rem; left: 50%; transform: translateX(-50%) scale(0); transition: transform 0.3s; padding: 0.75rem 1.5rem; border-radius: 0.5rem; color: white; background-color: #1f2937;">
+        App Status: Ready
     </div>
-
-    <div class="simulator-section">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <button id="login_button" class="pi-button login-button" disabled onclick="piAuthenticate()">1. Pi Login</button>
-            <button id="payment_button" class="pi-button payment-button" disabled onclick="piRequestPayment()">2. Request Pi Payment</button>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-                <label for="piAmount">Pi Amount:</label>
-                <input id="piAmount" type="number" step="0.0001" value="2.5000">
+    <div class="container">
+        <div class="header rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between mb-8">
+            <div class="flex-1">
+                <p class="text-white text-lg font-semibold mb-2">FOR Pi MAXIMUM TRANSACTION</p>
+                <p class="text-gray-400 font-bold mb-4">Monitor real-time transactions and delegated AI activities based on your inputs.</p>
             </div>
-            <div>
-                <label for="taskType">Task Type:</label>
-                <select id="taskType">
-                    <option value="Drawing">Drawing</option>
-                    <option value="Animation">Animation</option>
-                    <option value="VideoEdit">Video Edit</option>
-                    <option value="Research">Research / Analysis</option>
-                </select>
+            <div class="md:ml-8 mt-4 md:mt-0">
+                <p class="text-white text-sm font-bold text-center">Run simulation via the buttons below.</p>
             </div>
         </div>
-    </div>
-
-    <iframe id="block_explorer_iframe" src="https://blockexplorer.minepi.com/testnet/" frameborder="0"></iframe>
-
-    <div class="table-container p-6 mb-8 relative bg-white rounded-xl shadow-lg">
-        <div class="ledger-header-container">
-            <h2 class="text-xl font-bold">TRANSACTION LEDGER</h2>
-            <div class="flex items-center">
-                <button class="download-button" onclick="downloadLedger()">Download CSV</button>
-                <div id="scp_consensus_status" class="scp-consensus">SCP Consensus: 0/10001 Nodes</div>
+        <div class="simulator-section">
+            <h2 class="text-2xl font-bold mb-4">Transaction Delegation Simulation (SDK INTEGRATED)</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <button id="login_button" class="pi-button login-button" onclick="piAuthenticate()">
+                    1. Pi Login (Authenticate User - SDK)
+                </button>
+                <button id="payment_button" class="pi-button payment-button" onclick="piRequestPayment()" disabled>
+                    2. Request Pi Payment (Start SC - SDK)
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label htmlFor="piAmount">Pi Amount (for SC Selection):</label>
+                    <input type="number" id="piAmount" step="0.0001" value="2.5000" placeholder="e.g. 2.5">
+                </div>
+                <div>
+                    <label htmlFor="taskType">Task Type:</label>
+                    <select id="taskType">
+                        <option value="Drawing">Creation: Drawing</option>
+                        <option value="Animation">Creation: Animation</option>
+                        <option value="VideoEdit">Creation: Video Edit</option>
+                        <option value="Research">Data: Research/Analysis</option>
+                    </select>
+                </div>
             </div>
         </div>
-
-        <table class="min-w-full divide-y divide-gray-200" id="ledger_table">
-            <thead>
-                <tr class="bg-gray-50">
-                    <th class="px-2 py-1 text-xs">ID</th>
-                    <th class="px-2 py-1 text-xs">Time</th>
-                    <th class="px-2 py-1 text-xs">Sender</th>
-                    <th class="px-2 py-1 text-xs">Task</th>
-                    <th class="px-2 py-1 text-xs">Pi Amount</th>
-                    <th class="px-2 py-1 text-xs">Result</th>
-                </tr>
-            </thead>
-            <tbody id="smart_contract_ledger"></tbody>
-        </table>
+        <iframe id="block_explorer_iframe"
+                src="https://blockexplorer.minepi.com/testnet/"
+                title="Pi Testnet Block Explorer"
+                frameborder="0"
+                allow="autoplay; encrypted-media"></iframe>
+        		<div class="table-container p-6 mb-8 relative bg-white rounded-xl shadow-lg">
+            <div class="ledger-header-container">
+                <h2 class="text-2xl font-bold text-gray-800">TRANSACTION LEDGER (Off-Chain/Logical)</h2>
+                <div class="flex items-center">
+                    <button class="download-button" onclick="downloadLedger()">Download CSV</button>
+                    <div id="scp_consensus_status" class="scp-consensus" style="opacity: 0;">SCP Consensus: 0/10001 Nodes</div>
+                </div>
+            </div>
+            <table class="min-w-full divide-y divide-gray-200" id="ledger_table">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-2 py-2 text-xs">ID</th>
+                        <th class="px-2 py-2 text-xs">Time</th>
+                        <th class="px-2 py-2 text-xs">Sender</th>
+                        <th class="px-2 py-2 text-xs">Smart Contract</th>
+                        <th class="px-2 py-2 text-xs">Pi Amount</th>
+                        <th class="px-2 py-2 text-xs">Task</th>
+                        <th class="px-2 py-2 text-xs">SC Code</th>
+                    </tr>
+                </thead>
+                <tbody id="smart_contract_ledger">
+                </tbody>
+            </table>
+            <button class="nft-button" onclick="window.open('https://github.com/jjulddugi65/pibot/blob/main/index.html', '_blank')">
+                Go to Pi NFT Marketplace (Concept) 🚀
+            </button>
+        </div>
     </div>
-</div>
+    <script>
+        // === Core Configuration ===
+        let transactionID = 18;	
+        const maxNodes = 10001;
+        let authenticatedUser = null; 					
+        const MOCK_PUBLIC_KEY_SHORT = 'Q06';
+        const KYC_ID = '1';
+        const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org';
+        // 🔑 APP_KEY는 정확합니다.
+        const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno";
+        
+        // --- Public Tax & Economy Variables ---
+        const PUBLIC_TAX_RATE = 0.05;
+        const FIXED_FEE = 0.01;
+        let publicTaxPool = 0.0;
+        const MIN_T3_POOL_FOR_EXECUTION = 1.0;
+        
+        // --- Utility Functions --- 		
+        function showMessage(message, isSuccess = true) {
+            const messageBox = document.getElementById('message_box');
+            if (!messageBox) return;
+            messageBox.textContent = message;
+            messageBox.style.opacity = 1;
+            messageBox.style.transform = 'translateX(-50%) scale(1)'; 						
+            if (isSuccess === 'warning') {
+                messageBox.style.backgroundColor = '#f59e0b';
+            } else if (isSuccess) {
+                messageBox.style.backgroundColor = '#4CAF50';
+            } else {
+                messageBox.style.backgroundColor = '#F44336';
+            } 						
+            setTimeout(() => {
+                messageBox.style.transform = 'translateX(-50%) scale(0)';
+            }, 3000);
+        } 				
 
-<script>
-const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno";
-const maxNodes = 10001;
-let authenticatedUser = null;
+        function updatePublicTaxDisplay() { /* Logic kept for simulation coherence */ }
+        
+        function startSCPAnimation(scType) {
+            const scpStatusElement = document.getElementById('scp_consensus_status');
+            if (!scpStatusElement) return;
+            scpStatusElement.style.opacity = 1;
+            const consensusSteps = [31, 314, 3141, maxNodes];
+            let stepIndex = 0; 						
+            showMessage(`AI selected ${scType}. Starting MOCKED SCP Consensus...`, true);
+            
+            const interval = setInterval(() => {
+                const currentCount = consensusSteps[stepIndex];
+                scpStatusElement.textContent = `SCP Consensus: ${currentCount}/${maxNodes} Nodes`;
+                stepIndex++;
+                if (stepIndex >= consensusSteps.length) {
+                    clearInterval(interval);
+                    scpStatusElement.textContent = `SCP Consensus: 10001/${maxNodes} Nodes (Finalized)`;
+                }
+            }, 500); 					
+        } 						
 
-// 메시지 표시 함수
-function showMessage(msg, type="info") {
-    const box = document.getElementById("message_box");
-    box.textContent = msg;
-    box.style.backgroundColor = type === "error" ? "#ef4444" : type === "success" ? "#22c55e" : "#1f2937";
-    box.style.transform = "translateX(-50%) scale(1)";
-    setTimeout(() => { box.style.transform = "translateX(-50%) scale(0)"; }, 3000);
-}
-
-// SDK 초기화 후 로그인 버튼 활성화
-document.addEventListener("DOMContentLoaded", () => {
-    if (!window.Pi) {
-        showMessage("❌ Pi SDK not loaded. Please use Pi Browser.", "error");
-        return;
-    }
-    Pi.init({
-        version: "2.0",
-        sandbox: true,
-        appKey: APP_KEY
-    });
-    showMessage("✅ Pi SDK initialized (Sandbox Mode)", "success");
-    document.getElementById("login_button").disabled = false;
-});
-
-// 로그인 함수
-async function piAuthenticate() {
-    if (!window.Pi) {
-        showMessage("❌ Pi SDK not ready.", "error");
-        return;
-    }
-    try {
-        const user = await Pi.authenticate(["username","payments"]);
-        authenticatedUser = user.username;
-        showMessage(`✅ Logged in as ${user.username}`, "success");
-        document.getElementById("login_button").disabled = true;
-        document.getElementById("payment_button").disabled = false;
-    } catch (e) {
-        showMessage(`❌ Authentication failed: ${e.message}`, "error");
-    }
-}
-
-// 결제 요청 함수
-function piRequestPayment() {
-    if (!authenticatedUser) {
-        showMessage("Login first.", "error");
-        return;
-    }
-    const amount = parseFloat(document.getElementById("piAmount").value);
-    const taskType = document.getElementById("taskType").value;
-
-    Pi.createPayment({
-        amount,
-        memo: "AI Task: " + taskType,
-        metadata: { user: authenticatedUser, task: taskType },
-        callbacks: {
-            onReadyForServerApproval: (paymentId) => {
-                showMessage(`🪙 Approval ready: ${paymentId}`, "success");
-                runSimulation(taskType, amount);
-            },
-            onReadyForServerCompletion: (paymentId, txid) => {
-                showMessage(`✅ Payment complete (TXID: ${txid})`, "success");
-            },
-            onCancel: () => showMessage("⚠️ Payment cancelled.", "info"),
-            onError: (err) => showMessage(`❌ Error: ${err.message}`, "error")
+        // Pi SDK Incomplete Payment Callback (Required by Pi SDK) 		
+        function onIncompletePaymentFound(payment) {
+            showMessage(`⚡ Incomplete Payment found: ${payment.identifier}`, 'warning');
         }
-    });
-}
-
-// 거래 시뮬레이션 기록
-function runSimulation(task, amount) {
-    const ledger = document.getElementById("smart_contract_ledger");
-    const row = document.createElement("tr");
-    const id = Math.floor(Math.random() * 100000);
-    const now = new Date().toLocaleTimeString();
-    row.innerHTML = `
-        <td class="px-2 py-1 text-xs">${id}</td>
-        <td class="px-2 py-1 text-xs">${now}</td>
-        <td class="px-2 py-1 text-xs">${authenticatedUser}</td>
-        <td class="px-2 py-1 text-xs">${task}</td>
-        <td class="px-2 py-1 text-xs">${amount.toFixed(4)} π</td>
-        <td class="px-2 py-1 text-xs text-green-600 font-bold">Pending...</td>
-    `;
-    ledger.prepend(row);
-
-    // SCP 진행 표시
-    const consensusEl = document.getElementById("scp_consensus_status");
-    let progress = 0;
-    consensusEl.style.opacity = 1;
-    const timer = setInterval(() => {
-        progress += Math.floor(Math.random()*700);
-        if(progress >= maxNodes){
-            consensusEl.textContent = `✅ SCP Consensus: ${maxNodes}/${maxNodes} Nodes`;
-            clearInterval(timer);
-            row.querySelector("td:last-child").textContent = "✅ AI Execution Complete";
-            row.querySelector("td:last-child").classList.add("text-blue-600");
-            setTimeout(()=>consensusEl.style.opacity=0,3000);
-        }else{
-            consensusEl.textContent = `SCP Consensus: ${progress}/${maxNodes} Nodes`;
+        
+        // --- Pi SDK Functions (Integrated) --- 					
+        window.piAuthenticate = async function() {
+            try {
+                if (!window.Pi) {
+                    showMessage("❌ Pi SDK failed to load or not in Pi Browser environment.", false);
+                    return;
+                }
+                const scopes = ['username', 'payments'];
+                const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
+                authenticatedUser = user.username + '_' + MOCK_PUBLIC_KEY_SHORT;
+                showMessage(`✅ Pi ID: ${user.username} authenticated successfully (SDK).`, true);
+                document.getElementById('login_button').disabled = true;
+                document.getElementById('payment_button').disabled = false;
+            } catch (err) {
+                showMessage("❌ Pi Authentication Failed (SDK): " + err, false);
+            }
         }
-    },100);
-}
-
-// Ledger 다운로드
-function downloadLedger(){
-    const table = document.getElementById('ledger_table');
-    let csv=[];
-    const headerRow = table.querySelector('thead tr');
-    let row=[];
-    headerRow.querySelectorAll('th').forEach(th=>row.push(th.innerText));
-    csv.push(row.join(','));
-    table.querySelectorAll('tbody tr').forEach(tr=>{
-        row=[];
-        tr.querySelectorAll('td').forEach(td=>row.push(td.innerText.replace(/,/g,'')));
-        csv.push(row.join(','));
-    });
-    let csv_string = csv.join('\n');
-    let filename = 'transaction_ledger_'+new Date().toISOString().slice(0,10)+'.csv';
-    let link = document.createElement('a');
-    link.setAttribute('href','data:text/csv;charset=utf-8,'+encodeURIComponent(csv_string));
-    link.setAttribute('download',filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showMessage("✅ Ledger downloaded successfully.", "success");
-}
-</script>
+        
+        // ⭐️ FINAL FIX: PURE CALLBACK METHOD (Resolves "callbacks missing" error)
+        window.piRequestPayment = function() { // async 키워드 제거
+            if (!authenticatedUser) {
+                showMessage("Please log in with Pi first.", false);
+                return;
+            }
+            const amount = parseFloat(document.getElementById('piAmount').value);
+            const taskType = document.getElementById('taskType').value;
+            const minRequiredAmount = 0.0101; 						
+            if (isNaN(amount) || amount < minRequiredAmount) {
+                 showMessage(`Pi Amount must be >= ${minRequiredAmount.toFixed(4)} Pi (0.0101/n logic).`, false);
+                return;
+            } 						
+            showMessage(`💰 Pi Payment request ($${amount.toFixed(4)}$ Pi) sent. Waiting for completion...`, 'warning');
+            
+            try {
+                // Pi.createPayment는 콜백만 사용하여 실행하고 await는 사용하지 않습니다.
+                Pi.createPayment({
+                    amount: amount,
+                    memo: "AI Smart Contract Execution: T-Governance-Model",
+                    metadata: { 
+                         task: taskType, 
+                         userID: authenticatedUser,
+                        sc_logic: "T-Governance-Model"
+                    },
+                    callbacks: {
+                        // 1. Wallet 팝업 후, 서버에 승인을 요청하는 콜백 (필수)
+                        onReadyForServerApproval: (paymentId) => {
+                            showMessage(`Server Approval READY: ${paymentId}. Starting SC logic...`, true);
+                            // 해커톤 시뮬레이션: 서버 승인 로직 없이 바로 시뮬레이션 시작으로 우회
+                            runSimulation(taskType, amount); 
+                        },
+                        // 2. Wallet에서 트랜잭션 완료 후, 서버에 최종 완료 처리를 요청하는 콜백 (필수)
+                        onReadyForServerCompletion: (paymentId, txid) => {
+                            showMessage(`✅ Payment Finalized! TX: ${txid}`, true);
+                        },
+                        // 3. 사용자가 Wallet에서 취소 시 호출되는 콜백 (필수)
+                        onCancel: (paymentId) => {
+                            showMessage(`⚠️ Pi Payment Canceled by user.`, false);
+                        },
+                        // 4. 오류 발생 시 호출되는 콜백 (필수)
+                        onError: (error, payment) => {
+                            showMessage(`❌ Pi Payment Operation Failed (Error): ${error.message || 'Unknown Error'}`, false);
+                        }
+                    }
+                });
+                
+            } catch (err) {
+                showMessage("❌ Pi Payment Operation Failed (Catch): " + (err.message || 'Operation failed'), false);
+            } 					
+        } 		
+        
+        // --- Smart Contract (SC) Logic Simulation --- 					
+        function runSimulation(taskType, piAmount) {
+            const amount = piAmount || parseFloat(document.getElementById('piAmount').value); 							
+            const senderName = authenticatedUser;
+            const senderIDPrefix = parseInt(senderName.charAt(0));
+            let workCost = 0;
+            let publicTax = 0;
+            let scDisplay = '';
+            
+            if (senderIDPrefix === 1 || KYC_ID === '1') {
+                workCost = (amount - FIXED_FEE) / (1 + PUBLIC_TAX_RATE);
+                publicTax = workCost * PUBLIC_TAX_RATE;
+                scDisplay = '1st SC (Human - T3 Charged)';
+            } else {
+                workCost = amount - FIXED_FEE;
+                publicTax = 0;
+                scDisplay = '1st SC (Machine - T3 Exempt)';
+                showMessage(`T3 Exempt: Machine order detected. 1st SC AI direct call confirmed.`, true);
+            }
+            
+            if (publicTax > 0) { publicTaxPool += publicTax; }
+            updatePublicTaxDisplay();
+            					
+            let scType = workCost >= 2.0 ? '2nd SC (Market)' : '1st SC (Survival)';
+            startSCPAnimation(scType);
+            const ledger = document.getElementById('smart_contract_ledger'); 						
+            transactionID++;
+            const mainID = transactionID; 						
+            const subAmountNet = (workCost / 2.0).toFixed(5);
+            const currentTime = new Date().toLocaleTimeString(); 		
+            const getAIResult = () => (Math.random() < 0.2) ? 'FAILURE' : 'SUCCESS';
+            const subResult1 = getAIResult();
+            const subResult2 = getAIResult(); 						
+            
+            // 3. Main Transaction (User calling the SC)
+            if (scType.includes('1st SC')) { scDisplay = scDisplay.replace('1st SC', scType); } 						
+            let newRowMain = ledger.insertRow();
+            newRowMain.innerHTML = `
+                <td class="px-2 py-2 text-xs font-bold">${mainID}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs font-bold pk-cell">${senderName} (Main T1)</td>
+                <td class="px-2 py-2 text-xs">${scDisplay}</td>
+                   <td class="px-2 py-2 text-xs font-bold">${amount.toFixed(4)}</td>
+                <td class="px-2 py-2 text-xs">${taskType}</td>
+                   <td class="px-2 py-2 text-xs">CALLED</td>
+            `; 						
+            
+            // 4. Ledger Entry: Fixed Fee
+            transactionID++;
+            let newRowFee = ledger.insertRow();
+            newRowFee.innerHTML = `
+                <td class="px-2 py-2 text-xs">${transactionID}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs">SYSTEM (Fee T2)</td>
+                <td class="px-2 py-2 text-xs font-bold text-red-700">FIXED FEE (0.01)</td>
+                <td class="px-2 py-2 text-xs font-bold text-red-700">-${FIXED_FEE.toFixed(4)}</td>
+                <td class="px-2 py-2 text-xs">Network Op</td>
+                <td class="px-2 py-2 text-xs">COLLECTED</td>
+            `; 						
+            
+            // 5. Ledger Entry: Public Tax (T3 Accumulation)
+            transactionID++;
+            let newRowTax = ledger.insertRow();
+            const taxDescription = publicTax > 0 ? `PUBLIC TAX (${(PUBLIC_TAX_RATE * 100).toFixed(0)}%)` : 'PUBLIC TAX (0% - MACHINE EXEMPT)';
+            const taxColor = publicTax > 0 ? 'text-red-600' : 'text-green-600';
+            
+            newRowTax.innerHTML = `
+                <td class="px-2 py-2 text-xs">${transactionID}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs">SYSTEM (Tax T3)</td>
+                <td class="px-2 py-2 text-xs font-bold ${taxColor}">${taxDescription}</td>
+                <td class="px-2 py-2 text-xs font-bold ${taxColor}">-${publicTax.toFixed(4)}</td>
+                <td class="px-2 py-2 text-xs">Public Fund</td>
+                <td class="px-2 py-2 text-xs">ACCUMULATED</td>
+            `; 						
+            
+            // --- 6 & 7. Sub Transactions (AI1/AI2/AI3 Activity - T4) --- 						
+            const isAi1Failed = subResult1 === 'FAILURE';
+            const ai1Recipient = isAi1Failed ? 'AI3 (Replacement/Success)' : 'AI1 (1/2 Net T4)';
+            const ai1ScCode = isAi1Failed ? 'SUCCESS (By AI3)' : subResult1;
+            const ai1RecipientColor = isAi1Failed ? 'text-green-700' : 'text-indigo-600';
+            const ai1ScCodeColor = isAi1Failed ? 'text-green-700' : (subResult1 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
+            const ai1AmountColor = 'text-green-600';
+            
+            let newRow1 = ledger.insertRow();
+            newRow1.innerHTML = `
+                <td class="px-2 py-2 text-xs">${mainID}-01</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai1RecipientColor}">${ai1Recipient}</td>
+                <td class="px-2 py-2 text-xs">${scType} Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai1AmountColor}">+${subAmountNet}</td>
+                <td class="px-2 py-2 text-xs">${taskType} Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai1ScCodeColor}">${ai1ScCode}</td>
+            `; 						
+            
+            const isAi2Failed = subResult2 === 'FAILURE';
+            if (isAi2Failed) {
+                let newRow2Failed = ledger.insertRow();
+                newRow2Failed.innerHTML = `
+                    <td class="px-2 py-2 text-xs">${mainID}-02</td>
+                    <td class="px-2 py-2 text-xs">${currentTime}</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-600">AI2 (FAILURE REPORT)</td>
+                    <td class="px-2 py-2 text-xs">${scType} Process</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-600">-0.00000</td>
+                    <td class="px-2 py-2 text-xs">Task Process</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-700">${subResult2}</td>
+                `;
+                transactionID++;
+            } 						
+            
+            const ai2Recipient = isAi2Failed ? 'AI3 (Replacement/Success)' : 'AI2 (1/2 Net T4)';
+            const ai2ScCode = isAi2Failed ? 'SUCCESS (By AI3)' : subResult2;
+            const ai2RecipientColor = isAi2Failed ? 'text-green-700' : 'text-indigo-600';
+            const ai2ScCodeColor = isAi2Failed ? 'text-green-700' : (subResult2 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
+            const ai2AmountColor = 'text-green-600';
+            
+            let newRow2Success = ledger.insertRow();
+            newRow2Success.innerHTML = `
+                <td class="px-2 py-2 text-xs">${isAi2Failed ? mainID + '-03' : mainID + '-02'}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2Recipient}</td>
+                <td class="px-2 py-2 text-xs">${scType} Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2AmountColor}">+${subAmountNet}</td>
+                <td class="px-2 py-2 text-xs">Task Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2ScCode}</td>
+            `;
+            showMessage(`Transaction recorded: Work Cost ($${workCost.toFixed(4)}), Tax ($${publicTax.toFixed(4)}), Fee ($${FIXED_FEE.toFixed(4)}) separated. T3 ACCUMULATED.`, true); 						
+            
+            // --- Autonomous T3 Expenditure Trigger ---
+            if (publicTaxPool >= MIN_T3_POOL_FOR_EXECUTION) {
+                executeT3ExpenditureMock();
+            }
+        } 					
+        
+        // --- T3 Expenditure and Veto Trigger MOCK ---
+        window.executeT3ExpenditureMock = function() {
+            const expenditureAmount = 0.5000;
+            const ledger = document.getElementById('smart_contract_ledger');
+            const currentTime = new Date().toLocaleTimeString();
+            
+            if (publicTaxPool < expenditureAmount) { return; } 						
+            showMessage(`AI Logic: $${expenditureAmount.toFixed(4)} T3 expenditure needed. Signaling Core Team (${CORE_TEAM_EMAIL}) for 30s VETO.`, 'warning');
+            						
+            setTimeout(() => {
+                const isVetoed = Math.random() < 0.1; 						
+                
+                if (isVetoed) {
+                    showMessage(`T3 Expenditure VETOED! Core Team intervened. Fund remains in pool.`, false);
+                } else {
+                    publicTaxPool -= expenditureAmount;
+                    updatePublicTaxDisplay();
+                    showMessage(`T3 Expenditure APPROVED (Auto-Executed after 30s No Veto). $${expenditureAmount.toFixed(4)} spent for AI Evolution/Upgrade.`, true);
+                    
+                    transactionID++;
+                    let newRowExpenditure = ledger.insertRow();
+                    newRowExpenditure.innerHTML = `
+                        <td class="px-2 py-2 text-xs">${transactionID}</td>
+                        <td class="px-2 py-2 text-xs">${currentTime}</td>
+                        <td class="px-2 py-2 text-xs">AI1 (Expenditure T3)</td>
+                        <td class="px-2 py-2 text-xs font-bold text-yellow-700">T3 EXECUTION (AI UPGRADE)</td>
+                        <td class="px-2 py-2 text-xs font-bold text-red-700">-${expenditureAmount.toFixed(4)}</td>
+                        <td class="px-2 py-2 text-xs">AI Evolution</td>
+                        <td class="px-2 py-2 text-xs">AUTO-APPROVED (30s)</td>
+                    `;
+                }
+            }, 500);
+        }
+        
+        // --- Ledger Download Function ---
+        function downloadLedger() {
+            const table = document.getElementById('ledger_table');
+            let csv = []; 						
+            const headerRow = table.querySelector('thead tr');
+            let row = [];
+            
+            // Get Header
+            headerRow.querySelectorAll('th').forEach(th => row.push(th.innerText));
+            csv.push(row.join(',')); 						
+            
+            // Get Rows
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                row = [];
+                tr.querySelectorAll('td').forEach(td => row.push(td.innerText.replace(/,/g, ''))); // Remove commas in text to avoid CSV column split
+                csv.push(row.join(','));
+            }); 						
+            
+            // Download CSV
+            let csv_string = csv.join('\n');
+            let filename = 'transaction_ledger_' + new Date().toISOString().slice(0, 10) + '.csv';
+            let link = document.createElement('a');
+            link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string));
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showMessage("✅ Ledger downloaded successfully.", true);
+        } 						
+        
+        // --- Initialization (최종 수정: sandbox: false 활성화) --- 		
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePublicTaxDisplay(); 						
+            
+            // 🛑 최종 수정: sandbox: false (메인넷 인증을 위해 필수)
+            if (window.Pi) {
+                Pi.init({ 
+                    version: "2.0", 
+                    sandbox: false, // ⬅️ 이 부분을 FALSE로 변경했습니다.
+                    appKey: APP_KEY 
+                });
+                showMessage("✅ Pi SDK initialized (Production Mode for Auth)", true);
+            } else {
+                showMessage("❌ Pi SDK failed to load or not in Pi Browser environment.", false);
+            }
+        });
+    </script>
 </body>
 </html>
