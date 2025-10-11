@@ -120,7 +120,6 @@
         const FIXED_FEE = 0.01; 
         let publicTaxPool = 0.0; 
         const MIN_T3_POOL_FOR_EXECUTION = 1.0; 
-        // ------------------------------------
         
         // --- Utility Functions ---                
         function showMessage(message, isSuccess = true) {
@@ -185,6 +184,7 @@
             }
         }
         
+        // FINAL FIX: Payment Callback Issue Fixed
         window.piRequestPayment = async function() {
             if (!authenticatedUser) {
                 showMessage("Please log in with Pi first.", false);
@@ -200,6 +200,7 @@
             showMessage(`💰 Pi Payment request ($${amount.toFixed(4)}$ Pi) sent. Waiting for completion...`, 'warning');
             
             try {
+                // Pi.createPayment now simplified to fix the "callbacks missing" error
                 const payment = await Pi.createPayment({
                     amount: amount,
                     memo: "AI Smart Contract Execution: T-Governance-Model",
@@ -207,25 +208,20 @@
                          task: taskType, 
                          userID: authenticatedUser,
                         sc_logic: "T-Governance-Model"
-                    },
-                    callbacks: {
-                        onReadyForServerApproval: (paymentId) => {
-                            showMessage(`Server Approval READY: ${paymentId}`, "warning");
-                        },
-                        onReadyForServerCompletion: (paymentId, txid) => {
-                            showMessage(`✅ Payment Finalized! TX: ${txid}`);
-                            runSimulation(taskType, amount); 
-                        },
-                        onCancel: (paymentId) => {
-                            showMessage(`⚠️ Payment Cancelled: ${paymentId}`, false);
-                        },
-                        onError: (error) => {
-                            showMessage(`❌ Payment Error: ${error.message}`, false);
-                        }
                     }
+                    // The problematic 'callbacks' object has been removed
                 });
+                
+                // Payment completed in Pi Wallet (SDK callback - success)
+                if (payment && payment.identifier) {
+                    showMessage(`✅ Payment finalized: ${payment.identifier}. Starting SC logic...`, true); 
+                    // Execute the user's SC logic after successful payment
+                    runSimulation(taskType, amount); 
+                }
+                
             } catch (err) {
-                showMessage("⚠️ Pi Payment Error/Cancellation (SDK): " + err, false);
+                // Catches user cancellation or other payment failures
+                showMessage("⚠️ Pi Payment Canceled/Failed (SDK): " + (err.message || 'Operation failed'), false);
             }                  
         }       
         
@@ -361,7 +357,7 @@
             if (publicTaxPool >= MIN_T3_POOL_FOR_EXECUTION) {
                 executeT3ExpenditureMock();
             }
-        }          
+        }                          
         
         // --- T3 Expenditure and Veto Trigger MOCK ---
         window.executeT3ExpenditureMock = function() {
