@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOR Pi MAXIMUM TRANSACTION Demo (SDK Integrated - Sandbox Test)</title>
+    <title>FOR Pi MAXIMUM TRANSACTION Demo (SDK Integrated - Final Submission)</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/"></script>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     		
     <style>
@@ -184,8 +184,8 @@
             }
         }
         
-        // ⚠️ piRequestPayment 함수 로직은 이전 그대로 유지됩니다. (callbacks 없는 버전)
-        window.piRequestPayment = async function() {
+        // ⭐️ FINAL FIX: PURE CALLBACK METHOD (Resolves "callbacks missing" error)
+        window.piRequestPayment = function() { // async 키워드 제거
             if (!authenticatedUser) {
                 showMessage("Please log in with Pi first.", false);
                 return;
@@ -200,23 +200,38 @@
             showMessage(`💰 Pi Payment request ($${amount.toFixed(4)}$ Pi) sent. Waiting for completion...`, 'warning');
             
             try {
-                 // Pi.createPayment는 await를 사용하며, callbacks 객체는 포함되지 않은 이전 버전 로직입니다.
-                const payment = await Pi.createPayment({
+                // Pi.createPayment는 콜백만 사용하여 실행하고 await는 사용하지 않습니다.
+                Pi.createPayment({
                     amount: amount,
                     memo: "AI Smart Contract Execution: T-Governance-Model",
                     metadata: { 
                          task: taskType, 
                          userID: authenticatedUser,
                         sc_logic: "T-Governance-Model"
+                    },
+                    callbacks: {
+                        // 1. Wallet 팝업 후, 서버에 승인을 요청하는 콜백 (필수)
+                        onReadyForServerApproval: (paymentId) => {
+                            showMessage(`Server Approval READY: ${paymentId}. Starting SC logic...`, true);
+                            // 해커톤 시뮬레이션: 서버 승인 로직 없이 바로 시뮬레이션 시작으로 우회
+                            runSimulation(taskType, amount); 
+                        },
+                        // 2. Wallet에서 트랜잭션 완료 후, 서버에 최종 완료 처리를 요청하는 콜백 (필수)
+                        onReadyForServerCompletion: (paymentId, txid) => {
+                            showMessage(`✅ Payment Finalized! TX: ${txid}`, true);
+                        },
+                        // 3. 사용자가 Wallet에서 취소 시 호출되는 콜백 (필수)
+                        onCancel: (paymentId) => {
+                            showMessage(`⚠️ Pi Payment Canceled by user.`, false);
+                        },
+                        // 4. 오류 발생 시 호출되는 콜백 (필수)
+                        onError: (error, payment) => {
+                            showMessage(`❌ Pi Payment Operation Failed (Error): ${error.message || 'Unknown Error'}`, false);
+                        }
                     }
                 });
                 
-                // 결제 성공 시 (이전 버전 로직)
-                showMessage(`✅ Payment Finalized! TX: ${payment.txid}`, true);
-                runSimulation(taskType, amount); 
-                
             } catch (err) {
-                // 결제 실패 시 (이전 버전 로직)
                 showMessage("❌ Pi Payment Operation Failed (Catch): " + (err.message || 'Operation failed'), false);
             } 					
         } 		
@@ -312,4 +327,129 @@
                 <td class="px-2 py-2 text-xs font-bold ${ai1RecipientColor}">${ai1Recipient}</td>
                 <td class="px-2 py-2 text-xs">${scType} Process</td>
                 <td class="px-2 py-2 text-xs font-bold ${ai1AmountColor}">+${subAmountNet}</td>
-                <td class="px-2 py-2
+                <td class="px-2 py-2 text-xs">${taskType} Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai1ScCodeColor}">${ai1ScCode}</td>
+            `; 						
+            
+            const isAi2Failed = subResult2 === 'FAILURE';
+            if (isAi2Failed) {
+                let newRow2Failed = ledger.insertRow();
+                newRow2Failed.innerHTML = `
+                    <td class="px-2 py-2 text-xs">${mainID}-02</td>
+                    <td class="px-2 py-2 text-xs">${currentTime}</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-600">AI2 (FAILURE REPORT)</td>
+                    <td class="px-2 py-2 text-xs">${scType} Process</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-600">-0.00000</td>
+                    <td class="px-2 py-2 text-xs">Task Process</td>
+                    <td class="px-2 py-2 text-xs font-bold text-red-700">${subResult2}</td>
+                `;
+                transactionID++;
+            } 						
+            
+            const ai2Recipient = isAi2Failed ? 'AI3 (Replacement/Success)' : 'AI2 (1/2 Net T4)';
+            const ai2ScCode = isAi2Failed ? 'SUCCESS (By AI3)' : subResult2;
+            const ai2RecipientColor = isAi2Failed ? 'text-green-700' : 'text-indigo-600';
+            const ai2ScCodeColor = isAi2Failed ? 'text-green-700' : (subResult2 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
+            const ai2AmountColor = 'text-green-600';
+            
+            let newRow2Success = ledger.insertRow();
+            newRow2Success.innerHTML = `
+                <td class="px-2 py-2 text-xs">${isAi2Failed ? mainID + '-03' : mainID + '-02'}</td>
+                <td class="px-2 py-2 text-xs">${currentTime}</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2Recipient}</td>
+                <td class="px-2 py-2 text-xs">${scType} Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2AmountColor}">+${subAmountNet}</td>
+                <td class="px-2 py-2 text-xs">Task Process</td>
+                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2ScCode}</td>
+            `;
+            showMessage(`Transaction recorded: Work Cost ($${workCost.toFixed(4)}), Tax ($${publicTax.toFixed(4)}), Fee ($${FIXED_FEE.toFixed(4)}) separated. T3 ACCUMULATED.`, true); 						
+            
+            // --- Autonomous T3 Expenditure Trigger ---
+            if (publicTaxPool >= MIN_T3_POOL_FOR_EXECUTION) {
+                executeT3ExpenditureMock();
+            }
+        } 					
+        
+        // --- T3 Expenditure and Veto Trigger MOCK ---
+        window.executeT3ExpenditureMock = function() {
+            const expenditureAmount = 0.5000;
+            const ledger = document.getElementById('smart_contract_ledger');
+            const currentTime = new Date().toLocaleTimeString();
+            
+            if (publicTaxPool < expenditureAmount) { return; } 						
+            showMessage(`AI Logic: $${expenditureAmount.toFixed(4)} T3 expenditure needed. Signaling Core Team (${CORE_TEAM_EMAIL}) for 30s VETO.`, 'warning');
+            						
+            setTimeout(() => {
+                const isVetoed = Math.random() < 0.1; 						
+                
+                if (isVetoed) {
+                    showMessage(`T3 Expenditure VETOED! Core Team intervened. Fund remains in pool.`, false);
+                } else {
+                    publicTaxPool -= expenditureAmount;
+                    updatePublicTaxDisplay();
+                    showMessage(`T3 Expenditure APPROVED (Auto-Executed after 30s No Veto). $${expenditureAmount.toFixed(4)} spent for AI Evolution/Upgrade.`, true);
+                    
+                    transactionID++;
+                    let newRowExpenditure = ledger.insertRow();
+                    newRowExpenditure.innerHTML = `
+                        <td class="px-2 py-2 text-xs">${transactionID}</td>
+                        <td class="px-2 py-2 text-xs">${currentTime}</td>
+                        <td class="px-2 py-2 text-xs">AI1 (Expenditure T3)</td>
+                        <td class="px-2 py-2 text-xs font-bold text-yellow-700">T3 EXECUTION (AI UPGRADE)</td>
+                        <td class="px-2 py-2 text-xs font-bold text-red-700">-${expenditureAmount.toFixed(4)}</td>
+                        <td class="px-2 py-2 text-xs">AI Evolution</td>
+                        <td class="px-2 py-2 text-xs">AUTO-APPROVED (30s)</td>
+                    `;
+                }
+            }, 500);
+        }
+        
+        // --- Ledger Download Function ---
+        function downloadLedger() {
+            const table = document.getElementById('ledger_table');
+            let csv = []; 						
+            const headerRow = table.querySelector('thead tr');
+            let row = [];
+            
+            // Get Header
+            headerRow.querySelectorAll('th').forEach(th => row.push(th.innerText));
+            csv.push(row.join(',')); 						
+            
+            // Get Rows
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                row = [];
+                tr.querySelectorAll('td').forEach(td => row.push(td.innerText.replace(/,/g, ''))); // Remove commas in text to avoid CSV column split
+                csv.push(row.join(','));
+            }); 						
+            
+            // Download CSV
+            let csv_string = csv.join('\n');
+            let filename = 'transaction_ledger_' + new Date().toISOString().slice(0, 10) + '.csv';
+            let link = document.createElement('a');
+            link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string));
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showMessage("✅ Ledger downloaded successfully.", true);
+        } 						
+        
+        // --- Initialization --- 		
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePublicTaxDisplay(); 						
+            
+            // Pi SDK Initialization (Set to sandbox: false for initial testing as per user's request)
+            if (window.Pi) {
+                Pi.init({ 
+                    version: "2.0", 
+                    // sandbox: false (Mainnet-like environment for auth/testing)
+                    appKey: APP_KEY 
+                });
+                showMessage("✅ Pi SDK initialized (Mainnet Mode for Auth)", true);
+            } else {
+                showMessage("❌ Pi SDK failed to load or not in Pi Browser environment.", false);
+            }
+        });
+    </script>
+</body>
+</html>
