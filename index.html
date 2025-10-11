@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FOR Pi MAXIMUM TRANSACTION (Full SDK Integrated)</title>
 
-        <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
   <style>
@@ -117,15 +117,13 @@
 
   <script>
     // === CONFIG ===
-    // ⭐ YOUR-APP-KEY-HERE를 귀하의 앱 키로 대체했습니다.
-    const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno"; 
+    const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno";
     const PUBLIC_TAX_RATE = 0.05, FIXED_FEE = 0.01;
     let txID = 0, user = null, publicTaxPool = 0.0;
 
     // === SDK INIT ===
     document.addEventListener("DOMContentLoaded", () => {
       if (window.Pi) {
-        // sandbox: false 로 실제 Wallet 모드 및 앱 키 설정
         Pi.init({ version: "2.0", sandbox: false, appKey: APP_KEY });
         showMsg("✅ Pi SDK Initialized (Wallet Mode)");
       } else {
@@ -183,8 +181,6 @@
           amount,
           memo: "AI Smart Contract Execution",
           metadata: { task, username: user.username },
-          
-          // ⭐ 콜백 함수 누락 오류를 해결하는 필수 코드
           callbacks: {
             onReadyForServerApproval: (pid) => showMsg(`Server Approval READY: ${pid}`, "warning"),
             onReadyForServerCompletion: (pid, txid) => {
