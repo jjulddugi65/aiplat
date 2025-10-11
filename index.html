@@ -442,7 +442,7 @@
             if (window.Pi) {
                 Pi.init({ 
                     version: "2.0", 
-                    // sandbox: false (Mainnet-like environment for auth/testing)
+                    sandbox: false, // <-- 이 부분을 명시적으로 추가했습니다.
                     appKey: APP_KEY 
                 });
                 showMessage("✅ Pi SDK initialized (Mainnet Mode for Auth)", true);
