@@ -1,220 +1,439 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>FOR Pi MAXIMUM TRANSACTION (Verified Build)</title>
 
+
+
   <!-- Tailwind & Pi SDK -->
+
   <script src="https://cdn.tailwindcss.com"></script>
+
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
+
+
   <style>
+
     body {
+
       font-family: sans-serif;
+
       background: #f3f4f6;
+
       color: #1f2937;
+
       padding: 2rem 1rem;
+
     }
+
     .header {
+
       background: #1f2937;
+
       color: #fff;
+
       padding: 1.5rem;
+
       border-radius: 1rem;
+
       text-align: center;
+
       margin-bottom: 1.5rem;
+
     }
+
     .btn {
+
       padding: 0.75rem 1.5rem;
+
       border-radius: 0.5rem;
+
       font-weight: bold;
+
       border: none;
+
       cursor: pointer;
+
       transition: background-color 0.2s;
+
       width: 100%;
+
     }
+
     .btn-login { background: #f7a43b; color: white; }
+
     .btn-login:hover { background: #e09133; }
+
     .btn-pay { background: #4CAF50; color: white; }
+
     .btn-pay:hover { background: #45A049; }
+
     .msg {
+
       position: fixed;
+
       top: 1rem;
+
       left: 50%;
+
       transform: translateX(-50%) scale(0);
+
       background: #1f2937;
+
       color: #fff;
+
       padding: 0.75rem 1.5rem;
+
       border-radius: 0.5rem;
+
       transition: transform 0.3s;
+
       z-index: 999;
+
     }
+
     table {
+
       width: 100%;
+
       border-collapse: collapse;
+
       margin-top: 1rem;
+
     }
+
     th, td {
+
       border: 1px solid #e5e7eb;
+
       padding: 0.5rem;
+
       font-size: 0.8rem;
+
       text-align: center;
+
     }
+
   </style>
+
 </head>
 
+
+
 <body>
+
   <div id="msg" class="msg">App Ready</div>
 
+
+
   <div class="header">
+
     <h1 class="text-xl font-bold">FOR Pi MAXIMUM TRANSACTION</h1>
+
     <p class="text-gray-300 text-sm mt-1">Pi SDK + Transaction Simulation</p>
+
   </div>
+
+
 
   <div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-    <div class="grid grid-cols-2 gap-4 mb-4">
-      <button id="btnLogin" class="btn btn-login">1️⃣ Pi Login (Authenticate)</button>
-      <button id="btnPay" class="btn btn-pay" disabled>2️⃣ Create Payment</button>
-    </div>
 
     <div class="grid grid-cols-2 gap-4 mb-4">
-      <div>
-        <label>Amount (Pi):</label>
-        <input id="amount" type="number" step="0.0001" value="1.0000" class="border p-2 w-full rounded" />
-      </div>
-      <div>
-        <label>Task Type:</label>
-        <select id="task" class="border p-2 w-full rounded">
-          <option value="Drawing">Drawing</option>
-          <option value="Animation">Animation</option>
-          <option value="VideoEdit">Video Edit</option>
-          <option value="Research">Research</option>
-        </select>
-      </div>
+
+      <button id="btnLogin" class="btn btn-login">1️⃣ Pi Login (Authenticate)</button>
+
+      <button id="btnPay" class="btn btn-pay" disabled>2️⃣ Create Payment</button>
+
     </div>
+
+
+
+    <div class="grid grid-cols-2 gap-4 mb-4">
+
+      <div>
+
+        <label>Amount (Pi):</label>
+
+        <input id="amount" type="number" step="0.0001" value="1.0000" class="border p-2 w-full rounded" />
+
+      </div>
+
+      <div>
+
+        <label>Task Type:</label>
+
+        <select id="task" class="border p-2 w-full rounded">
+
+          <option value="Drawing">Drawing</option>
+
+          <option value="Animation">Animation</option>
+
+          <option value="VideoEdit">Video Edit</option>
+
+          <option value="Research">Research</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
 
     <iframe
+
       src="https://blockexplorer.minepi.com/testnet/"
+
       title="Pi Testnet"
+
       frameborder="0"
+
       class="w-full h-40 border rounded mb-4"
+
     ></iframe>
 
+
+
     <table id="ledger">
+
       <thead>
+
         <tr class="bg-gray-50">
+
           <th>ID</th>
+
           <th>Time</th>
+
           <th>Sender</th>
+
           <th>Smart Contract</th>
+
           <th>Amount</th>
+
           <th>Task</th>
+
           <th>Result</th>
+
         </tr>
+
       </thead>
+
       <tbody></tbody>
+
     </table>
+
   </div>
 
+
+
   <script>
+
     // === CONFIG ===
+
     const APP_KEY = "ms2wkmzsv23ntgjfe0phadfszrs3waaaelusbzuu4iearyfz4qp1oymoyrj0feno";
+
     const PUBLIC_TAX_RATE = 0.05, FIXED_FEE = 0.01;
+
     let txID = 0, user = null, publicTaxPool = 0.0;
 
+
+
     // === SDK INIT ===
+
     document.addEventListener("DOMContentLoaded", () => {
+
       if (window.Pi) {
+
         Pi.init({ version: "2.0", sandbox: false, appKey: APP_KEY });
+
         showMsg("✅ Pi SDK Initialized (Wallet Mode)");
+
       } else {
+
         showMsg("❌ Pi SDK not found (Use Pi Browser)", false);
+
       }
+
     });
 
+
+
     // === Utility ===
+
     const showMsg = (msg, ok = true) => {
+
       const box = document.getElementById("msg");
+
       box.textContent = msg;
+
       box.style.background = ok ? "#10b981" : "#f44336";
+
       box.style.transform = "translateX(-50%) scale(1)";
+
       setTimeout(() => (box.style.transform = "translateX(-50%) scale(0)"), 3000);
+
     };
+
+
 
     const addLedger = (sender, sc, amt, task, result) => {
+
       const t = new Date().toLocaleTimeString();
+
       const row = `<tr>
+
         <td>${++txID}</td>
+
         <td>${t}</td>
+
         <td>${sender}</td>
+
         <td>${sc}</td>
+
         <td>${amt.toFixed(4)}</td>
+
         <td>${task}</td>
+
         <td>${result}</td>
+
       </tr>`;
+
       document.querySelector("#ledger tbody").insertAdjacentHTML("beforeend", row);
+
     };
+
+
 
     // === SDK Auth ===
+
     document.getElementById("btnLogin").onclick = async () => {
+
       try {
+
         const scopes = ["username"];
+
         user = await Pi.authenticate(scopes, (p) => showMsg(`Incomplete payment: ${p.identifier}`, false));
+
         showMsg(`✅ Authenticated: ${user.username}`);
+
         document.getElementById("btnPay").disabled = false;
+
       } catch (e) {
+
         showMsg(`❌ Auth failed: ${e.message}`, false);
+
       }
+
     };
 
+
+
     // === Payment ===
+
     document.getElementById("btnPay").onclick = async () => {
+
       if (!user) return showMsg("Please log in first", false);
 
+
+
       const amount = parseFloat(document.getElementById("amount").value);
+
       const task = document.getElementById("task").value;
+
       if (amount < 0.01) return showMsg("Amount too small", false);
+
+
 
       showMsg(`💰 Requesting ${amount} Pi Payment...`, "warning");
 
+
+
       try {
+
         const payment = await Pi.createPayment({
+
           amount,
+
           memo: "AI Smart Contract Execution",
+
           metadata: { task, username: user.username },
+
           callbacks: {
+
             onReadyForServerApproval: (pid) => showMsg(`Server Approval READY: ${pid}`, "warning"),
+
             onReadyForServerCompletion: (pid, txid) => {
+
               showMsg(`✅ Payment Finalized! TX: ${txid}`);
+
               simulateLedger(user.username, amount, task);
+
             },
+
             onCancel: (pid) => showMsg(`⚠️ Cancelled: ${pid}`, false),
+
             onError: (err) => showMsg(`❌ Error: ${err.message}`, false),
+
           },
+
         });
+
       } catch (e) {
+
         showMsg(`❌ Payment failed: ${e.message}`, false);
+
       }
+
     };
+
+
 
     // === Simulation ===
+
     const simulateLedger = (sender, amt, task) => {
+
       const net = (amt - FIXED_FEE) / (1 + PUBLIC_TAX_RATE);
+
       const tax = net * PUBLIC_TAX_RATE;
+
       publicTaxPool += tax;
 
+
+
       addLedger(sender, "1st SC (Human)", amt, task, "CALLED");
+
       addLedger("SYSTEM (Fee)", "FIXED", -FIXED_FEE, "Network", "COLLECTED");
+
       addLedger("SYSTEM (Tax)", "PUBLIC TAX", -tax, "Public Fund", "ACCUMULATED");
 
+
+
       const res = Math.random() < 0.8 ? "SUCCESS" : "FAILURE";
+
       addLedger("AI Agent", "Process Task", net / 2, task, res);
 
+
+
       if (publicTaxPool >= 1.0) {
+
         showMsg("AI auto-executes public tax (T3)", true);
+
         publicTaxPool = 0.0;
+
       }
+
     };
+
   </script>
+
 </body>
+
 </html>
