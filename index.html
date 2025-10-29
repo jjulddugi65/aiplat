@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,18 +34,18 @@
             border-radius: 1rem; 
             margin-top: 1rem;
         }
-        /* chart-container 스타일 조정: 높이를 늘리고, 내부 SVG를 위한 공간 확보 */
+        /* chart-container style adjustments: increase height, secure space for internal SVG */
         .chart-container {
-            min-height: 200px; /* 충분한 높이 확보 */
+            min-height: 200px; /* Secure sufficient height */
             background: white;
             padding: 1rem;
             margin-top: 1rem;
             border-radius: 1rem;
             box-shadow: 0 2px 15px -5px rgba(0, 0, 0, 0.1);
-            position: relative; /* 자식 요소의 absolute 위치 기준 */
+            position: relative; /* Base for absolute positioning of children */
             overflow: hidden; 
          }
-        /* [NEW] 후일 개발 기능에 대한 스타일 */
+        /* [NEW] Style for deferred development features */
         .deferred-feature {
             background-color: #f9fafb; /* Light gray background */
             color: #9ca3af; /* Gray text */
@@ -203,7 +202,7 @@
             font-weight: bold;
             color: #1f2937;
         }
-        /* Active Pool Chart의 범례 위치 조정 */
+        /* Active Pool Chart Legend Positioning */
         #active_pool_chart {
             display: flex;
             flex-direction: column;
@@ -252,25 +251,25 @@
                 <div>
                     <label htmlFor="recipientType">Recipient ID Type (T3 Policy Test):</label>
                     <select id="recipientType">
-                        <option value="1">1 (Human/KYC) - 1 to 1: T3 면제 (P2P 거래 활성화)</option>
-                        <option value="2">2 (AI) - 1 to 2: T3 5% 징수 (AI 생태계 기여/거버넌스 재원 확보)</option>
-                        <option value="3">3 (Robot) - 1 to 3: T3 5% 징수 (AI 생태계 기여/거버넌스 재원 확보)</option>
-                        <option value="4">4 (IoT) - 1 to 4: T3 5% 징수 (AI 생태계 기여/거버넌스 재원 확보)</option>
-                        <option value="5">5+ (External/Other) - 1 to 5+: T3 5% 징수 (AI 생태계 기여/거버넌스 재원 확보)</option>
+                        <option value="1">1 (Human/KYC) - 1 to 1: T3 Exempt (P2P Transaction Activation)</option>
+                        <option value="2">2 (AI) - 1 to 2: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
+                        <option value="3">3 (Robot) - 1 to 3: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
+                        <option value="4">4 (IoT) - 1 to 4: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
+                        <option value="5">5+ (External/Other) - 1 to 5+: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
                     </select>
                 </div>
                 </div>
             <div class="p-4 bg-white rounded-lg shadow-inner mt-4 border border-green-300">
-                <h3 class="text-lg font-bold text-gray-700 mb-2">3. T3 누적액 분배 실행 (MVP 필수)</h3>
-                <p class="text-sm text-gray-500 mb-3">T3 기금을 **시스템 개발/유지보수 보상(Dynamic Share)**을 포함하여 각 주체에 정산/분배합니다. (AI 생태계 선순환 모델 검증)</p>
+                <h3 class="text-lg font-bold text-gray-700 mb-2">3. Execute T3 Contribution Distribution (MVP Essential)</h3>
+                <p class="text-sm text-gray-500 mb-3">Settle/distribute the T3 fund to each entity, including **System Development/Maintenance Reward (Dynamic Share)**. (AI Ecosystem Virtuous Cycle Model Verification)</p>
                 <button class="pi-button payment-button" onclick="executeMonthlyDistribution()">
-                    **T3 월별 정산 실행** (시스템 기여 보상)
+                    **Execute T3 Monthly Settlement** (System Contribution Reward)
                 </button>
             </div>
             </div>
 
         <div class="deferred-feature">
-            <span class="deferred-label">후일개발 (시각화/검증 보조)</span>
+            <span class="deferred-label">Deferred Development (Visualization/Verification Aid)</span>
             <div class="deferred-content">
                 <iframe id="block_explorer_iframe"
                         src="https://blockexplorer.minepi.com/testnet/"
@@ -296,7 +295,7 @@
                     <p id="on_chain_tx_count" class="stat-value text-indigo-600">0</p>
                 </div>
                 <div class="stat-card">
-                    <p class="stat-label">Total Activation Fund Pool (T3 Accumulation)</p>
+                    <p class="stat-label">Total Activation Contribution Pool (T3 Accumulation)</p>
                     <p id="public_tax_display" class="stat-value text-purple-600">0.0000 Pi</p>
                 </div>
             </div>
@@ -306,15 +305,15 @@
                     <p id="minor_accuracy" class="stat-value text-green-600">85.5%</p>
                 </div>
                 <div class="stat-card">
-                    <p class="stat-label">T3 Developer Share (Scaling Factor)</p>
+                    <p class="stat-label">T3 System Contribution Share (Scaling Factor)</p>
                     <p id="scaling_factor" class="stat-value text-green-600">1/10 (Initial)</p>
                 </div>
             </div>
             <div id="active_pool_chart" class="chart-container deferred-feature" style="min-height: 100px; margin-top: 1rem;">
-                <span class="deferred-label">후일개발 (AI 자율 운영 잔고 지출)</span>
+                <span class="deferred-label">Deferred Development (AI Autonomous Operation Balance Expenditure)</span>
                 <div class="deferred-content">
                     <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-bold text-gray-700">20% AI Active Pool (코어팀 용처 결정 위임 잔고)</h3>
+                        <h3 class="text-lg font-bold text-gray-700">20% AI Active Pool (Balance delegated for Core Team's use decision)</h3>
                         <span id="active_pool_display" class="text-base font-bold text-pink-600">Active Pool Balance: 0.0000 Pi</span>
                     </div>
                 </div>
@@ -322,7 +321,7 @@
             </div>
 
         <div id="inflation_chart" class="chart-container deferred-feature" style="min-height: 100px;">
-            <span class="deferred-label">후일개발 (경제 지표 시각화)</span>
+            <span class="deferred-label">Deferred Development (Economic Indicator Visualization)</span>
             <div class="deferred-content">
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="text-lg font-bold text-gray-700">Pi Economy Inflation Index (Simulated)</h3>
@@ -335,7 +334,7 @@
                 <div class="flex items-center">
                     <button class="download-button" onclick="downloadLedger()">Download CSV</button>
                     <div id="scp_consensus_status_mvp" class="scp-consensus" style="opacity: 1;">
-                        SCP Consensus: 0/10001 Nodes (후일개발: 30초 VETO)
+                        SCP Consensus: 0/10001 Nodes (Deferred Development: 30-sec VETO)
                     </div>
                     </div>
             </div>
@@ -362,10 +361,10 @@
     <script>
 // --- PNP IP Core Logic Variables ---
 const MAPPING_TABLE = {
-    'VideoEdit': '영상 편집 (고가)',
-    'Animation': '애니메이션 제작 (중가)',
-    'Drawing': '드로잉 생성 (저가)',
-    'Research': '연구 분석 (중가)',
+    'VideoEdit': 'Video Editing (High Cost)',
+    'Animation': 'Animation Production (Medium Cost)',
+    'Drawing': 'Drawing Generation (Low Cost)',
+    'Research': 'Research Analysis (Medium Cost)',
 };
 
 // ... (Orderer_AI_Mixer function remains unchanged)
@@ -378,7 +377,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
     const maskedTaskId = `TID_${all_tx_requests.length}_MIXED`;
 
     const publicRecord = {
-        'Time': new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        'Time': new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
         'Sender': maskedSenderId,
         'Pi_Amount_CALLED': totalAmount,
         'Task_Masked': maskedTaskId,
@@ -391,19 +390,19 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         const maxNodes = 10001;
         let authenticatedUser = null;                   
         const MOCK_PUBLIC_KEY_SHORT = 'GATMBR...Q06';           
-        const KYC_ID = '10821'; // [정책 반영] 1:인간, 082:국가코드, 1:성별코드
+        const KYC_ID = '10821'; // [Policy Reflected] 1:Human, 082:Country Code, 1:Gender Code
         const mockUsername = KYC_ID + '_' + MOCK_PUBLIC_KEY_SHORT; 
         const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org'; 
         
-        // --- 🌟 월별 분배 지갑 주소 (MOCK) 🌟 ---
-        const DEV_WALLET_ADDRESS = 'GDI44IX6RML5LXPWK25AJAPBQNZ36J5V5IQFD2KEDNQ5HNEDSLTT22NS'; // 사용자님 지갑 주소 반영
+        // --- 🌟 Monthly Distribution Wallet Addresses (MOCK) 🌟 ---
+        const DEV_WALLET_ADDRESS = 'GDI44IX6RML5LXPWK25AJAPBQNZ36J5V5IQFD2KEDNQ5HNEDSLTT22NS'; // Reflecting user's wallet address
         const STABILIZER_WALLET_ADDRESS = 'STAB_A23...POOL'; 
         const CORE_TEAM_WALLET_ADDRESS = 'CORE_T50...TEAM'; 
 
         // --- Public Fund & Economy Variables (T3 Fund) ---
         const SYSTEM_FUND_RATE = 0.05; // 5% System Reinvestment Fund (T3) - FIXED RATE
         const FIXED_FEE = 0.01; // Fixed Fee (0.01 Pi)
-        let publicFundPool = 0.0; // T3 공공 펀드 적립 풀 (실제 징수된 T3 금액이 여기에 축적)
+        let publicFundPool = 0.0; // T3 Public Fund Accumulation Pool (Actual collected T3 amount accumulates here)
         
         // --- 🌟 On-Chain TX Dynamic Share Variables (UPDATED) 🌟 ---
         let onChainTXCount = 9999990; 
@@ -423,15 +422,15 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             return DEV_RATE_INITIAL; 
         }
 
-        // --- 월별 기금 분배 비율 (Total 100% of T3) ---
+        // --- Monthly Fund Distribution Rates (Total 100% of T3) ---
         const STABILIZER_RATE = 0.20; 
         const ACTIVATION_POOL_RATE = 0.20; 
         const CORE_TEAM_BASE_RATE = 0.50; 
         
-        // --- AI Active Pool (잔고만 표시) ---
+        // --- AI Active Pool (Balance only display) ---
         let activeAIPool = 0.0; 
         
-        // --- AI League Failure Rates & Data Mock (단순 시뮬레이션용) ---
+        // --- AI League Failure Rates & Data Mock (For simple simulation only) ---
         const MAJOR_AI_FAILURE_RATE = 0.05; 
         const MINOR_AI_FAILURE_RATE = 0.30; 
         const MAJOR_SC_MIN_COST = 2.0; 
@@ -439,7 +438,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         let minorAICount = 5;
         let minorAvgAccuracy = 85.5;
 
-        // --- Utility Functions (생략) ---        
+        // --- Utility Functions (Omitted) ---        
         function showMessage(message, isSuccess = true) {
             const messageBox = document.getElementById('message_box');
             if (!messageBox) return; 
@@ -463,7 +462,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             const activePool = document.getElementById('active_pool_display');
             
             if (totalFundDisplay) {
-                totalFundDisplay.textContent = `Total Activation Fund Pool: ${publicFundPool.toFixed(4)} Pi`;
+                totalFundDisplay.textContent = `Total Activation Contribution Pool: ${publicFundPool.toFixed(4)} Pi`; // UPDATED
             }
             if (activePool) {
                  activePool.textContent = `Active Pool Balance: ${activeAIPool.toFixed(4)} Pi`;
@@ -483,10 +482,10 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         function startSCPAnimation(scType) {
             const scpStatusElement = document.getElementById('scp_consensus_status_mvp');
             if (!scpStatusElement) return;
-            showMessage(`AI selected ${scType}. MOCKED SCP Consensus: Only placeholder is active (후일개발).`, true); 
+            showMessage(`AI selected ${scType}. MOCKED SCP Consensus: Only placeholder is active (Deferred Development).`, true); 
         }                        
 
-        // --- MOCKED Pi SDK Functions (생략) ---                
+        // --- MOCKED Pi SDK Functions (Omitted) ---                
         window.piAuthenticate = function() {
             authenticatedUser = mockUsername;
             showMessage(`Pi ID: ${authenticatedUser} authenticated successfully (MOCKED). ID Prefix: ${authenticatedUser.charAt(0)}`, true);
@@ -513,7 +512,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             const minRequiredAmountBase = minWorkCost * (1 + 0.0) + FIXED_FEE; 
                                  
             if (amount < minRequiredAmountBase) { 
-                showMessage(`Pi Amount must be greater than or equal to ${minRequiredAmountBase.toFixed(4)} Pi (최소 Work Cost: 0.0101 + Fixed Fee: 0.01).`, false);
+                showMessage(`Pi Amount must be greater than or equal to ${minRequiredAmountBase.toFixed(4)} Pi (Minimum Work Cost: 0.0101 + Fixed Fee: 0.01).`, false);
                 return;
             }
 
@@ -525,27 +524,27 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         function runSimulation(taskType, recipientType) {
             const amount = parseFloat(document.getElementById('piAmount').value);                                           
             
-            // 🌟 1. T3 징수율 결정 (최종 ID Policy 적용 - 인간(1) -> 비인간(2+)만 부과) 🌟
-            let T3_CHARGE_RATE = 0.0; // 기본은 면세 (거래 활성화)
-            let policyDescription = 'T3 면제 (비인간 시작 또는 P2P 거래)';
+            // 🌟 1. Determine T3 Levy Rate (Final ID Policy Applied - Only Human (1) -> Non-Human (2+) is charged) 🌟
+            let T3_CHARGE_RATE = 0.0; // Default is exemption (Transaction Activation)
+            let policyDescription = 'T3 Exempt (Non-Human Initiated or P2P Transaction)';
             const senderIDPrefix = authenticatedUser ? authenticatedUser.charAt(0) : '1';
             const recipientIDPrefix = recipientType; 
             
-            // T3가 부과되는 유일한 조건: 인간(1)이 비인간(2, 3, 4, 5+ 등)에게 송금할 때
+            // The only condition where T3 is charged: when a Human (1) sends to a Non-Human/External (2, 3, 4, 5+, etc.)
             if (senderIDPrefix === '1' && recipientIDPrefix !== '1') {
-                T3_CHARGE_RATE = SYSTEM_FUND_RATE; // 5% 부과
-                policyDescription = `KYC (1) to Non-Human/External (${recipientIDPrefix}): T3 5% 징수 (AI 생태계 기여/거버넌스 재원 확보)`;
+                T3_CHARGE_RATE = SYSTEM_FUND_RATE; // 5% contribution
+                policyDescription = `KYC (1) to Non-Human/External (${recipientIDPrefix}): T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)`; // UPDATED
             } else if (senderIDPrefix === '1' && recipientIDPrefix === '1') {
-                // 인간(1) to 인간(1) 거래: 면세 유지
-                policyDescription = `KYC (1) to KYC (1): T3 면제 (P2P 코어팀 영역 존중)`;
+                // Human (1) to Human (1) transaction: Exemption maintained
+                policyDescription = `KYC (1) to KYC (1): T3 Exempt (Respect P2P Core Team Domain)`;
             } else {
-                // 비인간 시작 거래 (2+, 3+, 4+ 등) to 모든 ID: 면세 유지
-                policyDescription = `Non-Human (${senderIDPrefix}) to All: T3 면제 (거래 활성화)`;
+                // Non-Human initiated transaction (2+, 3+, 4+, etc.) to Any ID: Exemption maintained
+                policyDescription = `Non-Human (${senderIDPrefix}) to All: T3 Exempt (Transaction Activation)`;
             }
 
-            // 2. Work Cost 역산 로직
+            // 2. Reverse Calculation Logic for Work Cost
             const workCost = (amount - FIXED_FEE) / (1 + T3_CHARGE_RATE);
-            const systemFund = workCost * T3_CHARGE_RATE; // 실제 징수되는 T3 금액
+            const systemFund = workCost * T3_CHARGE_RATE; // Actual collected T3 amount (Contribution)
             
             const senderName = authenticatedUser ? authenticatedUser : KYC_ID + '_...Q06';
             
@@ -559,12 +558,12 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             onChainTXCount++; 
             updatePublicTaxDisplay(); 
             
-            // 4. Smart Contract Selection (생략)
+            // 4. Smart Contract Selection (Omitted)
             const MAJOR_SC_MIN_COST = 2.0; 
             let scType = workCost >= MAJOR_SC_MIN_COST ? '2nd SC (Market)' : '1st SC (Survival)';
             let scDisplay = `${scType} (T3 Charged: ${currentT3RateDisplay}% of Work Cost)`; 
 
-            // 5. AI League Failure Rate Logic Integration (생략)
+            // 5. AI League Failure Rate Logic Integration (Omitted)
             let currentFailureRate = scType.includes('1st SC') ? MINOR_AI_FAILURE_RATE : MAJOR_AI_FAILURE_RATE;
             let isMinorLeagueTask = scType.includes('1st SC');
             
@@ -577,7 +576,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             transactionID++;
             const mainID = transactionID;                                           
             const subAmountNet = (workCost / 2.0); 
-            const currentTime = new Date().toLocaleTimeString();                    
+            const currentTime = new Date().toLocaleTimeString('en-US');                    
 
             // 6. Main Transaction (User calling the SC)
             let newRowMain = ledger.insertRow();
@@ -604,11 +603,11 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 <td class="px-2 py-2 text-xs">COLLECTED</td>
             `;                    
 
-            // 8. Ledger Entry: Public Fund (T3) - T3가 0이 아닐 때만 기록
+            // 8. Ledger Entry: Public Fund (T3) - Record only if T3 is charged
             if (systemFund > 0) {
                 transactionID++; 
                 let newRowFund = ledger.insertRow();
-                const fundDescription = `SYSTEM REINVESTMENT (${currentT3RateDisplay}% of Work Cost to Pool)`;
+                const fundDescription = `SYSTEM CONTRIBUTION (${currentT3RateDisplay}% of Work Cost to Pool)`; // UPDATED
                 const fundColor = 'text-red-600'; 
 
                 newRowFund.innerHTML = `
@@ -621,7 +620,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 `;       
             }
 
-            // 9. Sub Transactions (AI Activity) - T4 (생략: AI1, AI2/AI3 정산 로직)
+            // 9. Sub Transactions (AI Activity) - T4 (Omitted: AI1, AI2/AI3 Settlement Logic)
             const isAi1Failed = subResult1 === 'FAILURE';
             const ai1Recipient = isAi1Failed ? 'AI3 (Replacement/Success)' : 'AI1 (1/2 Net T4)';
             const ai1ScCode = isAi1Failed ? 'SUCCESS (By AI3)' : subResult1;
@@ -678,17 +677,17 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2ScCode}</td>
             `;
 
-            showMessage(`Transaction recorded: Work Cost ($${workCost.toFixed(4)}), Fund ($${systemFund.toFixed(4)}), Fee ($${FIXED_FEE.toFixed(4)}) separated. T3 ACCUMULATED (if not exempted).`, true); 
+            showMessage(`Transaction recorded: Work Cost ($${workCost.toFixed(4)}), Contribution Fund ($${systemFund.toFixed(4)}), Fee ($${FIXED_FEE.toFixed(4)}) separated. T3 ACCUMULATED (if not exempted).`, true); // UPDATED
         }       
         
-        // --- 월별 기금 분배 실행 함수 (MOCK) (생략) ---
+        // --- Monthly Fund Distribution Execution Function (MOCK) (Omitted) ---
         window.executeMonthlyDistribution = function() {
             const ledger = document.getElementById('smart_contract_ledger');
-            const currentTime = new Date().toLocaleTimeString();
+            const currentTime = new Date().toLocaleTimeString('en-US');
             const totalFund = publicFundPool;
             
             if (totalFund === 0) {
-                showMessage("Total Activation Fund Pool (T3) is 0. Cannot execute monthly distribution.", false);
+                showMessage("Total Activation Contribution Pool (T3) is 0. Cannot execute monthly distribution.", false); // UPDATED
                 return;
             }
 
@@ -708,7 +707,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             rowDev.innerHTML = `
                 <td class="px-2 py-2 text-xs">${transactionID}</td>
                 <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold text-pink-600">DEVELOPER (${devShareDisplay} - T3)</td>
+                <td class="px-2 py-2 text-xs font-bold text-pink-600">SYSTEM CONTRIBUTION (${devShareDisplay} - T3)</td> // UPDATED
                 <td class="px-2 py-2 text-xs">Monthly Fund Dist.</td>
                 <td class="px-2 py-2 text-xs font-bold text-green-600">-${devShare.toFixed(4)}</td>
                 <td class="px-2 py-2 text-xs pk-cell">${DEV_WALLET_ADDRESS}</td>
@@ -754,10 +753,10 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             `;
             
             updatePublicTaxDisplay();
-            showMessage(`Monthly T3 Fund distribution executed. Total $${totalFund.toFixed(4)} Pi distributed. Core Team absorbs developer share surplus.`, true);
+            showMessage(`Monthly T3 Contribution Fund distribution executed. Total $${totalFund.toFixed(4)} Pi distributed. Core Team absorbs developer share surplus.`, true); // UPDATED
         }
 
-        // --- Ledger Download Function (생략) ---
+        // --- Ledger Download Function (Omitted) ---
         function downloadLedger() {
             const table = document.getElementById('ledger_table');
             let csv = [];                                             
@@ -794,7 +793,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             showMessage("Ledger downloaded successfully!", true);
         }
 
-        // --- D3.js Chart (후일개발) (생략) ---
+        // --- D3.js Chart (Deferred Development) (Omitted) ---
         function updateActivePoolChart() {
             d3.select('#active_pool_chart svg').remove(); 
             d3.select('#active_pool_chart .chart-elements').remove(); 
@@ -847,7 +846,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         }
 
 
-        // --- DOM Content Loaded Initialization (생략) ---
+        // --- DOM Content Loaded Initialization (Omitted) ---
         document.addEventListener('DOMContentLoaded', () => {
             updatePublicTaxDisplay();                                            
             createInflationChart(); 
