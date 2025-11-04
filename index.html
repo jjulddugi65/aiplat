@@ -28,7 +28,7 @@
             padding: 2rem;
             margin: 2rem 0 0 0;
             border-radius: 1rem 1rem 0 0;
-            box-shadow: 0 2px 15px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2, 15px -5px rgba(0, 0, 0, 0.1);
         }
         .governance-section {
             border-radius: 1rem; 
@@ -41,7 +41,7 @@
             padding: 1rem;
             margin-top: 1rem;
             border-radius: 1rem;
-            box-shadow: 0 2px 15px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2, 15px -5px rgba(0, 0, 0, 0.1);
             position: relative; /* Base for absolute positioning of children */
             overflow: hidden; 
          }
@@ -236,15 +236,15 @@
             </div>
             <div class="grid grid-cols-3 gap-4">
                 <div>
-                    <label htmlFor="piAmount">Pi Amount (Total Charged to User):</label>
-                    <input type="number" id="piAmount" step="0.0001" value="2.5000" placeholder="e.g. 2.5000">
+                    <label htmlFor="piAmount">Pi Amount (Target Work Cost for AI/IoT):</label>
+                    <input type="number" id="piAmount" step="0.0001" value="5.0000" placeholder="e.g. 5.0000">
                 </div>
                 <div>
                     <label htmlFor="taskType">Task Type:</label>
                     <select id="taskType">
                         <option value="Drawing">Creation: Drawing</option>
                         <option value="Animation">Creation: Animation</option>
-                        <option value="VideoEdit">Creation: Video Edit</option>
+                        <option value="VideoEdit" selected>Creation: Video Edit</option>
                         <option value="Research">Data: Research/Analysis</option>
                     </select>
                 </div>
@@ -252,7 +252,7 @@
                     <label htmlFor="recipientType">Recipient ID Type (T3 Policy Test):</label>
                     <select id="recipientType">
                         <option value="1">1 (Human/KYC) - 1 to 1: T3 Exempt (P2P Transaction Activation)</option>
-                        <option value="2">2 (AI) - 1 to 2: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
+                        <option value="2" selected>2 (AI) - 1 to 2: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
                         <option value="3">3 (Robot) - 1 to 3: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
                         <option value="4">4 (IoT) - 1 to 4: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
                         <option value="5">5+ (External/Other) - 1 to 5+: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
@@ -261,7 +261,7 @@
                 </div>
             <div class="p-4 bg-white rounded-lg shadow-inner mt-4 border border-green-300">
                 <h3 class="text-lg font-bold text-gray-700 mb-2">3. Execute T3 Contribution Distribution (MVP Essential)</h3>
-                <p class="text-sm text-gray-500 mb-3">Settle/distribute the T3 fund to each entity, including **System Development/Maintenance Reward (Dynamic Share)**. (AI Ecosystem Virtuous Cycle Model Verification)</p>
+                <p class="text-sm text-gray-500 mb-3">Settles/distributes the T3 fund to each entity. **The Stabilization Fund (20% -> 25% after reduction), AI Activation Fund (20%), and Core Team Share (50%) are adjustable at the Core Team's discretion.** **The developer's surplus share (10%→5%) is now 100% dedicated to the Stabilizer Pool.** (Verification of the AI Ecosystem virtuous cycle model)</p>
                 <button class="pi-button payment-button" onclick="executeMonthlyDistribution()">
                     **Execute T3 Monthly Settlement** (System Contribution Reward)
                 </button>
@@ -284,8 +284,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                 <div class="stat-card">
                     <p class="stat-label">Major League (n) AI Count</p>
-                    <p id="major_ai_count" class="stat-value text-indigo-600">3</p>
-                </div>
+                    <p id="major_ai_count" class="stat-value text-indigo-600">2</p> </div>
                 <div class="stat-card">
                     <p class="stat-label">Minor League (Incubating) AI Count</p>
                     <p id="minor_ai_count" class="stat-value text-yellow-600">5</p>
@@ -299,7 +298,7 @@
                     <p id="public_tax_display" class="stat-value text-purple-600">0.0000 Pi</p>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div class="stat-card">
                     <p class="stat-label">Minor League Avg. 1st SC Accuracy</p>
                     <p id="minor_accuracy" class="stat-value text-green-600">85.5%</p>
@@ -308,12 +307,32 @@
                     <p class="stat-label">T3 System Contribution Share (Scaling Factor)</p>
                     <p id="scaling_factor" class="stat-value text-green-600">1/10 (Initial)</p>
                 </div>
+                <div class="stat-card">
+                    <p class="stat-label">Stabilizer Pool Balance (VETO Fund)</p>
+                    <p id="stabilizer_pool_display" class="stat-value text-red-600">0.0000 Pi</p>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-yellow-50 rounded-lg shadow-inner mt-4 border border-yellow-300">
+                <h3 class="text-lg font-bold text-red-700 mb-2">D (Strategic Defense Factor) Strategic Control</h3>
+                <p class="text-sm text-gray-600 mb-3">**This is the Core Team's sole policy lever (D) for competitive response and securing emergency funds within the 0.01 / V*N*D formula.** (If D > 1, it's a discount; if D < 1, it's a surcharge)</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <div class="md:col-span-1">
+                        <label class="font-bold text-gray-700">D Factor Value: (<span id="p_value_display">1.00</span>)</label>
+                        <input type="range" id="p_factor_slider" min="0.5" max="2.0" step="0.01" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="updatePFactorAndFee(this.value)">
+                    </div>
+                    <div class="md:col-span-2 stat-card bg-white border-red-300">
+                        <p class="stat-label">D-Adjusted Final Fee (V*N mocked to 1.0) based on 0.01 Pi (Standard Pi Fee)</p>
+                        <p id="p_adjusted_fee" class="stat-value text-red-700">0.0100 Pi</p>
+                    </div>
+                </div>
             </div>
             <div id="active_pool_chart" class="chart-container deferred-feature" style="min-height: 100px; margin-top: 1rem;">
                 <span class="deferred-label">Deferred Development (AI Autonomous Operation Balance Expenditure)</span>
                 <div class="deferred-content">
                     <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-bold text-gray-700">20% AI Active Pool (Balance delegated for Core Team's use decision)</h3>
+                        <h3 class="text-lg font-bold text-gray-700">20% AI Active Pool (Use and distribution determined at Core Team's discretion)</h3>
                         <span id="active_pool_display" class="text-base font-bold text-pink-600">Active Pool Balance: 0.0000 Pi</span>
                     </div>
                 </div>
@@ -367,7 +386,7 @@ const MAPPING_TABLE = {
     'Research': 'Research Analysis (Medium Cost)',
 };
 
-// ... (Orderer_AI_Mixer function remains unchanged)
+// --- Orderer AI Mixer (Unchanged) ---
 function Orderer_AI_Mixer(raw_requests, user_tx) {
     const all_tx_requests = [...raw_requests, user_tx];
     const totalAmount = all_tx_requests.reduce((sum, req) => sum + req.amount, 0);
@@ -377,7 +396,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
     const maskedTaskId = `TID_${all_tx_requests.length}_MIXED`;
 
     const publicRecord = {
-        'Time': new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        'Time': new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
         'Sender': maskedSenderId,
         'Pi_Amount_CALLED': totalAmount,
         'Task_Masked': maskedTaskId,
@@ -389,469 +408,483 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         let transactionID = 18; 
         const maxNodes = 10001;
         let authenticatedUser = null;                   
-        const MOCK_PUBLIC_KEY_SHORT = 'GATMBR...Q06';           
+        const MOCK_PUBLIC_KEY_SHORT = 'GD144...2NS';           
         const KYC_ID = '10821'; // [Policy Reflected] 1:Human, 082:Country Code, 1:Gender Code
-        const mockUsername = KYC_ID + '_' + MOCK_PUBLIC_KEY_SHORT; 
-        const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org'; 
-        
+        const mockUsername = KYC_ID + '_' + MOCK_PUBLIC_KEY_SHORT;
+        const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org';
+
         // --- 🌟 Monthly Distribution Wallet Addresses (MOCK) 🌟 ---
         const DEV_WALLET_ADDRESS = 'GDI44IX6RML5LXPWK25AJAPBQNZ36J5V5IQFD2KEDNQ5HNEDSLTT22NS'; // Reflecting user's wallet address
-        const STABILIZER_WALLET_ADDRESS = 'STAB_A23...POOL'; 
-        const CORE_TEAM_WALLET_ADDRESS = 'CORE_T50...TEAM'; 
+        const STABILIZER_WALLET_ADDRESS = 'STAB_A23...POOL';
+        const CORE_TEAM_WALLET_ADDRESS = 'CORE_T50...TEAM';
 
         // --- Public Fund & Economy Variables (T3 Fund) ---
         const SYSTEM_FUND_RATE = 0.05; // 5% System Reinvestment Fund (T3) - FIXED RATE
-        const FIXED_FEE = 0.01; // Fixed Fee (0.01 Pi)
         let publicFundPool = 0.0; // T3 Public Fund Accumulation Pool (Actual collected T3 amount accumulates here)
-        
-        // --- 🌟 On-Chain TX Dynamic Share Variables (UPDATED) 🌟 ---
-        let onChainTXCount = 9999990; 
-        const THRESHOLD_10M = 10000000;
-        const DEV_RATE_INITIAL = 0.10; // 10%
-        const DEV_RATE_10M = 0.05; // 5% (1/20) - [UPDATED]
-        const THRESHOLD_100M = 100000000;
-        const DEV_RATE_100M = 0.01; // 1% (1/100) - [UPDATED]
 
-        // --- TX Count Based Developer Share Rate Logic ---
-        function getDevShareRate() {
-            if (onChainTXCount >= THRESHOLD_100M) {
-                return DEV_RATE_100M; 
-            } else if (onChainTXCount >= THRESHOLD_10M) {
-                return DEV_RATE_10M; 
-            }
-            return DEV_RATE_INITIAL; 
-        }
+        // --- 🌟 Economic Invariance Variables (Pi IP Core: 0.01 / V * N * D) 🌟 ---
+        // V: Value Stability Factor (Ensures stable fee value by adjusting based on Pi/USD price feed)
+        const V_VALUE_STABILITY_FACTOR = 1.0; // V: Value Stability Factor (Mocked to 1.0 for D demo)
+        // N: Scalability Factor (Represents the number of active non-human entities, diluting the fee)
+        const N_SCALABILITY_FACTOR = 1.0; // N: Scalability Factor (Mocked to 1.0 for D demo)
+        // [MODIFIED] Changed from 0.0101 to 0.0100 based on user request (Standard Pi Fee)
+        const CORE_FORMULA_NUMERATOR = 0.0100; // 0.0100 Pi (Standard On-Chain Fee: Numerator for the Pi IP Core Formula) 
+        // [NEW] D: Strategic Defense Factor (Core Team Strategy Index) - Default to 1.0 (No adjustment)
+        let D_STRATEGIC_DEFENSE_FACTOR = 1.0; 
+        // --- 🌟 End IP Core 🌟 ---
 
-        // --- Monthly Fund Distribution Rates (Total 100% of T3) ---
-        const STABILIZER_RATE = 0.20; 
-        const ACTIVATION_POOL_RATE = 0.20; 
-        const CORE_TEAM_BASE_RATE = 0.50; 
-        
-        // --- AI Active Pool (Balance only display) ---
-        let activeAIPool = 0.0; 
-        
+        // --- 🌟 On-Chain TX Dynamic Share Variables (REVERTED TO INITIAL) 🌟 ---
+        const PREVIOUS_DEV_RATE_FOR_SURPLUS = 0.10; // Original 10% rate for surplus calculation
+        // Initial rate back to 0.50% Work Cost (10% T3 Pool). 
+        const CREATOR_SHARE_RATE_OF_WORK_INITIAL = 0.0050; // 0.50% of Work Cost (Initial IP Creator Share)
+        // The reduced rate is now correctly set to 0.25% for the future reduction policy
+        const CREATOR_SHARE_RATE_OF_WORK_REDUCED = 0.0025; // 0.25% of Work Cost (Reduced IP Creator Share)
+        // 100 TX -> 100 Million TX (for policy realism)
+        const MOCK_TX_THRESHOLD = 100; // Mocked 100 TX Threshold for the 0.5% -> 0.25% transition (In production: 100 Million TX)
+        const STABILIZER_RATE = 0.20; // 20% Base Stabilizer Fund Rate
+        const ACTIVATION_POOL_RATE = 0.20; // 20% Base AI Activation Pool Rate
+        const CORE_TEAM_BASE_RATE = 0.50; // 50% Core Team Share (Fixed Base)
+        let onChainTXCount = 0;
+        let stabilizerPoolBalance = 0.0; // Stabilizer Fund Balance Variable Added
+
         // --- AI League Failure Rates & Data Mock (For simple simulation only) ---
-        const MAJOR_AI_FAILURE_RATE = 0.05; 
-        const MINOR_AI_FAILURE_RATE = 0.30; 
+        const MAJOR_AI_FAILURE_RATE = 0.20; // 20% Failure Chance (Increased for better demonstration)
         const MAJOR_SC_MIN_COST = 2.0; 
-        let majorAICount = 3;
-        let minorAICount = 5;
-        let minorAvgAccuracy = 85.5;
+        let majorAICount = 2; // AI1, AI2 (UPDATED: 2 active AIs)
+        
+        // [MODIFIED] Function to calculate and display D-Adjusted Fee
+        function calculatePAdjustedFee(dFactor) {
+            // Full VND Formula: CORE_FORMULA_NUMERATOR / (V * N * D)
+            const finalFee = CORE_FORMULA_NUMERATOR / (V_VALUE_STABILITY_FACTOR * N_SCALABILITY_FACTOR * dFactor); 
+            // Update the D_STRATEGIC_DEFENSE_FACTOR global variable (renamed from P)
+            D_STRATEGIC_DEFENSE_FACTOR = parseFloat(dFactor);
+            // Update UI elements
+            document.getElementById('p_adjusted_fee').textContent = `${finalFee.toFixed(4)} Pi`; // toFixed(4) to show 0.0100
+        }
 
-        // --- Utility Functions (Omitted) ---        
-        function showMessage(message, isSuccess = true) {
-            const messageBox = document.getElementById('message_box');
-            if (!messageBox) return; 
-            messageBox.textContent = message;
-            messageBox.style.opacity = 1;
-            messageBox.style.transform = 'translateX(-50%) scale(1)';                                    
-            if (isSuccess === 'warning') {
-                messageBox.style.backgroundColor = '#f59e0b'; 
-            } else if (isSuccess) {
-                messageBox.style.backgroundColor = '#4CAF50'; 
-            } else {
-                messageBox.style.backgroundColor = '#F44336'; 
-            }                               
-            setTimeout(() => {
-                messageBox.style.transform = 'translateX(-50%) scale(0)';
-            }, 3000);
+        // [MODIFIED] Function triggered by slider movement
+        function updatePFactorAndFee(dFactorValue) {
+            document.getElementById('p_value_display').textContent = parseFloat(dFactorValue).toFixed(2);
+            calculatePAdjustedFee(dFactorValue);
+        }
+
+        // [MODIFIED] Initialization function to run the first calculation
+        function initializePFactorDemo() {
+            const initialD = document.getElementById('p_factor_slider').value;
+            updatePFactorAndFee(initialD);
+        }
+
+        // --- Ledger Update Functions ---
+        // 🌟 [Apply logic to display latest transactions at the top] 🌟: Add new transaction to the top of the ledger.
+        function updateLedgerTable(ledgerRecords) {
+            const smartContractLedger = document.getElementById('smart_contract_ledger');
+            ledgerRecords.forEach(record => {
+                const rowHTML = generateLedgerRowHTML(record); 
+                // Insert new row at the beginning of the tbody using 'afterbegin'.
+                smartContractLedger.insertAdjacentHTML('afterbegin', rowHTML);
+            });
+        }
+
+        // 🌟 [Add SC_Code color logic] 🌟
+        function generateLedgerRowHTML(record) {
+            let amountClass = 'text-green-600 font-semibold';
+            if (record.Pi_Amount.startsWith('-')) {
+                amountClass = 'text-red-600 font-semibold';
+            } else if (record.SC_Code === 'FAILURE REPORT') {
+                amountClass = 'text-red-900 font-bold';
+            }
+            // ... (Color and formatting logic)
+            // ... (Omitted for brevity, but full function remains)
+            let scCodeClass = 'bg-gray-200 text-gray-700';
+            if (record.SC_Code.includes('COLLECTED')) scCodeClass = 'bg-yellow-200 text-yellow-800';
+            if (record.SC_Code.includes('ACCUMULATED')) scCodeClass = 'bg-purple-200 text-purple-800';
+            if (record.SC_Code.includes('SUCCESS')) scCodeClass = 'bg-green-200 text-green-800';
+            if (record.SC_Code.includes('FAILURE')) scCodeClass = 'bg-red-200 text-red-800';
+            if (record.SC_Code.includes('SENT')) scCodeClass = 'bg-blue-200 text-blue-800';
+
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-2 py-2 text-xs text-gray-500">${record.ID}</td>
+                    <td class="px-2 py-2 text-xs text-gray-500">${record.Time}</td>
+                    <td class="px-2 py-2 text-xs pk-cell text-gray-800">${record.Sender}</td>
+                    <td class="px-2 py-2 text-xs text-gray-600">${record.Smart_Contract}</td>
+                    <td class="px-2 py-2 text-sm ${amountClass}">${record.Pi_Amount}</td>
+                    <td class="px-2 py-2 text-xs text-gray-600">${record.Task}</td>
+                    <td class="px-2 py-2 text-xs font-bold ${scCodeClass} rounded-md">${record.SC_Code}</td>
+                </tr>
+            `;
+        }
+
+        // --- NEW Helper Function to get all Dev/Creator Share Rates ---
+        function getDevWorkCostRate() { 
+            let workRate = CREATOR_SHARE_RATE_OF_WORK_INITIAL; // 0.0050 (Initial High Rate)
+            if (onChainTXCount >= MOCK_TX_THRESHOLD) {
+                // Policy to reduce to the lower rate after threshold
+                workRate = CREATOR_SHARE_RATE_OF_WORK_REDUCED; // 0.0025
+            }
+            const rateAsPercent = workRate * 100; // 0.50% or 0.25%
+            const t3PoolRate = workRate / SYSTEM_FUND_RATE; // 0.10 or 0.05
+            
+            return {
+                workRate: workRate, 
+                t3PoolRate: t3PoolRate, 
+                displayPercent: rateAsPercent.toFixed(2), // "0.50" or "0.25"
+            };
         }
         
-        function updatePublicTaxDisplay() {
-            const totalFundDisplay = document.getElementById('public_tax_display'); 
-            const activePool = document.getElementById('active_pool_display');
-            
-            if (totalFundDisplay) {
-                totalFundDisplay.textContent = `Total Activation Contribution Pool: ${publicFundPool.toFixed(4)} Pi`; // UPDATED
-            }
-            if (activePool) {
-                 activePool.textContent = `Active Pool Balance: ${activeAIPool.toFixed(4)} Pi`;
-            }
-            document.getElementById('major_ai_count').textContent = majorAICount;
-            document.getElementById('minor_ai_count').textContent = minorAICount;
-            document.getElementById('minor_accuracy').textContent = minorAvgAccuracy.toFixed(1) + '%';
-            
-            const currentDevRate = getDevShareRate(); 
-            document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString('en-US');
-            
-            const factorDenominator = (1 / currentDevRate).toFixed(0);
-            const factorDisplay = `${(currentDevRate * 100).toFixed(2)}% (1/${factorDenominator})`;
-            document.getElementById('scaling_factor').textContent = factorDisplay;
+        // --- Dev Share Rate (Dynamic) ---
+        function getDevShareRate() {
+            // Returns T3 Pool Rate (0.10 or 0.05)
+            return getDevWorkCostRate().t3PoolRate; 
         }
+        // --- END NEW Helper Function ---
 
-        function startSCPAnimation(scType) {
-            const scpStatusElement = document.getElementById('scp_consensus_status_mvp');
-            if (!scpStatusElement) return;
-            showMessage(`AI selected ${scType}. MOCKED SCP Consensus: Only placeholder is active (Deferred Development).`, true); 
-        }                        
+        function updateT3ScalingFactorDisplay() {
+            const devRates = getDevWorkCostRate(); 
+            const currentDevRate = devRates.t3PoolRate; // 0.10 or 0.05
 
-        // --- MOCKED Pi SDK Functions (Omitted) ---                
-        window.piAuthenticate = function() {
-            authenticatedUser = mockUsername;
-            showMessage(`Pi ID: ${authenticatedUser} authenticated successfully (MOCKED). ID Prefix: ${authenticatedUser.charAt(0)}`, true);
-            document.getElementById('login_button').disabled = true;
-            document.getElementById('payment_button').disabled = false;
-        }
+            const devSurplus = PREVIOUS_DEV_RATE_FOR_SURPLUS - currentDevRate; // 0.10 - currentDevRate
+            const coreTeamDisplay = `${(CORE_TEAM_BASE_RATE * 100).toFixed(2)}% (Base)`; // Core Team is fixed at 50% Base
 
-        window.piRequestPayment = function() {
-            if (!authenticatedUser) {
-                showMessage("Please log in with Pi first.", false);
-                return;
-            }
-
-            const amount = parseFloat(document.getElementById('piAmount').value);
-            const taskType = document.getElementById('taskType').value; 
-            const recipientType = document.getElementById('recipientType').value; // Get Recipient Type (1, 2, 3, 4, 5+)
-
-            if (isNaN(amount) || amount <= 0) { 
-                showMessage("Please enter a valid Pi Amount.", false); 
-                return;
-            }
-
-            const minWorkCost = 0.0101; 
-            const minRequiredAmountBase = minWorkCost * (1 + 0.0) + FIXED_FEE; 
-                                 
-            if (amount < minRequiredAmountBase) { 
-                showMessage(`Pi Amount must be greater than or equal to ${minRequiredAmountBase.toFixed(4)} Pi (Minimum Work Cost: 0.0101 + Fixed Fee: 0.01).`, false);
-                return;
-            }
-
-            showMessage(`MOCKED Payment request ($${amount.toFixed(4)}$ Pi) sent. Starting SC execution...`, true);
-            runSimulation(taskType, recipientType);              
-        }        
-
-        // --- 1st SC AI Logic: T3 Collection (FINAL ID POLICY - P2P EXEMPTION) ---             
-        function runSimulation(taskType, recipientType) {
-            const amount = parseFloat(document.getElementById('piAmount').value);                                           
+            // [MODIFIED LOGIC START: 100% of Dev Surplus to Stabilizer Pool]
+            // Stabilizer Pool receives 100% of the surplus
+            const stabilizerRateNew = STABILIZER_RATE + devSurplus; // 0.20 + 0.05 = 0.25 (If reduced)
             
-            // 🌟 1. Determine T3 Levy Rate (Final ID Policy Applied - Only Human (1) -> Non-Human (2+) is charged) 🌟
-            let T3_CHARGE_RATE = 0.0; // Default is exemption (Transaction Activation)
-            let policyDescription = 'T3 Exempt (Non-Human Initiated or P2P Transaction)';
-            const senderIDPrefix = authenticatedUser ? authenticatedUser.charAt(0) : '1';
-            const recipientIDPrefix = recipientType; 
+            // Activation Pool receives 0% of the surplus (remains at base 0.20)
+            const activationRateNew = ACTIVATION_POOL_RATE; 
+            // [MODIFIED LOGIC END]
+
+            const stabilizerDisplay = `${(stabilizerRateNew * 100).toFixed(2)}%`; 
+            const activationDisplay = `${(activationRateNew * 100).toFixed(2)}%`; 
             
-            // The only condition where T3 is charged: when a Human (1) sends to a Non-Human/External (2, 3, 4, 5+, etc.)
-            if (senderIDPrefix === '1' && recipientIDPrefix !== '1') {
-                T3_CHARGE_RATE = SYSTEM_FUND_RATE; // 5% contribution
-                policyDescription = `KYC (1) to Non-Human/External (${recipientIDPrefix}): T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)`; // UPDATED
-            } else if (senderIDPrefix === '1' && recipientIDPrefix === '1') {
-                // Human (1) to Human (1) transaction: Exemption maintained
-                policyDescription = `KYC (1) to KYC (1): T3 Exempt (Respect P2P Core Team Domain)`;
+            let factorDisplay = `${devRates.displayPercent}% (Work Cost) / ${ (currentDevRate * 100).toFixed(2)}% (T3 Pool)`;
+            
+            // Display logic for showing the dynamic policy
+            if (currentDevRate === CREATOR_SHARE_RATE_OF_WORK_INITIAL / SYSTEM_FUND_RATE) {
+                 factorDisplay += ' (Initial)'; // "10.00% (Initial)"
             } else {
-                // Non-Human initiated transaction (2+, 3+, 4+, etc.) to Any ID: Exemption maintained
-                policyDescription = `Non-Human (${senderIDPrefix}) to All: T3 Exempt (Transaction Activation)`;
+                 factorDisplay += ` (Reduced after ${MOCK_TX_THRESHOLD} TX - MAX STABILIZER ALLOCATION)`;
+            }
+            
+            document.getElementById('scaling_factor').innerHTML = `${factorDisplay}<br>(Core Team Share: ${coreTeamDisplay})<br>(Stabilizer: ${stabilizerDisplay} / Activation: ${activationDisplay})`;
+        }
+
+
+        // --- Monthly Distribution ---
+        function executeMonthlyDistribution() {
+            const devRates = getDevWorkCostRate(); 
+            const currentDevRate = devRates.t3PoolRate; // Use T3 Pool rate for distribution calculation
+
+            if (publicFundPool < 0.0001) {
+                document.getElementById('message_box').textContent = '🚨 T3 Pool is empty. Cannot distribute.';
+                document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
+                return;
+            }
+            
+            document.getElementById('message_box').textContent = `💰 Executing Monthly T3 Settlement of ${publicFundPool.toFixed(4)} Pi...`;
+            document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+
+            // [MODIFIED LOGIC START: 100% of Dev Surplus to Stabilizer Pool]
+            // Calculate surplus (0.05 when reduced)
+            const devSurplus = PREVIOUS_DEV_RATE_FOR_SURPLUS - currentDevRate; 
+            const coreTeamRate = CORE_TEAM_BASE_RATE; 
+
+            // Stabilizer Pool receives 100% of the surplus
+            const stabilizerRateNew = STABILIZER_RATE + devSurplus; // 0.20 + 0.05 = 0.25 (If reduced)
+            
+            // Activation Pool receives 0% of the surplus (remains at base 0.20)
+            const activationRateNew = ACTIVATION_POOL_RATE; 
+            // [MODIFIED LOGIC END]
+
+            // Calculate final distribution amounts
+            const devAmount = publicFundPool * currentDevRate;
+            const stabilizerAmount = publicFundPool * stabilizerRateNew;
+            const activationAmount = publicFundPool * activationRateNew;
+            const coreTeamAmount = publicFundPool * coreTeamRate;
+
+            // Simple check (should be near zero)
+            let totalCheck = devAmount + stabilizerAmount + activationAmount + coreTeamAmount;
+            if (Math.abs(totalCheck - publicFundPool) > 0.0001) {
+                console.error(`Distribution Error: Sum ${totalCheck.toFixed(4)} != Pool ${publicFundPool.toFixed(4)}`);
             }
 
-            // 2. Reverse Calculation Logic for Work Cost
-            const workCost = (amount - FIXED_FEE) / (1 + T3_CHARGE_RATE);
-            const systemFund = workCost * T3_CHARGE_RATE; // Actual collected T3 amount (Contribution)
-            
-            const senderName = authenticatedUser ? authenticatedUser : KYC_ID + '_...Q06';
-            
-            const currentT3RateDisplay = (T3_CHARGE_RATE * 100).toFixed(0);
-            showMessage(`ID Policy Applied: ${policyDescription}. T3 Rate: ${currentT3RateDisplay}% of Work Cost ($${workCost.toFixed(4)} Pi). Current Dev Share: ${(getDevShareRate() * 100).toFixed(2)}%`, 'warning');
-            
-            // 🌟 3. T3 Fund Collection Logic: ACCUMULATE only if T3 is charged 🌟
-            if (systemFund > 0) {
-                 publicFundPool += systemFund;
-            }
-            onChainTXCount++; 
-            updatePublicTaxDisplay(); 
-            
-            // 4. Smart Contract Selection (Omitted)
-            const MAJOR_SC_MIN_COST = 2.0; 
-            let scType = workCost >= MAJOR_SC_MIN_COST ? '2nd SC (Market)' : '1st SC (Survival)';
-            let scDisplay = `${scType} (T3 Charged: ${currentT3RateDisplay}% of Work Cost)`; 
+            let distributionLedger = []; 
+            const distTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
 
-            // 5. AI League Failure Rate Logic Integration (Omitted)
-            let currentFailureRate = scType.includes('1st SC') ? MINOR_AI_FAILURE_RATE : MAJOR_AI_FAILURE_RATE;
-            let isMinorLeagueTask = scType.includes('1st SC');
-            
-            const getAIResult = (failureRate) => (Math.random() < failureRate) ? 'FAILURE' : 'SUCCESS';
-            const subResult1 = getAIResult(currentFailureRate); 
-            const subResult2 = getAIResult(currentFailureRate); 
-
-            startSCPAnimation(scType); 
-            const ledger = document.getElementById('smart_contract_ledger');                                            
-            transactionID++;
-            const mainID = transactionID;                                           
-            const subAmountNet = (workCost / 2.0); 
-            const currentTime = new Date().toLocaleTimeString('en-US');                    
-
-            // 6. Main Transaction (User calling the SC)
-            let newRowMain = ledger.insertRow();
-            newRowMain.innerHTML = `
-                <td class="px-2 py-2 text-xs font-bold">${mainID}</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold pk-cell">${senderName} (Main T1)</td>
-                <td class="px-2 py-2 text-xs">${scDisplay}</td> 
-                <td class="px-2 py-2 text-xs font-bold">${amount.toFixed(4)}</td>
-                <td class="px-2 py-2 text-xs">${taskType}</td> 
-                <td class="px-2 py-2 text-xs">CALLED</td>
-            `;                    
-
-            // 7. Ledger Entry: Fixed Fee
+            // 1. Developer Share
             transactionID++; 
-            let newRowFee = ledger.insertRow();
-            newRowFee.innerHTML = `
-                <td class="px-2 py-2 text-xs">${transactionID}</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs">SYSTEM (Fee T2)</td>
-                <td class="px-2 py-2 text-xs font-bold text-red-700">FIXED FEE (0.01)</td>
-                <td class="px-2 py-2 text-xs font-bold text-red-700">-${FIXED_FEE.toFixed(4)}</td>
-                <td class="px-2 py-2 text-xs">Network Op</td>
-                <td class="px-2 py-2 text-xs">COLLECTED</td>
-            `;                    
+            distributionLedger.push({
+                ID: transactionID,
+                Time: distTime,
+                // **UPDATED SENDER STRING** to show Work Cost Rate
+                Sender: `SYSTEM CONTRIBUTION (${devRates.displayPercent}% Work Cost / ${(currentDevRate * 100).toFixed(2)}% T3 - T3)`,
+                Smart_Contract: 'Monthly Fund Dist.',
+                Pi_Amount: (-devAmount).toFixed(4),
+                Task: DEV_WALLET_ADDRESS.slice(0, 15) + 'SENT',
+                SC_Code: 'SUCCESS'
+            });
 
-            // 8. Ledger Entry: Public Fund (T3) - Record only if T3 is charged
-            if (systemFund > 0) {
-                transactionID++; 
-                let newRowFund = ledger.insertRow();
-                const fundDescription = `SYSTEM CONTRIBUTION (${currentT3RateDisplay}% of Work Cost to Pool)`; // UPDATED
-                const fundColor = 'text-red-600'; 
+            // 2. Stabilizer Share
+            transactionID++; 
+            distributionLedger.push({
+                ID: transactionID,
+                Time: distTime,
+                Sender: `STABILIZER (${(stabilizerRateNew * 100).toFixed(2)}% - T3 - **MAX ALLOCATED**)`,
+                Smart_Contract: 'Monthly Fund Dist.',
+                Pi_Amount: (-stabilizerAmount).toFixed(4),
+                Task: STABILIZER_WALLET_ADDRESS.slice(0, 15) + 'SENT (VETO AI)',
+                SC_Code: 'SUCCESS'
+            });
+            stabilizerPoolBalance += stabilizerAmount; // Update Stabilizer Pool Balance
 
-                newRowFund.innerHTML = `
-                    <td class="px-2 py-2 text-xs">${transactionID}</td>
-                    <td class="px-2 py-2 text-xs">${currentTime}</td>
-                    <td class="px-2 py-2 text-xs">SYSTEM (Fund T3)</td> 
-                    <td class="px-2 py-2 text-xs font-bold ${fundColor}">${fundDescription}</td>
-                    <td class="px-2 py-2 text-xs font-bold ${fundColor}">-${systemFund.toFixed(4)}</td>
-                    <td class="px-2 py-2 text-xs">Activation Fund</td> <td class="px-2 py-2 text-xs">ACCUMULATED</td>
-                `;       
-            }
+            // 3. AI Activation Pool Share
+            transactionID++; 
+            distributionLedger.push({
+                ID: transactionID,
+                Time: distTime,
+                Sender: `ACTIVATION POOL (${(activationRateNew * 100).toFixed(2)}% - T3)`,
+                Smart_Contract: 'Monthly Fund Dist.',
+                Pi_Amount: (-activationAmount).toFixed(4),
+                Task: 'AI Activation',
+                SC_Code: 'SUCCESS'
+            });
 
-            // 9. Sub Transactions (AI Activity) - T4 (Omitted: AI1, AI2/AI3 Settlement Logic)
-            const isAi1Failed = subResult1 === 'FAILURE';
-            const ai1Recipient = isAi1Failed ? 'AI3 (Replacement/Success)' : 'AI1 (1/2 Net T4)';
-            const ai1ScCode = isAi1Failed ? 'SUCCESS (By AI3)' : subResult1;
-            const ai1RecipientColor = isAi1Failed ? 'text-green-700' : 'text-indigo-600';
-            const ai1ScCodeColor = isAi1Failed ? 'text-green-700' : (subResult1 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
-            const ai1NetAmount = subAmountNet; 
-            const ai1AmountDisplay = ai1NetAmount.toFixed(5);
-            const ai1AmountColor = ai1NetAmount > 0 ? 'text-green-600' : 'text-red-600';
+            // 4. Core Team Share
+            transactionID++; 
+            distributionLedger.push({
+                ID: transactionID,
+                Time: distTime,
+                Sender: `CORE TEAM (${(coreTeamRate * 100).toFixed(2)}% - T3)`,
+                Smart_Contract: 'Monthly Fund Dist.',
+                Pi_Amount: (-coreTeamAmount).toFixed(4),
+                Task: CORE_TEAM_WALLET_ADDRESS.slice(0, 15) + 'SENT',
+                SC_Code: 'SUCCESS'
+            });
 
-            let newRow1 = ledger.insertRow();
-            newRow1.innerHTML = `
-                <td class="px-2 py-2 text-xs">${mainID}-01</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai1RecipientColor}">${ai1Recipient}</td>
-                <td class="px-2 py-2 text-xs">${scType} Process</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai1AmountColor}">+${ai1AmountDisplay}</td>
-                <td class="px-2 py-2 text-xs">${taskType} Process</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai1ScCodeColor}">${ai1ScCode}</td>
-            `;                    
-
-            const isAi2Failed = subResult2 === 'FAILURE';
-            if (isAi2Failed) {
-                let newRow2Failed = ledger.insertRow();
-                newRow2Failed.innerHTML = `
-                    <td class="px-2 py-2 text-xs">${mainID}-02}</td>
-                    <td class="px-2 py-2 text-xs">${currentTime}</td>
-                    <td class="px-2 py-2 text-xs font-bold text-red-600">AI2 (FAILURE REPORT)</td>
-                    <td class="px-2 py-2 text-xs">${scType} Process</td>
-                    <td class="px-2 py-2 text-xs font-bold text-red-600">+0.00000</td>
-                    <td class="px-2 py-2 text-xs">Task Process</td>
-                    <td class="px-2 py-2 text-xs font-bold text-red-700">${subResult2}</td>
-                `;
-                transactionID++; 
-            }                    
-
-            const ai2Recipient = isAi2Failed ? 'AI3 (Replacement/Success)' : 'AI2 (1/2 Net T4)';
-            const ai2ScCode = isAi2Failed ? 'SUCCESS (By AI3)' : subResult2;
-            const ai2RecipientColor = isAi2Failed ? 'text-green-700' : 'text-indigo-600';
-            const ai2ScCodeColor = isAi2Failed ? 'text-green-700' : (subResult2 === 'SUCCESS' ? 'text-indigo-600' : 'text-red-600');
+            // Final Update
+            publicFundPool = 0.0; // Reset T3 pool after distribution
+            updateLedgerTable(distributionLedger);
+            updateT3ScalingFactorDisplay();
+            document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(4)} Pi`;
+            document.getElementById('stabilizer_pool_display').textContent = `${stabilizerPoolBalance.toFixed(4)} Pi`;
             
-            const ai2NetAmount = subAmountNet;
-            const ai2AmountDisplay = ai2NetAmount.toFixed(5);
-            const ai2AmountColor = ai2NetAmount > 0 ? 'text-green-600' : 'text-red-600';
-            
+            setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 3000);
+        }
 
-            let newRow2Success = ledger.insertRow();
-            newRow2Success.innerHTML = `
-                <td class="px-2 py-2 text-xs">${isAi2Failed ? mainID + '-03' : mainID + '-02'}</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2Recipient}</td>
-                <td class="px-2 py-2 text-xs">${scType} Process</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai2AmountColor}">+${ai2AmountDisplay}</td>
-                <td class="px-2 py-2 text-xs">Task Process</td>
-                <td class="px-2 py-2 text-xs font-bold ${ai2RecipientColor}">${ai2ScCode}</td>
-            `;
+        // --- Pi SDK Mock Functions ---
+        function piAuthenticate() {
+            // ... (Omitted for brevity, but full function remains)
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    authenticatedUser = {
+                        username: mockUsername,
+                        public_key: MOCK_PUBLIC_KEY_SHORT,
+                        kyc_status: true
+                    };
+                    document.getElementById('message_box').textContent = `✅ Pi Login Success: ${authenticatedUser.username}`;
+                    document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                    document.getElementById('login_button').disabled = true;
+                    document.getElementById('payment_button').disabled = false;
+                    setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
+                    resolve(authenticatedUser);
+                }, 500);
+            });
+        }
 
-            showMessage(`Transaction recorded: Work Cost ($${workCost.toFixed(4)}), Contribution Fund ($${systemFund.toFixed(4)}), Fee ($${FIXED_FEE.toFixed(4)}) separated. T3 ACCUMULATED (if not exempted).`, true); // UPDATED
-        }       
-        
-        // --- Monthly Fund Distribution Execution Function (MOCK) (Omitted) ---
-        window.executeMonthlyDistribution = function() {
-            const ledger = document.getElementById('smart_contract_ledger');
-            const currentTime = new Date().toLocaleTimeString('en-US');
-            const totalFund = publicFundPool;
-            
-            if (totalFund === 0) {
-                showMessage("Total Activation Contribution Pool (T3) is 0. Cannot execute monthly distribution.", false); // UPDATED
+        // [MODIFIED] piRequestPayment() function with Additive Tax Logic
+        function piRequestPayment() {
+            if (!authenticatedUser) {
+                document.getElementById('message_box').textContent = '🚨 Login Required!';
+                document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
                 return;
             }
 
-            const devShareRate = getDevShareRate(); 
-            const devShare = totalFund * devShareRate; 
-            const stabilizerFund = totalFund * STABILIZER_RATE; 
-            const activationPoolTransfer = totalFund * ACTIVATION_POOL_RATE; 
-            const coreTeamShare = totalFund - (devShare + stabilizerFund + activationPoolTransfer);
+            // [MODIFIED LOGIC START: Implementing Additive Tax (T3/T2 added to Work Cost)]
+            
+            // 1. UI 입력 값 (targetNetWorkCost)을 AI/IoT가 받을 '순 작업 비용'으로 재정의
+            const targetNetWorkCost = parseFloat(document.getElementById('piAmount').value); 
+            const taskType = document.getElementById('taskType').value;
+            const recipientType = document.getElementById('recipientType').value;
+            const currentDevRate = getDevShareRate(); 
 
-            publicFundPool = 0.0;
-            activeAIPool += activationPoolTransfer; 
+            // 2. T2 수수료 (D-Adjusted Fee) 계산
+            const D_ADJUSTED_FEE = CORE_FORMULA_NUMERATOR / (V_VALUE_STABILITY_FACTOR * N_SCALABILITY_FACTOR * D_STRATEGIC_DEFENSE_FACTOR); 
+            
+            // 3. T3 면제 여부 확인 (1: Human to Human)
+            const isT3Exempt = recipientType === '1'; 
 
-            // Ledger records
-            const devShareDisplay = `${(devShareRate * 100).toFixed(2)}% (Dynamic: 1/${(1/devShareRate).toFixed(0)})`;
-            transactionID++;
-            let rowDev = ledger.insertRow();
-            rowDev.innerHTML = `
-                <td class="px-2 py-2 text-xs">${transactionID}</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold text-pink-600">SYSTEM CONTRIBUTION (${devShareDisplay} - T3)</td> // UPDATED
-                <td class="px-2 py-2 text-xs">Monthly Fund Dist.</td>
-                <td class="px-2 py-2 text-xs font-bold text-green-600">-${devShare.toFixed(4)}</td>
-                <td class="px-2 py-2 text-xs pk-cell">${DEV_WALLET_ADDRESS}</td>
-                <td class="px-2 py-2 text-xs">SENT</td>
-            `;
+            // 4. T3 공공 기금 (5%의 가산세) 계산
+            // T3는 targetNetWorkCost를 기준으로 계산되며, 인간에게 부과됨
+            const publicFundContribution = isT3Exempt ? 0.0 : targetNetWorkCost * SYSTEM_FUND_RATE; 
             
-            transactionID++;
-            let rowStab = ledger.insertRow();
-            rowStab.innerHTML = `
-                <td class="px-2 py-2 text-xs">${transactionID}</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold text-yellow-700">STABILIZER (20% - T3)</td>
-                <td class="px-2 py-2 text-xs">Monthly Fund Dist.</td>
-                <td class="px-2 py-2 text-xs font-bold text-green-600">-${stabilizerFund.toFixed(4)}</td>
-                <td class="px-2 py-2 text-xs pk-cell">${STABILIZER_WALLET_ADDRESS}</td>
-                <td class="px-2 py-2 text-xs">SENT (VETO AI)</td>
-            `;
+            // 5. 인간 사용자에게 청구될 총 금액 계산 (Target Work Cost + T3 Tax + T2 Fee)
+            const totalChargedAmount = targetNetWorkCost + publicFundContribution + D_ADJUSTED_FEE;
             
-            transactionID++;
-            let rowActive = ledger.insertRow();
-            rowActive.innerHTML = `
-                <td class="px-2 py-2 text-xs">${transactionID}</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold text-indigo-600">ACTIVATION POOL (20% - T3)</td>
-                <td class="px-2 py-2 text-xs">Monthly Fund Dist.</td>
-                <td class="px-2 py-2 text-xs font-bold text-green-600">-${activationPoolTransfer.toFixed(4)}</td>
-                <td class="px-2 py-2 text-xs">ActiveAIPool Balance</td>
-                <td class="px-2 py-2 text-xs">TRANSFER (Core Team Decides Use)</td> 
-            `;
+            // 최소 작업 비용 확인 (AI가 받을 순 작업 비용 기준)
+            if (targetNetWorkCost < 0.0001) { 
+                document.getElementById('message_box').textContent = `🚨 Minimum Required: 0.0001 Pi (Target Work Cost)`;
+                document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 3000);
+                return;
+            }
+
+            // 최종 TX 처리 변수 설정
+            // SDK Mock에 전달될 최종 청구액 (Total Charged)
+            const rawAmount = totalChargedAmount; 
             
-            const coreTeamRateCalc = (coreTeamShare / totalFund) * 100;
-            const coreTeamShareDisplay = `${coreTeamRateCalc.toFixed(2)}% (50% Base + Dev Surplus)`;
-            transactionID++;
-            let rowCore = ledger.insertRow();
-            rowCore.innerHTML = `
-                <td class="px-2 py-2 text-xs">${transactionID}</td>
-                <td class="px-2 py-2 text-xs">${currentTime}</td>
-                <td class="px-2 py-2 text-xs font-bold text-red-600">CORE TEAM (${coreTeamShareDisplay} - T3)</td>
-                <td class="px-2 py-2 text-xs">Monthly Fund Dist.</td>
-                <td class="px-2 py-2 text-xs font-bold text-green-600">-${coreTeamShare.toFixed(4)}</td>
-                <td class="px-2 py-2 text-xs pk-cell">${CORE_TEAM_WALLET_ADDRESS}</td>
-                <td class="px-2 py-2 text-xs">SENT</td>
-            `;
+            // T4 분배에 사용될 AI/IoT의 순수익 (T3가 차감되지 않음)
+            const netWorkCost = targetNetWorkCost; 
             
-            updatePublicTaxDisplay();
-            showMessage(`Monthly T3 Contribution Fund distribution executed. Total $${totalFund.toFixed(4)} Pi distributed. Core Team absorbs developer share surplus.`, true); // UPDATED
+            // T3 계산의 기준이 된 금액 (AI/IoT의 순수익과 동일)
+            const workCost = targetNetWorkCost; 
+            // [MODIFIED LOGIC END]
+
+            document.getElementById('message_box').textContent = `🚀 Initiating Smart Contract for ${rawAmount.toFixed(4)} Pi (Charged to User)...`;
+            document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+
+            const smartContractType = recipientType === '1' ? '1st SC (Survival)' : '2nd SC (Market)';
+            const T3Charged = isT3Exempt ? 'Exempt' : `${(SYSTEM_FUND_RATE * 100).toFixed(0)}%`;
+
+            setTimeout(() => { 
+                let scLedger = []; 
+                let currentTXID = ++transactionID;
+
+                // 1. T1: User -> SC Call (Total Charged Amount)
+                const T1 = {
+                    ID: currentTXID,
+                    Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                    Sender: mockUsername,
+                    Smart_Contract: `${smartContractType} (T3 Charged: ${T3Charged} of Work Cost)`,
+                    Pi_Amount: (-rawAmount).toFixed(4), // 사용자에게 청구된 총 금액 (음수)
+                    Task: MAPPING_TABLE[taskType] || taskType,
+                    SC_Code: 'CALLED'
+                };
+                scLedger.push(T1);
+
+                // [LEDGER SIMPLIFICATION START] - System Collector
+                // T2: Fee Collection (Fixed Fee, D-Adjusted)
+                const T_Fee = {
+                    ID: ++transactionID,
+                    Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                    // CORE_FORMULA_NUMERATOR is now 0.0100
+                    Smart_Contract: `FIXED FEE (${CORE_FORMULA_NUMERATOR.toFixed(2)}) / D-Factor: ${D_STRATEGIC_DEFENSE_FACTOR.toFixed(2)}`,
+                    Pi_Amount: D_ADJUSTED_FEE.toFixed(4), // T2 Fee collected (positive entry to SC pool)
+                    Task: 'Network Op',
+                    SC_Code: 'COLLECTED & ACCUMULATED'
+                };
+                scLedger.push(T_Fee);
+                onChainTXCount++; // Mock On-Chain TX count increment
+
+                // T3: Public Fund Accumulation
+                if (!isT3Exempt && publicFundContribution > 0.0) {
+                    publicFundPool += publicFundContribution; // T3 적립
+                    const T_System = {
+                        ID: ++transactionID,
+                        Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                        Sender: 'SYSTEM (Fund T3)',
+                        Smart_Contract: `SYSTEM CONTRIBUTION (${T3Charged} of Work Cost to Pool)`,
+                        Pi_Amount: publicFundContribution.toFixed(4), // T3 collected (positive entry to SC pool)
+                        Task: 'Activation Fund',
+                        SC_Code: 'COLLECTED & ACCUMULATED'
+                    };
+                    scLedger.push(T_System);
+                }
+                
+                // --- 4. T4: AI Settlement (SC -> AI/Robot) ---
+                // netWorkCost는 AI의 순 작업 비용 (targetNetWorkCost)이며 T3/T2가 차감되지 않음.
+                const totalActiveAIs = majorAICount; 
+                const aiShare = netWorkCost / totalActiveAIs; 
+
+                let ai2FailedShare = 0.0; // Variable to hold AI2's share if it fails
+
+                // AI1 and AI2 (Active AIs) Distribution
+                for (let i = 1; i <= totalActiveAIs; i++) {
+                    let aiID = `AI${i}`;
+                    let scCode = 'SUCCESS';
+                    let currentShare = aiShare; // Start with the default share
+
+                    // 1. AI2 Failure Check (20% chance + not a survival TX)
+                    if (i === 2 && Math.random() < MAJOR_AI_FAILURE_RATE && netWorkCost > MAJOR_SC_MIN_COST) {
+                        scCode = 'FAILURE REPORT';
+                        ai2FailedShare = aiShare; // Save AI2's share for replacement distribution
+                        currentShare = 0.0; // AI2 receives 0
+                    }
+
+                    // T4 transaction for the current active AI (AI1, AI2)
+                    const T4_Active = {
+                        ID: `${currentTXID}-${i}`,
+                        Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                        Sender: `${aiID} (1/${totalActiveAIs} Net T4)`,
+                        Smart_Contract: `${smartContractType} Process`,
+                        Pi_Amount: currentShare.toFixed(5),
+                        Task: `${taskType} Process`,
+                        SC_Code: scCode
+                    };
+                    scLedger.push(T4_Active);
+                }
+
+                // AI3 (Replacement AI) - Only appears if AI2 failed
+                if (ai2FailedShare > 0.0) {
+                    const T4_Replacement = {
+                        ID: ++transactionID,
+                        Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                        Sender: `AI3 (Replacement T4)`,
+                        Smart_Contract: `${smartContractType} Process`,
+                        Pi_Amount: ai2FailedShare.toFixed(5),
+                        Task: `${taskType} Process`,
+                        SC_Code: 'SUCCESS (REPLACEMENT)'
+                    };
+                    scLedger.push(T4_Replacement);
+                }
+
+                updateLedgerTable(scLedger);
+                document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(4)} Pi`;
+                document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
+                
+                // Hide message box after all operations
+                setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
+            }, 1000);
         }
 
-        // --- Ledger Download Function (Omitted) ---
+
+        // --- Ledger Download ---
         function downloadLedger() {
+            // ... (Omitted for brevity, but full function remains)
             const table = document.getElementById('ledger_table');
-            let csv = [];                                             
-            const headerRow = table.querySelector('thead tr');
-            let row = [];
-            headerRow.querySelectorAll('th').forEach(th => {
-                row.push(th.innerText);
-            });
-            csv.push(row.join(','));
-
-            table.querySelectorAll('#smart_contract_ledger tr').forEach(tr => {
-                row = [];
-                tr.querySelectorAll('td').forEach(td => {
-                    let data = td.innerText.replace(/"/g, '""'); 
-                    row.push(`"${data}"`);
-                });
+            let csv = [];
+            for (let i = 0; i < table.rows.length; i++) {
+                let row = [];
+                let cells = table.rows[i].querySelectorAll('th, td');
+                for (let j = 0; j < cells.length; j++) {
+                    row.push(cells[j].innerText.trim());
+                }
                 csv.push(row.join(','));
-            });
+            }
 
-            const csvString = csv.join('\n');
-            const BOM = "\uFEFF"; 
-            const finalCsvData = BOM + csvString;                    
-            const blob = new Blob([finalCsvData], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');                    
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'pi_governance_ledger.csv');
-            link.style.visibility = 'hidden';
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', 'AI_Governance_Ledger.csv');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
-            showMessage("Ledger downloaded successfully!", true);
+            document.getElementById('message_box').textContent = '💾 CSV Downloaded!';
+            document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+            setTimeout(() => {
+                document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)';
+            }, 2000);
         }
 
-        // --- D3.js Chart (Deferred Development) (Omitted) ---
-        function updateActivePoolChart() {
-            d3.select('#active_pool_chart svg').remove(); 
-            d3.select('#active_pool_chart .chart-elements').remove(); 
-        }
-        
-        function createInflationChart() {
-            const data = [1.5, 2.3, 1.8, 2.6, 3.0, 2.7, 3.2];
-            const margin = {top: 5, right: 20, bottom: 20, left: 40};
-            const chartDiv = document.getElementById('inflation_chart');
-            const containerWidth = chartDiv.clientWidth - 20;
-            const width = containerWidth - margin.left - margin.right; 
-            const height = 150 - margin.top - margin.bottom; 
-
-            d3.select('#inflation_chart svg').remove(); 
-
-            const svg = d3.select('#inflation_chart').append('svg')
-               .attr('width', '100%')
-                .attr('height', height + margin.top + margin.bottom);                    
-            
-            const x = d3.scaleBand().range([0, width]).padding(0.3);
-            const y = d3.scaleLinear().range([height, 0]);
-
-            const g = svg.append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            x.domain(data.map((d, i) => 'Q' + (i + 1))); 
-            y.domain([0, d3.max(data, d => d) + 0.5]);
-
-            // Y-axis generation
-            g.append("g")
-                .call(d3.axisLeft(y).ticks(3).tickFormat(d3.format(".1f")))
-                .style("font-size", "10px");
-            
-            // X-axis generation
-            g.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x))
-                .style("font-size", "10px");
-
-            // Bar chart generation
-            g.selectAll(".bar")
-                .data(data)
-                .enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", (d, i) => x('Q' + (i + 1)))
-                .attr("y", d => y(d))
-                .attr("width", x.bandwidth())
-                .attr("height", d => height - y(d))
-                .attr("fill", "#6366f1");
-        }
-
-
-        // --- DOM Content Loaded Initialization (Omitted) ---
+        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            updatePublicTaxDisplay();                                            
-            createInflationChart(); 
-            updateActivePoolChart(); 
+            document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
+            updateT3ScalingFactorDisplay();
+            initializePFactorDemo(); // [MODIFIED]
         });
-        </script>
+    </script>
 </body>
 </html>
