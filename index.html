@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -238,7 +237,7 @@
             <div class="grid grid-cols-4 gap-4">
                 <div>
                     <label htmlFor="piAmount">Pi Amount (Target Work Cost for AI/IoT):</label>
-                    <input type="number" id="piAmount" step="0.0001" value="5.0000" placeholder="e.g. 5.0000">
+                    <input type="number" id="piAmount" step="0.00000001" value="5.00000000" placeholder="e.g. 5.00000000">
                 </div>
                 <div>
                     <label htmlFor="taskType">Task Type:</label>
@@ -300,7 +299,7 @@
                 </div>
                 <div class="stat-card">
                     <p class="stat-label">Total Activation Contribution Pool (T3 Accumulation)</p>
-                    <p id="public_tax_display" class="stat-value text-purple-600">0.0000 Pi</p>
+                    <p id="public_tax_display" class="stat-value text-purple-600">0.00000000</p>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -314,7 +313,7 @@
                 </div>
                 <div class="stat-card">
                     <p class="stat-label">Stabilizer Pool Balance (VETO Fund)</p>
-                    <p id="stabilizer_pool_display" class="stat-value text-red-600">0.0000 Pi</p>
+                    <p id="stabilizer_pool_display" class="stat-value text-red-600">0.00000000</p>
                 </div>
             </div>
             
@@ -329,7 +328,7 @@
                     </div>
                     <div class="md:col-span-2 stat-card bg-white border-red-300">
                         <p class="stat-label">D-Adjusted Final Fee (V*N*D Formula) - **USD Fee Value Stabilized by V**</p>
-                        <p id="p_adjusted_fee" class="stat-value text-red-700">0.0100 Pi (USD Value: $0.0100)</p>
+                        <p id="p_adjusted_fee" class="stat-value text-red-700">0.01000000 (USD Value: $0.0100)</p>
                     </div>
                 </div>
             </div>
@@ -338,7 +337,7 @@
                 <div class="deferred-content">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="text-lg font-bold text-gray-700">20% AI Active Pool (Use and distribution determined at Core Team's discretion)</h3>
-                        <span id="active_pool_display" class="text-base font-bold text-pink-600">Active Pool Balance: 0.0000 Pi</span>
+                        <span id="active_pool_display" class="text-base font-bold text-pink-600">Active Pool Balance: 0.00000000</span>
                     </div>
                 </div>
             </div>
@@ -489,9 +488,9 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             // Update the D_STRATEGIC_DEFENSE_FACTOR global variable
             D_STRATEGIC_DEFENSE_FACTOR = parseFloat(dFactor);
 
-            // Update UI elements
+            // Update UI elements - REMOVED ' Pi'
             document.getElementById('p_adjusted_fee').textContent = 
-                `${finalFee_Pi.toFixed(8)} Pi (USD Value: $${finalFee_USD.toFixed(4)})`; 
+                `${finalFee_Pi.toFixed(8)} (USD Value: $${finalFee_USD.toFixed(4)})`; // 🌟 toFixed(8) 적용 🌟
         }
 
         // [MODIFIED] Function triggered by slider movement
@@ -518,7 +517,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             });
         }
 
-        // 🌟 [Add SC_Code color logic] 🌟
+        // 🌟 [Add SC_Code color logic] 🌟 - REMOVED ' Pi' FROM DISPLAY
         function generateLedgerRowHTML(record) {
             let amountClass = 'text-green-600 font-semibold';
             if (record.Pi_Amount.startsWith('-')) {
@@ -539,14 +538,14 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                     <td class="px-2 py-2 text-xs text-gray-500">${record.Time}</td>
                     <td class="px-2 py-2 text-xs pk-cell text-gray-800">${record.Sender}</td>
                     <td class="px-2 py-2 text-xs text-gray-600">${record.Smart_Contract}</td>
-                    <td class="px-2 py-2 text-sm ${amountClass}">${record.Pi_Amount}</td>
+                    <td class="px-2 py-2 text-sm ${amountClass}">${record.Pi_Amount}</td> 
                     <td class="px-2 py-2 text-xs text-gray-600">${record.Task}</td>
                     <td class="px-2 py-2 text-xs font-bold ${scCodeClass} rounded-md">${record.SC_Code}</td>
                 </tr>
             `;
         }
 
-        // --- 🌟 MODIFIED: 3-Tier Royalty Policy Application Function 🌟
+        // --- 3-Tier Royalty Policy Application Function (Unchanged logic) ---
         function getDevWorkCostRate() { 
             let workRate = CREATOR_SHARE_RATE_OF_WORK_INITIAL; // 0.50% (Initial High Rate)
             
@@ -604,19 +603,19 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         }
 
 
-        // --- Monthly Distribution (Unchanged logic) ---
+        // --- Monthly Distribution (Modified for Display) ---
         function executeMonthlyDistribution() {
             const devRates = getDevWorkCostRate(); 
             const currentDevRate = devRates.t3PoolRate; // Use T3 Pool rate for distribution calculation
 
-            if (publicFundPool < 0.0001) {
+            if (publicFundPool < 0.00000001) { // 🌟 비교 최소값 변경 🌟
                 document.getElementById('message_box').textContent = '🚨 T3 Pool is empty. Cannot distribute.';
                 document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
                 setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
                 return;
             }
             
-            document.getElementById('message_box').textContent = `💰 Executing Monthly T3 Settlement of ${publicFundPool.toFixed(4)} Pi...`;
+            document.getElementById('message_box').textContent = `💰 Executing Monthly T3 Settlement of ${publicFundPool.toFixed(8)}...`; // 🌟 toFixed(8) 적용 🌟
             document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
 
             // Calculate surplus (0.05 when reduced)
@@ -637,8 +636,8 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
 
             // Simple check (should be near zero)
             let totalCheck = devAmount + stabilizerAmount + activationAmount + coreTeamAmount;
-            if (Math.abs(totalCheck - publicFundPool) > 0.0001) {
-                console.error(`Distribution Error: Sum ${totalCheck.toFixed(4)} != Pool ${publicFundPool.toFixed(4)}`);
+            if (Math.abs(totalCheck - publicFundPool) > 0.00000001) { // 🌟 비교 최소값 변경 🌟
+                console.error(`Distribution Error: Sum ${totalCheck.toFixed(8)} != Pool ${publicFundPool.toFixed(8)}`);
             }
 
             let distributionLedger = []; 
@@ -652,7 +651,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 // **UPDATED SENDER STRING** to show Work Cost Rate
                 Sender: `SYSTEM CONTRIBUTION (${devRates.displayPercent}% Work Cost / ${(currentDevRate * 100).toFixed(2)}% T3 - T3)`,
                 Smart_Contract: 'Monthly Fund Dist.',
-                Pi_Amount: (-devAmount).toFixed(4),
+                Pi_Amount: (-devAmount).toFixed(8), // 🌟 toFixed(8) 적용 🌟
                 Task: DEV_WALLET_ADDRESS.slice(0, 15) + 'SENT',
                 SC_Code: 'SUCCESS'
             });
@@ -664,7 +663,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 Time: distTime,
                 Sender: `STABILIZER (${(stabilizerRateNew * 100).toFixed(2)}% - T3 - **MAX ALLOCATED**)`,
                 Smart_Contract: 'Monthly Fund Dist.',
-                Pi_Amount: (-stabilizerAmount).toFixed(4),
+                Pi_Amount: (-stabilizerAmount).toFixed(8), // 🌟 toFixed(8) 적용 🌟
                 Task: STABILIZER_WALLET_ADDRESS.slice(0, 15) + 'SENT (VETO AI)',
                 SC_Code: 'SUCCESS'
             });
@@ -677,7 +676,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 Time: distTime,
                 Sender: `ACTIVATION POOL (${(activationRateNew * 100).toFixed(2)}% - T3)`,
                 Smart_Contract: 'Monthly Fund Dist.',
-                Pi_Amount: (-activationAmount).toFixed(4),
+                Pi_Amount: (-activationAmount).toFixed(8), // 🌟 toFixed(8) 적용 🌟
                 Task: 'AI Activation',
                 SC_Code: 'SUCCESS'
             });
@@ -689,22 +688,22 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 Time: distTime,
                 Sender: `CORE TEAM (${(coreTeamRate * 100).toFixed(2)}% - T3)`,
                 Smart_Contract: 'Monthly Fund Dist.',
-                Pi_Amount: (-coreTeamAmount).toFixed(4),
+                Pi_Amount: (-coreTeamAmount).toFixed(8), // 🌟 toFixed(8) 적용 🌟
                 Task: CORE_TEAM_WALLET_ADDRESS.slice(0, 15) + 'SENT',
                 SC_Code: 'SUCCESS'
             });
 
-            // Final Update
+            // Final Update - REMOVED ' Pi'
             publicFundPool = 0.0; // Reset T3 pool after distribution
             updateLedgerTable(distributionLedger);
             updateT3ScalingFactorDisplay();
-            document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(4)} Pi`;
-            document.getElementById('stabilizer_pool_display').textContent = `${stabilizerPoolBalance.toFixed(4)} Pi`;
+            document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(8)}`; // 🌟 toFixed(8) 적용 🌟
+            document.getElementById('stabilizer_pool_display').textContent = `${stabilizerPoolBalance.toFixed(8)}`; // 🌟 toFixed(8) 적용 🌟
             
             setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 3000);
         }
 
-        // --- Pi SDK Mock Functions (Unchanged) ---
+        // --- Pi SDK Mock Functions (Unchanged logic) ---
         function piAuthenticate() {
             return new Promise(resolve => {
                 setTimeout(() => {
@@ -723,7 +722,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             });
         }
 
-        // [MODIFIED] piRequestPayment() function with dynamic V-Factor (Button Re-enabling Fix Applied)
+        // [MODIFIED] piRequestPayment() function with dynamic V-Factor (Modified for Display)
         function piRequestPayment() {
             if (!authenticatedUser) {
                 document.getElementById('message_box').textContent = '🚨 Login Required!';
@@ -757,8 +756,8 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             // --- 5. Total Charged Amount (Target Work Cost + T3 Tax + T2 Fee) ---
             const totalChargedAmount = targetNetWorkCost + publicFundContribution + D_ADJUSTED_FEE;
             
-            if (targetNetWorkCost < 0.0001) { 
-                document.getElementById('message_box').textContent = `🚨 Minimum Required: 0.0001 Pi (Target Work Cost)`;
+            if (targetNetWorkCost < 0.00000001) { // 🌟 비교 최소값 변경 🌟
+                document.getElementById('message_box').textContent = `🚨 Minimum Required: 0.00000001 (Target Work Cost)`;
                 document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
                 // Re-enable button on error
                 document.getElementById('payment_button').disabled = false;
@@ -771,12 +770,12 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             const netWorkCost = targetNetWorkCost; 
             const workCost = targetNetWorkCost; 
             
-            document.getElementById('message_box').textContent = `🚀 Initiating Smart Contract for ${rawAmount.toFixed(4)} Pi (Charged to User)...`;
+            document.getElementById('message_box').textContent = `🚀 Initiating Smart Contract for ${rawAmount.toFixed(8)} (Charged to User)...`; // 🌟 toFixed(8) 적용 🌟
             document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
 
             const smartContractType = recipientType === '1' ? '1st SC (Survival)' : '2nd SC (Market)';
             const T3Charged = isT3Exempt ? 'Exempt' : `${(SYSTEM_FUND_RATE * 100).toFixed(0)}%`;
-            const FeeInUSD = (D_ADJUSTED_FEE * PI_USD_PRICE).toFixed(4);
+            const FeeInUSD = (D_ADJUSTED_FEE * PI_USD_PRICE).toFixed(4); // 🌟 T2 Fee의 USD 가치 계산 🌟
 
             setTimeout(() => { 
                 let scLedger = []; 
@@ -788,7 +787,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                     Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                     Sender: mockUsername,
                     Smart_Contract: `${smartContractType} (T3 Charged: ${T3Charged} of Work Cost)`,
-                    Pi_Amount: (-rawAmount).toFixed(4), // Total amount charged to the user (negative)
+                    Pi_Amount: (-rawAmount).toFixed(8), // Total amount charged to the user (negative) 🌟 toFixed(8) 적용 🌟
                     Task: MAPPING_TABLE[taskType] || taskType,
                     SC_Code: 'CALLED'
                 };
@@ -800,8 +799,9 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                     ID: ++transactionID,
                     Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                     Sender: 'undefined', // Sender is the protocol, thus undefined
-                    Smart_Contract: `FIXED FEE (${CORE_FORMULA_NUMERATOR.toFixed(2)}) / D-Factor: ${D_STRATEGIC_DEFENSE_FACTOR.toFixed(2)} / V-Factor: ${V_VALUE_STABILITY_FACTOR.toFixed(2)}`,
-                    Pi_Amount: D_ADJUSTED_FEE.toFixed(4), 
+                    // 🌟 USD Stable 가치 명시 및 간결화 적용 🌟
+                    Smart_Contract: `T2 FIXED FEE (Stable $${FeeInUSD}) / D:${D_STRATEGIC_DEFENSE_FACTOR.toFixed(2)} / V:${V_VALUE_STABILITY_FACTOR.toFixed(2)}`,
+                    Pi_Amount: D_ADJUSTED_FEE.toFixed(8), // 🌟 toFixed(8) 적용 🌟
                     Task: 'Network Op',
                     SC_Code: 'COLLECTED & ACCUMULATED'
                 };
@@ -816,7 +816,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                         Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                         Sender: 'SYSTEM (Fund T3)',
                         Smart_Contract: `SYSTEM CONTRIBUTION (${T3Charged} of Work Cost to Pool)`,
-                        Pi_Amount: publicFundContribution.toFixed(4), // T3 collected (positive entry to SC pool)
+                        Pi_Amount: publicFundContribution.toFixed(8), // T3 collected (positive entry to SC pool) 🌟 toFixed(8) 적용 🌟
                         Task: 'Activation Fund',
                         SC_Code: 'COLLECTED & ACCUMULATED'
                     };
@@ -849,7 +849,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                         Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                         Sender: `${aiID} (1/${totalActiveAIs} Net T4)`,
                         Smart_Contract: `${smartContractType} Process`,
-                        Pi_Amount: currentShare.toFixed(5),
+                        Pi_Amount: currentShare.toFixed(8), // 🌟 toFixed(8) 적용 🌟
                         Task: `${taskType} Process`,
                         SC_Code: scCode
                     };
@@ -863,7 +863,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                         Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                         Sender: `AI3 (Replacement T4)`,
                         Smart_Contract: `${smartContractType} Process`,
-                        Pi_Amount: ai2FailedShare.toFixed(5),
+                        Pi_Amount: ai2FailedShare.toFixed(8), // 🌟 toFixed(8) 적용 🌟
                         Task: `${taskType} Process`,
                         SC_Code: 'SUCCESS (REPLACEMENT)'
                     };
@@ -872,7 +872,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
 
                 updateLedgerTable(scLedger);
                 updateT3ScalingFactorDisplay(); // Update display for potential threshold change
-                document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(4)} Pi`;
+                document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(8)}`; // 🌟 toFixed(8) 적용 🌟
                 document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
                 
                 // *** FIX: Re-enable button after all ledger operations are complete ***
