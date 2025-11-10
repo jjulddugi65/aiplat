@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -234,7 +235,7 @@
                     2. Request Pi Payment (Start SC - MOCKED)
                 </button>
             </div>
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-4 gap-4">
                 <div>
                     <label htmlFor="piAmount">Pi Amount (Target Work Cost for AI/IoT):</label>
                     <input type="number" id="piAmount" step="0.0001" value="5.0000" placeholder="e.g. 5.0000">
@@ -257,6 +258,10 @@
                         <option value="4">4 (IoT) - 1 to 4: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
                         <option value="5">5+ (External/Other) - 1 to 5+: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
                     </select>
+                </div>
+                <div>
+                    <label htmlFor="piUsdPrice">Pi/USD Price (P) for V Factor:</label>
+                    <input type="number" id="piUsdPrice" step="0.01" value="1.00" oninput="updatePiUsdPrice(this.value)">
                 </div>
                 </div>
             <div class="p-4 bg-white rounded-lg shadow-inner mt-4 border border-green-300">
@@ -323,8 +328,8 @@
                         <input type="range" id="p_factor_slider" min="0.5" max="2.0" step="0.01" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="updatePFactorAndFee(this.value)">
                     </div>
                     <div class="md:col-span-2 stat-card bg-white border-red-300">
-                        <p class="stat-label">D-Adjusted Final Fee (V*N mocked to 1.0) based on 0.01 Pi (Standard Pi Fee)</p>
-                        <p id="p_adjusted_fee" class="stat-value text-red-700">0.0100 Pi</p>
+                        <p class="stat-label">D-Adjusted Final Fee (V*N*D Formula) - **USD Fee Value Stabilized by V**</p>
+                        <p id="p_adjusted_fee" class="stat-value text-red-700">0.0100 Pi (USD Value: $0.0100)</p>
                     </div>
                 </div>
             </div>
@@ -423,43 +428,70 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         let publicFundPool = 0.0; // T3 Public Fund Accumulation Pool (Actual collected T3 amount accumulates here)
 
         // --- 🌟 Economic Invariance Variables (Pi IP Core: 0.01 / V * N * D) 🌟 ---
-        // V: Value Stability Factor (Ensures stable fee value by adjusting based on Pi/USD price feed)
-        const V_VALUE_STABILITY_FACTOR = 1.0; // V: Value Stability Factor (Mocked to 1.0 for D demo)
-        // N: Scalability Factor (Represents the number of active non-human entities, diluting the fee)
+        let PI_USD_PRICE = 1.00; // Dynamic variable for V calculation 
+        const TARGET_USD_FEE = 0.0100; // The goal USD value for the base fee (0.01 Pi @ $1.00)
         const N_SCALABILITY_FACTOR = 1.0; // N: Scalability Factor (Mocked to 1.0 for D demo)
-        // [MODIFIED] Changed from 0.0101 to 0.0100 based on user request (Standard Pi Fee)
-        const CORE_FORMULA_NUMERATOR = 0.0100; // 0.0100 Pi (Standard On-Chain Fee: Numerator for the Pi IP Core Formula) 
-        // [NEW] D: Strategic Defense Factor (Core Team Strategy Index) - Default to 1.0 (No adjustment)
+        const CORE_FORMULA_NUMERATOR = TARGET_USD_FEE; // Numerator is the Target USD Fee (0.0100 USD)
         let D_STRATEGIC_DEFENSE_FACTOR = 1.0; 
         // --- 🌟 End IP Core 🌟 ---
 
-        // --- 🌟 On-Chain TX Dynamic Share Variables (REVERTED TO INITIAL) 🌟 ---
+        // --- 🌟 On-Chain TX Dynamic Share Variables (3-Tier Policy Applied) 🌟 ---
         const PREVIOUS_DEV_RATE_FOR_SURPLUS = 0.10; // Original 10% rate for surplus calculation
-        // Initial rate back to 0.50% Work Cost (10% T3 Pool). 
-        const CREATOR_SHARE_RATE_OF_WORK_INITIAL = 0.0050; // 0.50% of Work Cost (Initial IP Creator Share)
-        // The reduced rate is now correctly set to 0.25% for the future reduction policy
-        const CREATOR_SHARE_RATE_OF_WORK_REDUCED = 0.0025; // 0.25% of Work Cost (Reduced IP Creator Share)
-        // 100 TX -> 100 Million TX (for policy realism)
-        const MOCK_TX_THRESHOLD = 100; // Mocked 100 TX Threshold for the 0.5% -> 0.25% transition (In production: 100 Million TX)
+        
+        // 1. Initial Royalty: 0.50% of Work Cost
+        const CREATOR_SHARE_RATE_OF_WORK_INITIAL = 0.0050; 
+        
+        // 2. Mid Royalty (Reduced at 100M TX): 0.25% of Work Cost
+        const CREATOR_SHARE_RATE_OF_WORK_MID = 0.0025; 
+        
+        // 3. Final Royalty (Reduced at 1B TX): 0.10% of Work Cost (Final Policy Applied)
+        const CREATOR_SHARE_RATE_OF_WORK_FINAL = 0.0010; 
+
+        // 🌟 Mock Thresholds (In production: 100 Million TX and 1 Billion TX)
+        const MOCK_TX_THRESHOLD = 100; // Mocked 100 TX Threshold (for 0.5% -> 0.25%)
+        const MOCK_TX_THRESHOLD_FINAL = 1000; // Mocked 1000 TX Threshold (for 0.25% -> 0.1%)
+        
         const STABILIZER_RATE = 0.20; // 20% Base Stabilizer Fund Rate
         const ACTIVATION_POOL_RATE = 0.20; // 20% Base AI Activation Pool Rate
         const CORE_TEAM_BASE_RATE = 0.50; // 50% Core Team Share (Fixed Base)
         let onChainTXCount = 0;
-        let stabilizerPoolBalance = 0.0; // Stabilizer Fund Balance Variable Added
+        let stabilizerPoolBalance = 0.0; 
 
         // --- AI League Failure Rates & Data Mock (For simple simulation only) ---
         const MAJOR_AI_FAILURE_RATE = 0.20; // 20% Failure Chance (Increased for better demonstration)
         const MAJOR_SC_MIN_COST = 2.0; 
         let majorAICount = 2; // AI1, AI2 (UPDATED: 2 active AIs)
         
+        // 🌟 [NEW] Function to update Pi/USD Price and trigger Fee Recalculation 🌟
+        function updatePiUsdPrice(priceValue) {
+            PI_USD_PRICE = parseFloat(priceValue);
+            // Ensure PI_USD_PRICE is never zero to prevent division by zero
+            if (PI_USD_PRICE <= 0) {
+                PI_USD_PRICE = 0.01; // Set a minimal floor price for calculation safety
+                document.getElementById('piUsdPrice').value = 0.01;
+            }
+            // Recalculate fee using the current D-Factor slider position
+            const currentD = document.getElementById('p_factor_slider').value;
+            calculatePAdjustedFee(currentD);
+        }
+
         // [MODIFIED] Function to calculate and display D-Adjusted Fee
         function calculatePAdjustedFee(dFactor) {
-            // Full VND Formula: CORE_FORMULA_NUMERATOR / (V * N * D)
-            const finalFee = CORE_FORMULA_NUMERATOR / (V_VALUE_STABILITY_FACTOR * N_SCALABILITY_FACTOR * dFactor); 
-            // Update the D_STRATEGIC_DEFENSE_FACTOR global variable (renamed from P)
+            // V Factor calculation: V = Pi Price / 1 USD (It's the inverse function factor)
+            const V_VALUE_STABILITY_FACTOR = PI_USD_PRICE; 
+
+            // Full VND Formula: CORE_FORMULA_NUMERATOR (TARGET_USD_FEE) / (V * N * D)
+            const finalFee_Pi = CORE_FORMULA_NUMERATOR / (V_VALUE_STABILITY_FACTOR * N_SCALABILITY_FACTOR * dFactor); 
+            
+            // Calculate the resulting USD fee value for demonstration
+            const finalFee_USD = finalFee_Pi * PI_USD_PRICE; 
+
+            // Update the D_STRATEGIC_DEFENSE_FACTOR global variable
             D_STRATEGIC_DEFENSE_FACTOR = parseFloat(dFactor);
+
             // Update UI elements
-            document.getElementById('p_adjusted_fee').textContent = `${finalFee.toFixed(4)} Pi`; // toFixed(4) to show 0.0100
+            document.getElementById('p_adjusted_fee').textContent = 
+                `${finalFee_Pi.toFixed(8)} Pi (USD Value: $${finalFee_USD.toFixed(4)})`; 
         }
 
         // [MODIFIED] Function triggered by slider movement
@@ -470,11 +502,12 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
 
         // [MODIFIED] Initialization function to run the first calculation
         function initializePFactorDemo() {
-            const initialD = document.getElementById('p_factor_slider').value;
-            updatePFactorAndFee(initialD);
+            // Ensure initial PI_USD_PRICE is read from the input
+            const initialPrice = document.getElementById('piUsdPrice').value;
+            updatePiUsdPrice(initialPrice); // This calls calculatePAdjustedFee internally
         }
 
-        // --- Ledger Update Functions ---
+        // --- Ledger Update Functions (Unchanged) ---
         // 🌟 [Apply logic to display latest transactions at the top] 🌟: Add new transaction to the top of the ledger.
         function updateLedgerTable(ledgerRecords) {
             const smartContractLedger = document.getElementById('smart_contract_ledger');
@@ -493,8 +526,6 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             } else if (record.SC_Code === 'FAILURE REPORT') {
                 amountClass = 'text-red-900 font-bold';
             }
-            // ... (Color and formatting logic)
-            // ... (Omitted for brevity, but full function remains)
             let scCodeClass = 'bg-gray-200 text-gray-700';
             if (record.SC_Code.includes('COLLECTED')) scCodeClass = 'bg-yellow-200 text-yellow-800';
             if (record.SC_Code.includes('ACCUMULATED')) scCodeClass = 'bg-purple-200 text-purple-800';
@@ -515,44 +546,45 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             `;
         }
 
-        // --- NEW Helper Function to get all Dev/Creator Share Rates ---
+        // --- 🌟 MODIFIED: 3-Tier Royalty Policy Application Function 🌟
         function getDevWorkCostRate() { 
-            let workRate = CREATOR_SHARE_RATE_OF_WORK_INITIAL; // 0.0050 (Initial High Rate)
-            if (onChainTXCount >= MOCK_TX_THRESHOLD) {
-                // Policy to reduce to the lower rate after threshold
-                workRate = CREATOR_SHARE_RATE_OF_WORK_REDUCED; // 0.0025
+            let workRate = CREATOR_SHARE_RATE_OF_WORK_INITIAL; // 0.50% (Initial High Rate)
+            
+            // 1. If on-chain TX reaches 1 Billion (Mock 1000), reduce to 0.10% (Final Stage)
+            if (onChainTXCount >= MOCK_TX_THRESHOLD_FINAL) {
+                workRate = CREATOR_SHARE_RATE_OF_WORK_FINAL; // 0.0010 (0.10%)
+            } 
+            // 2. Else if on-chain TX reaches 100 Million (Mock 100), reduce to 0.25% (Mid Stage)
+            else if (onChainTXCount >= MOCK_TX_THRESHOLD) {
+                workRate = CREATOR_SHARE_RATE_OF_WORK_MID; // 0.0025 (0.25%)
             }
-            const rateAsPercent = workRate * 100; // 0.50% or 0.25%
-            const t3PoolRate = workRate / SYSTEM_FUND_RATE; // 0.10 or 0.05
+            // 3. Otherwise, maintain 0.50%
+            
+            const rateAsPercent = workRate * 100; // 0.50%, 0.25%, or 0.10%
+            const t3PoolRate = workRate / SYSTEM_FUND_RATE; // 0.10, 0.05, or 0.02
             
             return {
                 workRate: workRate, 
                 t3PoolRate: t3PoolRate, 
-                displayPercent: rateAsPercent.toFixed(2), // "0.50" or "0.25"
+                displayPercent: rateAsPercent.toFixed(2), 
             };
         }
         
-        // --- Dev Share Rate (Dynamic) ---
         function getDevShareRate() {
-            // Returns T3 Pool Rate (0.10 or 0.05)
+            // Returns T3 Pool Rate (0.10, 0.05, or 0.02)
             return getDevWorkCostRate().t3PoolRate; 
         }
-        // --- END NEW Helper Function ---
+        // --- END MODIFIED Helper Function ---
 
         function updateT3ScalingFactorDisplay() {
             const devRates = getDevWorkCostRate(); 
-            const currentDevRate = devRates.t3PoolRate; // 0.10 or 0.05
+            const currentDevRate = devRates.t3PoolRate; // Use T3 Pool rate for distribution calculation
 
-            const devSurplus = PREVIOUS_DEV_RATE_FOR_SURPLUS - currentDevRate; // 0.10 - currentDevRate
-            const coreTeamDisplay = `${(CORE_TEAM_BASE_RATE * 100).toFixed(2)}% (Base)`; // Core Team is fixed at 50% Base
+            const devSurplus = PREVIOUS_DEV_RATE_FOR_SURPLUS - currentDevRate; 
+            const coreTeamDisplay = `${(CORE_TEAM_BASE_RATE * 100).toFixed(2)}% (Base)`; 
 
-            // [MODIFIED LOGIC START: 100% of Dev Surplus to Stabilizer Pool]
-            // Stabilizer Pool receives 100% of the surplus
-            const stabilizerRateNew = STABILIZER_RATE + devSurplus; // 0.20 + 0.05 = 0.25 (If reduced)
-            
-            // Activation Pool receives 0% of the surplus (remains at base 0.20)
+            const stabilizerRateNew = STABILIZER_RATE + devSurplus; 
             const activationRateNew = ACTIVATION_POOL_RATE; 
-            // [MODIFIED LOGIC END]
 
             const stabilizerDisplay = `${(stabilizerRateNew * 100).toFixed(2)}%`; 
             const activationDisplay = `${(activationRateNew * 100).toFixed(2)}%`; 
@@ -560,17 +592,19 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             let factorDisplay = `${devRates.displayPercent}% (Work Cost) / ${ (currentDevRate * 100).toFixed(2)}% (T3 Pool)`;
             
             // Display logic for showing the dynamic policy
-            if (currentDevRate === CREATOR_SHARE_RATE_OF_WORK_INITIAL / SYSTEM_FUND_RATE) {
-                 factorDisplay += ' (Initial)'; // "10.00% (Initial)"
+            if (onChainTXCount >= MOCK_TX_THRESHOLD_FINAL) {
+                 factorDisplay += ` (FINAL: Reduced after ${MOCK_TX_THRESHOLD_FINAL} TX - MAX STABILIZER ALLOCATION)`;
+            } else if (onChainTXCount >= MOCK_TX_THRESHOLD) {
+                 factorDisplay += ` (MID: Reduced after ${MOCK_TX_THRESHOLD} TX - MAX STABILIZER ALLOCATION)`;
             } else {
-                 factorDisplay += ` (Reduced after ${MOCK_TX_THRESHOLD} TX - MAX STABILIZER ALLOCATION)`;
+                 factorDisplay += ' (Initial)'; 
             }
             
             document.getElementById('scaling_factor').innerHTML = `${factorDisplay}<br>(Core Team Share: ${coreTeamDisplay})<br>(Stabilizer: ${stabilizerDisplay} / Activation: ${activationDisplay})`;
         }
 
 
-        // --- Monthly Distribution ---
+        // --- Monthly Distribution (Unchanged logic) ---
         function executeMonthlyDistribution() {
             const devRates = getDevWorkCostRate(); 
             const currentDevRate = devRates.t3PoolRate; // Use T3 Pool rate for distribution calculation
@@ -585,7 +619,6 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             document.getElementById('message_box').textContent = `💰 Executing Monthly T3 Settlement of ${publicFundPool.toFixed(4)} Pi...`;
             document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
 
-            // [MODIFIED LOGIC START: 100% of Dev Surplus to Stabilizer Pool]
             // Calculate surplus (0.05 when reduced)
             const devSurplus = PREVIOUS_DEV_RATE_FOR_SURPLUS - currentDevRate; 
             const coreTeamRate = CORE_TEAM_BASE_RATE; 
@@ -595,7 +628,6 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             
             // Activation Pool receives 0% of the surplus (remains at base 0.20)
             const activationRateNew = ACTIVATION_POOL_RATE; 
-            // [MODIFIED LOGIC END]
 
             // Calculate final distribution amounts
             const devAmount = publicFundPool * currentDevRate;
@@ -672,9 +704,8 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 3000);
         }
 
-        // --- Pi SDK Mock Functions ---
+        // --- Pi SDK Mock Functions (Unchanged) ---
         function piAuthenticate() {
-            // ... (Omitted for brevity, but full function remains)
             return new Promise(resolve => {
                 setTimeout(() => {
                     authenticatedUser = {
@@ -692,7 +723,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             });
         }
 
-        // [MODIFIED] piRequestPayment() function with Additive Tax Logic
+        // [MODIFIED] piRequestPayment() function with dynamic V-Factor (Button Re-enabling Fix Applied)
         function piRequestPayment() {
             if (!authenticatedUser) {
                 document.getElementById('message_box').textContent = '🚨 Login Required!';
@@ -701,51 +732,51 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 return;
             }
 
-            // [MODIFIED LOGIC START: Implementing Additive Tax (T3/T2 added to Work Cost)]
-            
-            // 1. UI 입력 값 (targetNetWorkCost)을 AI/IoT가 받을 '순 작업 비용'으로 재정의
+            // *** FIX: Disable button immediately to prevent double-click during processing ***
+            document.getElementById('payment_button').disabled = true; 
+
+            // --- 1. Get Inputs and Calculate V-Factor ---
             const targetNetWorkCost = parseFloat(document.getElementById('piAmount').value); 
             const taskType = document.getElementById('taskType').value;
             const recipientType = document.getElementById('recipientType').value;
             const currentDevRate = getDevShareRate(); 
+            
+            // [NEW] Get V Factor dynamically
+            const V_VALUE_STABILITY_FACTOR = PI_USD_PRICE; 
 
-            // 2. T2 수수료 (D-Adjusted Fee) 계산
+            // --- 2. T2 Fee (D-Adjusted, V-Stabilized) Calculation ---
+            // D_ADJUSTED_FEE = TARGET_USD_FEE / (V * N * D)
             const D_ADJUSTED_FEE = CORE_FORMULA_NUMERATOR / (V_VALUE_STABILITY_FACTOR * N_SCALABILITY_FACTOR * D_STRATEGIC_DEFENSE_FACTOR); 
             
-            // 3. T3 면제 여부 확인 (1: Human to Human)
+            // --- 3. T3 Exemption Check ---
             const isT3Exempt = recipientType === '1'; 
 
-            // 4. T3 공공 기금 (5%의 가산세) 계산
-            // T3는 targetNetWorkCost를 기준으로 계산되며, 인간에게 부과됨
+            // --- 4. T3 Public Fund (5% Additive Tax) Calculation ---
             const publicFundContribution = isT3Exempt ? 0.0 : targetNetWorkCost * SYSTEM_FUND_RATE; 
             
-            // 5. 인간 사용자에게 청구될 총 금액 계산 (Target Work Cost + T3 Tax + T2 Fee)
+            // --- 5. Total Charged Amount (Target Work Cost + T3 Tax + T2 Fee) ---
             const totalChargedAmount = targetNetWorkCost + publicFundContribution + D_ADJUSTED_FEE;
             
-            // 최소 작업 비용 확인 (AI가 받을 순 작업 비용 기준)
             if (targetNetWorkCost < 0.0001) { 
                 document.getElementById('message_box').textContent = `🚨 Minimum Required: 0.0001 Pi (Target Work Cost)`;
                 document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                // Re-enable button on error
+                document.getElementById('payment_button').disabled = false;
                 setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 3000);
                 return;
             }
 
-            // 최종 TX 처리 변수 설정
-            // SDK Mock에 전달될 최종 청구액 (Total Charged)
+            // Final TX Processing Variables
             const rawAmount = totalChargedAmount; 
-            
-            // T4 분배에 사용될 AI/IoT의 순수익 (T3가 차감되지 않음)
             const netWorkCost = targetNetWorkCost; 
-            
-            // T3 계산의 기준이 된 금액 (AI/IoT의 순수익과 동일)
             const workCost = targetNetWorkCost; 
-            // [MODIFIED LOGIC END]
-
+            
             document.getElementById('message_box').textContent = `🚀 Initiating Smart Contract for ${rawAmount.toFixed(4)} Pi (Charged to User)...`;
             document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
 
             const smartContractType = recipientType === '1' ? '1st SC (Survival)' : '2nd SC (Market)';
             const T3Charged = isT3Exempt ? 'Exempt' : `${(SYSTEM_FUND_RATE * 100).toFixed(0)}%`;
+            const FeeInUSD = (D_ADJUSTED_FEE * PI_USD_PRICE).toFixed(4);
 
             setTimeout(() => { 
                 let scLedger = []; 
@@ -757,7 +788,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                     Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                     Sender: mockUsername,
                     Smart_Contract: `${smartContractType} (T3 Charged: ${T3Charged} of Work Cost)`,
-                    Pi_Amount: (-rawAmount).toFixed(4), // 사용자에게 청구된 총 금액 (음수)
+                    Pi_Amount: (-rawAmount).toFixed(4), // Total amount charged to the user (negative)
                     Task: MAPPING_TABLE[taskType] || taskType,
                     SC_Code: 'CALLED'
                 };
@@ -768,9 +799,9 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 const T_Fee = {
                     ID: ++transactionID,
                     Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
-                    // CORE_FORMULA_NUMERATOR is now 0.0100
-                    Smart_Contract: `FIXED FEE (${CORE_FORMULA_NUMERATOR.toFixed(2)}) / D-Factor: ${D_STRATEGIC_DEFENSE_FACTOR.toFixed(2)}`,
-                    Pi_Amount: D_ADJUSTED_FEE.toFixed(4), // T2 Fee collected (positive entry to SC pool)
+                    Sender: 'undefined', // Sender is the protocol, thus undefined
+                    Smart_Contract: `FIXED FEE (${CORE_FORMULA_NUMERATOR.toFixed(2)}) / D-Factor: ${D_STRATEGIC_DEFENSE_FACTOR.toFixed(2)} / V-Factor: ${V_VALUE_STABILITY_FACTOR.toFixed(2)}`,
+                    Pi_Amount: D_ADJUSTED_FEE.toFixed(4), 
                     Task: 'Network Op',
                     SC_Code: 'COLLECTED & ACCUMULATED'
                 };
@@ -779,7 +810,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
 
                 // T3: Public Fund Accumulation
                 if (!isT3Exempt && publicFundContribution > 0.0) {
-                    publicFundPool += publicFundContribution; // T3 적립
+                    publicFundPool += publicFundContribution; // T3 accumulation
                     const T_System = {
                         ID: ++transactionID,
                         Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
@@ -793,7 +824,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 }
                 
                 // --- 4. T4: AI Settlement (SC -> AI/Robot) ---
-                // netWorkCost는 AI의 순 작업 비용 (targetNetWorkCost)이며 T3/T2가 차감되지 않음.
+                // netWorkCost is the pure work cost of the AI (targetNetWorkCost) without T3/T2 deduction.
                 const totalActiveAIs = majorAICount; 
                 const aiShare = netWorkCost / totalActiveAIs; 
 
@@ -840,8 +871,12 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 }
 
                 updateLedgerTable(scLedger);
+                updateT3ScalingFactorDisplay(); // Update display for potential threshold change
                 document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(4)} Pi`;
                 document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
+                
+                // *** FIX: Re-enable button after all ledger operations are complete ***
+                document.getElementById('payment_button').disabled = false;
                 
                 // Hide message box after all operations
                 setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
@@ -849,9 +884,8 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         }
 
 
-        // --- Ledger Download ---
+        // --- Ledger Download (Unchanged) ---
         function downloadLedger() {
-            // ... (Omitted for brevity, but full function remains)
             const table = document.getElementById('ledger_table');
             let csv = [];
             for (let i = 0; i < table.rows.length; i++) {
@@ -883,7 +917,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
             updateT3ScalingFactorDisplay();
-            initializePFactorDemo(); // [MODIFIED]
+            initializePFactorDemo(); // Call the V-Factor setup
         });
     </script>
 </body>
