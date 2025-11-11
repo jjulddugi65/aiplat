@@ -444,7 +444,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         const CREATOR_SHARE_RATE_OF_WORK_MID = 0.0025; 
         
         // 3. Final Royalty (Reduced at 1B TX): 0.20% of Work Cost (Final Policy Applied) 
-        // 🌟 [수정됨: 0.0010(0.10%) -> 0.0020(0.20%)] 🌟
+        // 🌟 [MODIFIED: 0.0010(0.10%) -> 0.0020(0.20%)] 🌟
         const CREATOR_SHARE_RATE_OF_WORK_FINAL = 0.0020; 
 
         // 🌟 Mock Thresholds (In production: 100 Million TX and 1 Billion TX)
@@ -494,7 +494,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
 
             // Update UI elements - REMOVED ' Pi'
             document.getElementById('p_adjusted_fee').textContent = 
-                `${finalFee_Pi.toFixed(8)} (USD Value: $${finalFee_USD.toFixed(4)})`; // 🌟 toFixed(8) 적용 🌟
+                `${finalFee_Pi.toFixed(8)} (USD Value: $${finalFee_USD.toFixed(4)})`; // 🌟 toFixed(8) applied 🌟
         }
 
         // [MODIFIED] Function triggered by slider movement
@@ -558,7 +558,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             
             // 1. If on-chain TX reaches 1 Billion (Mock 1000), reduce to 0.20% (Final Stage)
             if (onChainTXCount >= MOCK_TX_THRESHOLD_FINAL) {
-                workRate = CREATOR_SHARE_RATE_OF_WORK_FINAL; // 0.0020 (0.20%) 🌟 [수정된 값] 🌟
+                workRate = CREATOR_SHARE_RATE_OF_WORK_FINAL; // 0.0020 (0.20%) 🌟 [MODIFIED VALUE] 🌟
             } 
             // 2. Else if on-chain TX reaches 100 Million (Mock 100), reduce to 0.25% (Mid Stage)
             else if (onChainTXCount >= MOCK_TX_THRESHOLD) {
@@ -567,7 +567,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             // 3. Otherwise, maintain 0.50%
             
             const rateAsPercent = workRate * 100; // 0.50%, 0.25%, or 0.20%
-            const t3PoolRate = workRate / SYSTEM_FUND_RATE; // T3 Fund (5%) 기준 비율
+            const t3PoolRate = workRate / SYSTEM_FUND_RATE; // T3 Fund (5%) Standard Rate
             
             return {
                 workRate: workRate, 
@@ -577,7 +577,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
         }
         
         function getDevShareRate() {
-            // Returns T3 Pool Rate (0.10, 0.05, or 0.04) 🌟 0.04 (0.20% / 5%) 반영 🌟
+            // Returns T3 Pool Rate (0.10, 0.05, or 0.04) 🌟 0.04 (0.20% / 5%) Reflected 🌟
             return getDevWorkCostRate().t3PoolRate; 
         }
         // --- END MODIFIED Helper Function ---
@@ -615,14 +615,14 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             const devRates = getDevWorkCostRate(); 
             const currentDevRate = devRates.t3PoolRate; // Use T3 Pool rate for distribution calculation
 
-            if (publicFundPool < 0.00000001) { // 🌟 비교 최소값 변경 🌟
+            if (publicFundPool < 0.00000001) { // 🌟 Minimum comparison value changed 🌟
                 document.getElementById('message_box').textContent = '🚨 T3 Pool is empty. Cannot distribute.';
                 document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
                 setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
                 return;
             }
             
-            document.getElementById('message_box').textContent = `💰 Executing Monthly T3 Settlement of ${publicFundPool.toFixed(8)}...`; // 🌟 toFixed(8) 적용 🌟
+            document.getElementById('message_box').textContent = `💰 Executing Monthly T3 Settlement of ${publicFundPool.toFixed(8)}...`; // 🌟 toFixed(8) applied 🌟
             document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
 
             // Calculate surplus (0.05 when reduced)
@@ -643,7 +643,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
 
             // Simple check (should be near zero)
             let totalCheck = devAmount + stabilizerAmount + activationAmount + coreTeamAmount;
-            if (Math.abs(totalCheck - publicFundPool) > 0.00000001) { // 🌟 비교 최소값 변경 🌟
+            if (Math.abs(totalCheck - publicFundPool) > 0.00000001) { // 🌟 Minimum comparison value changed 🌟
                 console.error(`Distribution Error: Sum ${totalCheck.toFixed(8)} != Pool ${publicFundPool.toFixed(8)}`);
             }
 
@@ -658,7 +658,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 // **UPDATED SENDER STRING** to show Work Cost Rate
                 Sender: `SYSTEM CONTRIBUTION (${devRates.displayPercent}% Work Cost / ${(currentDevRate * 100).toFixed(2)}% T3 - T3)`,
                 Smart_Contract: 'Monthly Fund Dist.',
-                Pi_Amount: (-devAmount).toFixed(8), // 🌟 toFixed(8) 적용 🌟
+                Pi_Amount: (-devAmount).toFixed(8), // 🌟 toFixed(8) applied 🌟
                 Task: DEV_WALLET_ADDRESS.slice(0, 15) + 'SENT',
                 SC_Code: 'SUCCESS'
             });
@@ -670,7 +670,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 Time: distTime,
                 Sender: `STABILIZER (${(stabilizerRateNew * 100).toFixed(2)}% - T3 - **MAX ALLOCATED**)`,
                 Smart_Contract: 'Monthly Fund Dist.',
-                Pi_Amount: (-stabilizerAmount).toFixed(8), // 🌟 toFixed(8) 적용 🌟
+                Pi_Amount: (-stabilizerAmount).toFixed(8), // 🌟 toFixed(8) applied 🌟
                 Task: STABILIZER_WALLET_ADDRESS.slice(0, 15) + 'SENT (VETO AI)',
                 SC_Code: 'SUCCESS'
             });
@@ -683,7 +683,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 Time: distTime,
                 Sender: `ACTIVATION POOL (${(activationRateNew * 100).toFixed(2)}% - T3)`,
                 Smart_Contract: 'Monthly Fund Dist.',
-                Pi_Amount: (-activationAmount).toFixed(8), // 🌟 toFixed(8) 적용 🌟
+                Pi_Amount: (-activationAmount).toFixed(8), // 🌟 toFixed(8) applied 🌟
                 Task: 'AI Activation',
                 SC_Code: 'SUCCESS'
             });
@@ -695,7 +695,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 Time: distTime,
                 Sender: `CORE TEAM (${(coreTeamRate * 100).toFixed(2)}% - T3)`,
                 Smart_Contract: 'Monthly Fund Dist.',
-                Pi_Amount: (-coreTeamAmount).toFixed(8), // 🌟 toFixed(8) 적용 🌟
+                Pi_Amount: (-coreTeamAmount).toFixed(8), // 🌟 toFixed(8) applied 🌟
                 Task: CORE_TEAM_WALLET_ADDRESS.slice(0, 15) + 'SENT',
                 SC_Code: 'SUCCESS'
             });
@@ -704,8 +704,8 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             publicFundPool = 0.0; // Reset T3 pool after distribution
             updateLedgerTable(distributionLedger);
             updateT3ScalingFactorDisplay();
-            document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(8)}`; // 🌟 toFixed(8) 적용 🌟
-            document.getElementById('stabilizer_pool_display').textContent = `${stabilizerPoolBalance.toFixed(8)}`; // 🌟 toFixed(8) 적용 🌟
+            document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(8)}`; // 🌟 toFixed(8) applied 🌟
+            document.getElementById('stabilizer_pool_display').textContent = `${stabilizerPoolBalance.toFixed(8)}`; // 🌟 toFixed(8) applied 🌟
             
             setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 3000);
         }
@@ -762,7 +762,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             // --- 5. Total Charged Amount (Target Work Cost + T3 Tax + T2 Fee) ---
             const totalChargedAmount = targetNetWorkCost + publicFundContribution + D_ADJUSTED_FEE;
             
-            if (targetNetWorkCost < 0.00000001) { // 🌟 비교 최소값 변경 🌟
+            if (targetNetWorkCost < 0.00000001) { // 🌟 Minimum comparison value changed 🌟
                 document.getElementById('message_box').textContent = `🚨 Minimum Required: 0.00000001 (Target Work Cost)`;
                 document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
                 // Re-enable button on error
@@ -781,12 +781,12 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
             const rootID = ++transactionID; // Root ID for the user's payment
             let subIdCounter = 1; 
             
-            document.getElementById('message_box').textContent = `🚀 Initiating Smart Contract for ${rawAmount.toFixed(8)} (Charged to User - Root ID ${rootID})...`; // 🌟 toFixed(8) 적용 🌟
+            document.getElementById('message_box').textContent = `🚀 Initiating Smart Contract for ${rawAmount.toFixed(8)} (Charged to User - Root ID ${rootID})...`; // 🌟 toFixed(8) applied 🌟
             document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
 
             const smartContractType = recipientType === '1' ? '1st SC (Survival)' : '2nd SC (Market)';
             const T3Charged = isT3Exempt ? 'Exempt' : `${(SYSTEM_FUND_RATE * 100).toFixed(0)}%`;
-            const FeeInUSD = (D_ADJUSTED_FEE * PI_USD_PRICE).toFixed(4); // 🌟 T2 Fee의 USD 가치 계산 🌟
+            const FeeInUSD = (D_ADJUSTED_FEE * PI_USD_PRICE).toFixed(4); // 🌟 T2 Fee USD Value Calculation 🌟
 
             setTimeout(() => { 
                 
@@ -796,7 +796,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                     Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                     Sender: mockUsername,
                     Smart_Contract: `${smartContractType} (T3 Charged: ${T3Charged} of Work Cost)`,
-                    Pi_Amount: (-rawAmount).toFixed(8), // Total amount charged to the user (negative) 🌟 toFixed(8) 적용 🌟
+                    Pi_Amount: (-rawAmount).toFixed(8), // Total amount charged to the user (negative) 🌟 toFixed(8) applied 🌟
                     Task: MAPPING_TABLE[taskType] || taskType,
                     SC_Code: 'CALLED'
                 };
@@ -808,7 +808,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                     Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                     Sender: 'undefined', // Sender is the protocol, thus undefined
                     Smart_Contract: `T2 FIXED FEE (Stable $${FeeInUSD}) / D:${D_STRATEGIC_DEFENSE_FACTOR.toFixed(2)} / V:${V_VALUE_STABILITY_FACTOR.toFixed(2)}`,
-                    Pi_Amount: D_ADJUSTED_FEE.toFixed(8), // 🌟 toFixed(8) 적용 🌟
+                    Pi_Amount: D_ADJUSTED_FEE.toFixed(8), // 🌟 toFixed(8) applied 🌟
                     Task: 'Network Op',
                     SC_Code: 'COLLECTED & ACCUMULATED'
                 };
@@ -823,7 +823,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                         Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                         Sender: 'SYSTEM (Fund T3)',
                         Smart_Contract: `SYSTEM CONTRIBUTION (${T3Charged} of Work Cost to Pool)`,
-                        Pi_Amount: publicFundContribution.toFixed(8), // T3 collected (positive entry to SC pool) 🌟 toFixed(8) 적용 🌟
+                        Pi_Amount: publicFundContribution.toFixed(8), // T3 collected (positive entry to SC pool) 🌟 toFixed(8) applied 🌟
                         Task: 'Activation Fund',
                         SC_Code: 'COLLECTED & ACCUMULATED'
                     };
@@ -835,7 +835,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 const aiShare = netWorkCost / totalActiveAIs; 
 
                 let ai2FailedShare = 0.0; // Variable to hold AI2's share if it fails
-                // const AI_REHABILITATION_COST = 0.50000000; // AI 갱생 비용 (DEFERRED: T3 Pool 갱생 비용 차감)
+                // const AI_REHABILITATION_COST = 0.50000000; // AI Rehabilitation Cost (DEFERRED: T3 Pool Rehabilitation Cost Deduction)
 
                 // AI1 and AI2 (Active AIs) Distribution
                 for (let i = 1; i <= totalActiveAIs; i++) {
@@ -858,19 +858,19 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                         Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                         Sender: `${aiID} (1/${totalActiveAIs} Net T4)`,
                         Smart_Contract: `${smartContractType} Process`,
-                        Pi_Amount: currentShare.toFixed(8), // 🌟 toFixed(8) 적용 🌟
+                        Pi_Amount: currentShare.toFixed(8), // 🌟 toFixed(8) applied 🌟
                         Task: `${taskType} Process`,
-                        // 실패한 AI의 경우 Pi Amount는 0이지만 FAILURE REPORT 기록은 남김
+                        // In the case of a failed AI, the Pi Amount is 0, but the FAILURE REPORT record remains.
                         SC_Code: scCode
                     };
                     scLedger.push(T4_Active);
 
-                    // 🌟 [DEFERRED] AI Rehabilitation Logic (Only for AI2 failure) - 나중 개발 🌟
-                    // AI 갱생 비용 차감 로직은 현재 구현하지 않음. 
-                    // 이 로직은 향후 AI Activation Pool의 자금 사용 정책이 확정된 후 구현될 예정입니다.
+                    // 🌟 [DEFERRED] AI Rehabilitation Logic (Only for AI2 failure) - Deferred Development 🌟
+                    // The AI rehabilitation cost deduction logic is not currently implemented.
+                    // This logic will be implemented later, after the policy for using funds from the AI Activation Pool has been determined.
                     /*
                     if (isFailed) {
-                        // A. AI 갱생 비용 차감 (Hierarchical ID 9x-Y)
+                        // A. AI Rehabilitation Cost Deduction (Hierarchical ID 9x-Y)
                         if (publicFundPool >= AI_REHABILITATION_COST) {
                             publicFundPool -= AI_REHABILITATION_COST; 
 
@@ -881,11 +881,11 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                                 Smart_Contract: `REHABILITATION DEBIT (AI2) / Cost: ${AI_REHABILITATION_COST.toFixed(8)}`,
                                 Pi_Amount: (-AI_REHABILITATION_COST).toFixed(8), // Debit entry (negative)
                                 Task: `AI2 Re-training/Upgrade (Rehabilitation)`,
-                                SC_Code: 'REHABILITATION' // 갱생 기록
+                                SC_Code: 'REHABILITATION' // Rehabilitation Record
                             };
                             scLedger.push(T_Rehab);
                         } else {
-                            // Pool 잔액 부족 시 기록 (갱생 실패 기록)
+                            // Record when Pool Balance is Insufficient (Rehabilitation Failure Record)
                             const T_Rehab_Fail = {
                                 ID: `${rootID}-${subIdCounter++}`, 
                                 Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
@@ -908,7 +908,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                         Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                         Sender: `AI3 (Replacement T4)`,
                         Smart_Contract: `${smartContractType} Process`,
-                        Pi_Amount: ai2FailedShare.toFixed(8), // 🌟 toFixed(8) 적용 🌟
+                        Pi_Amount: ai2FailedShare.toFixed(8), // 🌟 toFixed(8) applied 🌟
                         Task: `${taskType} Process`,
                         SC_Code: 'SUCCESS (REPLACEMENT)'
                     };
@@ -917,7 +917,7 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
 
                 updateLedgerTable(scLedger);
                 updateT3ScalingFactorDisplay(); // Update display for potential threshold change
-                document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(8)}`; // 🌟 toFixed(8) 적용 🌟
+                document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(8)}`; // 🌟 toFixed(8) applied 🌟
                 document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
                 
                 // *** FIX: Re-enable button after all ledger operations are complete ***
