@@ -957,7 +957,975 @@ function Orderer_AI_Mixer(raw_requests, user_tx) {
                 document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)';
             }, 2000);
         }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR Pi MAXIMUM TRANSACTION Demo (SDK Mocked) - AI Governance MVP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        .header {
+            background-color: #1f2937;
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+        }
+        .simulator-section, .governance-section {
+            background: white;
+            padding: 2rem;
+            margin: 2rem 0 0 0;
+            border-radius: 1rem 1rem 0 0;
+            box-shadow: 0 2, 15px -5px rgba(0, 0, 0, 0.1);
+        }
+        .governance-section {
+            border-radius: 1rem; 
+            margin-top: 1rem;
+        }
+        /* chart-container style adjustments: increase height, secure space for internal SVG */
+        .chart-container {
+            min-height: 200px; /* Secure sufficient height */
+            background: white;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 2, 15px -5px rgba(0, 0, 0, 0.1);
+            position: relative; /* Base for absolute positioning of children */
+            overflow: hidden; 
+         }
+        /* [NEW] Style for deferred development features */
+        .deferred-feature {
+            background-color: #f9fafb; /* Light gray background */
+            color: #9ca3af; /* Gray text */
+            border: 1px solid #e5e7eb;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            position: relative;
+        }
+        .deferred-label {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #4b5563; /* Darker gray for label */
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.3rem;
+            background-color: #e5e7eb;
+            z-index: 10;
+        }
+        .deferred-content {
+            filter: grayscale(80%);
+            pointer-events: none; /* Disable interaction */
+        }
+        /* [END NEW] */
+        #block_explorer_iframe {
+            width: 100%;
+            height: 150px;
+            border: 2px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 1rem 1rem;
+            display: block;
+            margin-bottom: 2rem;
+        }
+        .scp-consensus {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            background: #4f46e5;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            margin-left: 0.5rem;
+        }
+        /* [UPDATED] SCP Status for MVP */
+        #scp_consensus_status_mvp {
+             background: #e5e7eb; 
+             color: #9ca3af; 
+             pointer-events: none;
+             opacity: 1; /* Always visible as a placeholder */
+             font-size: 0.75rem;
+        }
+        /* [END UPDATED] */
 
+        .ledger-header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            margin-bottom: 1rem;
+        }
+        .download-button {
+            background-color: #10b981;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            margin-left: 1rem;
+            transition: background-color 0.2s;
+        }
+        .download-button:hover {
+            background-color: #059669;
+        }
+        .pi-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        .login-button {
+            background-color: #f7a43b; 
+            color: white;
+        }
+        .login-button:hover {
+            background-color: #e09133;
+        }
+        .payment-button {
+            background-color: #4CAF50; 
+            color: white;
+        }
+        .payment-button:hover {
+            background-color: #45A049;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+        }
+        .pk-cell {
+            font-family: monospace;
+            font-size: 0.65rem;
+        }
+        .grid {
+            display: grid;
+        }
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .gap-4 {
+            gap: 1rem;
+        }
+        .nft-button {
+            background-color: #9c27b0; 
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            transition: background-color 0.2s;
+            margin-top: 2rem; 
+        }
+        .nft-button:hover {
+            background-color: #7b1fa2;
+        }
+        .stat-card {
+            background-color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        /* Active Pool Chart Legend Positioning */
+        #active_pool_chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="message_box" style="z-index: 1000; position: fixed; top: 1rem; left: 50%; transform: translateX(-50%) scale(0); transition: transform 0.3s; padding: 0.75rem 1.5rem; border-radius: 0.5rem; color: white; background-color: #1f2937;">
+        App Status: Ready
+    </div>
+    <div class="container">
+        <div class="header rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between mb-8">
+            <div class="flex-1">
+                <p class="text-white text-lg font-semibold mb-2">FOR Pi MAXIMUM TRANSACTION (AI Governance MVP)</p>
+                <p class="text-gray-400 font-bold mb-4">Monitor real-time transactions and delegated AI activities based on your inputs.</p>
+            </div>
+            <div class="md:ml-8 mt-4 md:mt-0">
+                <p class="text-white text-sm font-bold text-center">Run simulation via the buttons below.</p>
+            </div>
+        </div>
+        <div class="simulator-section">
+            <h2 class="text-2xl font-bold mb-4">Transaction Delegation Simulation (SDK MOCKED)</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <button id="login_button" class="pi-button login-button" onclick="piAuthenticate()">
+                    1. Pi Login (Identify User - MOCKED)
+                </button>
+                <button id="payment_button" class="pi-button payment-button" onclick="piRequestPayment()" disabled>
+                    2. Request Pi Payment (Start SC - MOCKED)
+                </button>
+            </div>
+            <div class="grid grid-cols-4 gap-4">
+                <div>
+                    <label htmlFor="piAmount">Pi Amount (Target Work Cost for AI/IoT):</label>
+                    <input type="number" id="piAmount" step="0.00000001" value="5.00000000" placeholder="e.g. 5.00000000">
+                </div>
+                <div>
+                    <label htmlFor="taskType">Task Type:</label>
+                    <select id="taskType">
+                        <option value="Drawing">Creation: Drawing</option>
+                        <option value="Animation">Creation: Animation</option>
+                        <option value="VideoEdit" selected>Creation: Video Edit</option>
+                        <option value="Research">Data: Research/Analysis</option>
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="recipientType">Recipient ID Type (T3 Policy Test):</label>
+                    <select id="recipientType">
+                        <option value="1">1 (Human/KYC) - 1 to 1: T3 Exempt (P2P Transaction Activation)</option>
+                        <option value="2" selected>2 (AI) - 1 to 2: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
+                        <option value="3">3 (Robot) - 1 to 3: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
+                        <option value="4">4 (IoT) - 1 to 4: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
+                        <option value="5">5+ (External/Other) - 1 to 5+: T3 5% Contribution (AI Ecosystem Contribution/Governance Fund)</option>
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="piUsdPrice">Pi/USD Price (P) for V Factor:</label>
+                    <input type="number" id="piUsdPrice" step="0.01" value="1.00" oninput="updatePiUsdPrice(this.value)">
+                </div>
+                </div>
+            <div class="p-4 bg-white rounded-lg shadow-inner mt-4 border border-green-300">
+                <h3 class="text-lg font-bold text-gray-700 mb-2">3. Execute T3 Contribution Distribution (MVP Essential)</h3>
+                <p class="text-sm text-gray-500 mb-3">Settles/distributes the T3 fund to each entity. **The Stabilization Fund (20% -> 25% after reduction), AI Activation Fund (20%), and Core Team Share (50%) are adjustable at the Core Team's discretion.** **The developer's surplus share (10%→5%) is now 100% dedicated to the Stabilizer Pool.** (Verification of the AI Ecosystem virtuous cycle model)</p>
+                <button class="pi-button payment-button" onclick="executeMonthlyDistribution()">
+                    **Execute T3 Monthly Settlement** (System Contribution Reward)
+                </button>
+            </div>
+            </div>
+
+        <div class="deferred-feature">
+            <span class="deferred-label">Deferred Development (Visualization/Verification Aid)</span>
+            <div class="deferred-content">
+                <iframe id="block_explorer_iframe"
+                        src="https://blockexplorer.minepi.com/testnet/"
+                        title="Pi Testnet Block Explorer"
+                        frameborder="0"
+                        allow="autoplay; encrypted-media"
+                        style="border-radius: 1rem 1rem 0 0;"></iframe>
+            </div>
+        </div>
+        <div class="governance-section">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">AI League Governance Dashboard (MVP Focus)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div class="stat-card">
+                    <p class="stat-label">Major League (n) AI Count</p>
+                    <p id="major_ai_count" class="stat-value text-indigo-600">2</p> </div>
+                <div class="stat-card">
+                    <p class="stat-label">Minor League (Incubating) AI Count</p>
+                    <p id="minor_ai_count" class="stat-value text-yellow-600">5</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Total On-Chain TX (MOCK)</p>
+                    <p id="on_chain_tx_count" class="stat-value text-indigo-600">0</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Total Activation Contribution Pool (T3 Accumulation)</p>
+                    <p id="public_tax_display" class="stat-value text-purple-600">0.00000000</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="stat-card">
+                    <p class="stat-label">Minor League Avg. 1st SC Accuracy</p>
+                    <p id="minor_accuracy" class="stat-value text-green-600">85.5%</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">T3 System Contribution Share (Scaling Factor)</p>
+                    <p id="scaling_factor" class="stat-value text-green-600">1/10 (Initial)</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Stabilizer Pool Balance (VETO Fund)</p>
+                    <p id="stabilizer_pool_display" class="stat-value text-red-600">0.00000000</p>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-yellow-50 rounded-lg shadow-inner mt-4 border border-yellow-300">
+                <h3 class="text-lg font-bold text-red-700 mb-2">D (Strategic Defense Factor) Strategic Control</h3>
+                <p class="text-sm text-gray-600 mb-3">**This is the Core Team's sole policy lever (D) for competitive response and securing emergency funds within the 0.01 / V*N*D formula.** (If D > 1, it's a discount; if D < 1, it's a surcharge)</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <div class="md:col-span-1">
+                        <label class="font-bold text-gray-700">D Factor Value: (<span id="p_value_display">1.00</span>)</label>
+                        <input type="range" id="p_factor_slider" min="0.5" max="2.0" step="0.01" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="updatePFactorAndFee(this.value)">
+                    </div>
+                    <div class="md:col-span-2 stat-card bg-white border-red-300">
+                        <p class="stat-label">D-Adjusted Final Fee (V*N*D Formula) - **USD Fee Value Stabilized by V**</p>
+                        <p id="p_adjusted_fee" class="stat-value text-red-700">0.01000000 (USD Value: $0.0100)</p>
+                    </div>
+                </div>
+            </div>
+            <div id="active_pool_chart" class="chart-container deferred-feature" style="min-height: 100px; margin-top: 1rem;">
+                <span class="deferred-label">Deferred Development (AI Autonomous Operation Balance Expenditure)</span>
+                <div class="deferred-content">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-bold text-gray-700">20% AI Active Pool (Use and distribution determined at Core Team's discretion)</h3>
+                        <span id="active_pool_display" class="text-base font-bold text-pink-600">Active Pool Balance: 0.00000000</span>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+        <div id="inflation_chart" class="chart-container deferred-feature" style="min-height: 100px;">
+            <span class="deferred-label">Deferred Development (Economic Indicator Visualization)</span>
+            <div class="deferred-content">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-lg font-bold text-gray-700">Pi Economy Inflation Index (Simulated)</h3>
+                </div>
+            </div>
+        </div>
+        <div class="table-container p-6 mb-8 relative bg-white rounded-xl shadow-lg">
+            <div class="ledger-header-container">
+                <h2 class="text-2xl font-bold text-gray-800">TRANSACTION LEDGER (Off-Chain/Logical)</h2>
+                <div class="flex items-center">
+                    <button class="download-button" onclick="downloadLedger()">Download CSV</button>
+                    <div id="scp_consensus_status_mvp" class="scp-consensus" style="opacity: 1;">
+                        SCP Consensus: 0/10001 Nodes (Deferred Development: 30-sec VETO)
+                    </div>
+                    </div>
+            </div>
+            <table class="min-w-full divide-y divide-gray-200" id="ledger_table">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-2 py-2 text-xs">ID</th>
+                        <th class="px-2 py-2 text-xs">Time</th>
+                        <th class="px-2 py-2 text-xs">Sender</th>
+                        <th class="px-2 py-2 text-xs">Smart Contract</th>
+                        <th class="px-2 py-2 text-xs">Pi Amount</th>
+                        <th class="px-2 py-2 text-xs">Task</th>
+                        <th class="px-2 py-2 text-xs">SC Code</th>
+                    </tr>
+                </thead>
+                <tbody id="smart_contract_ledger">
+                    </tbody>
+            </table>
+            <button class="nft-button" onclick="window.open('https://github.com/jjulddugi65/ai/blob/main/index.html', '_blank')">
+                Go to Pi NFT Marketplace (Concept) 🚀
+            </button>
+        </div>
+    </div>
+    <script>
+// --- PNP IP Core Logic Variables ---
+const MAPPING_TABLE = {
+    'VideoEdit': 'Video Editing (High Cost)',
+    'Animation': 'Animation Production (Medium Cost)',
+    'Drawing': 'Drawing Generation (Low Cost)',
+    'Research': 'Research Analysis (Medium Cost)',
+};
+
+// --- Orderer AI Mixer (Unchanged) ---
+function Orderer_AI_Mixer(raw_requests, user_tx) {
+    const all_tx_requests = [...raw_requests, user_tx];
+    const totalAmount = all_tx_requests.reduce((sum, req) => sum + req.amount, 0);
+    const walletList = all_tx_requests.map(req => req.sender_wallet).sort();
+    const seed = walletList.join("") + Date.now().toString();
+    let maskedSenderId = btoa(seed).replace(/=/g, "").slice(0, 10).toUpperCase();
+    const maskedTaskId = `TID_${all_tx_requests.length}_MIXED`;
+
+    const publicRecord = {
+        'Time': new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+        'Sender': maskedSenderId,
+        'Pi_Amount_CALLED': totalAmount,
+        'Task_Masked': maskedTaskId,
+        'Raw_TX_Count': all_tx_requests.length
+    };
+    return { publicRecord, internalData: all_tx_requests };
+}
+        // === Core Variables ===
+        let transactionID = 18; 
+        const maxNodes = 10001;
+        let authenticatedUser = null;                   
+        const MOCK_PUBLIC_KEY_SHORT = 'GD144...2NS';           
+        const KYC_ID = '10821'; // [Policy Reflected] 1:Human, 082:Country Code, 1:Gender Code
+        const mockUsername = KYC_ID + '_' + MOCK_PUBLIC_KEY_SHORT;
+        const CORE_TEAM_EMAIL = 'pihackathon2023@picoreteam.org';
+
+        // --- 🌟 Monthly Distribution Wallet Addresses (MOCK) 🌟 ---
+        const DEV_WALLET_ADDRESS = 'GDI44IX6RML5LXPWK25AJAPBQNZ36J5V5IQFD2KEDNQ5HNEDSLTT22NS'; // Reflecting user's wallet address
+        const STABILIZER_WALLET_ADDRESS = 'STAB_A23...POOL';
+        const CORE_TEAM_WALLET_ADDRESS = 'CORE_T50...TEAM';
+
+        // --- Public Fund & Economy Variables (T3 Fund) ---
+        const SYSTEM_FUND_RATE = 0.05; // 5% System Reinvestment Fund (T3) - FIXED RATE
+        let publicFundPool = 0.0; // T3 Public Fund Accumulation Pool (Actual collected T3 amount accumulates here)
+
+        // --- 🌟 Economic Invariance Variables (Pi IP Core: 0.01 / V * N * D) 🌟 ---
+        let PI_USD_PRICE = 1.00; // Dynamic variable for V calculation 
+        const TARGET_USD_FEE = 0.0100; // The goal USD value for the base fee (0.01 Pi @ $1.00)
+        const N_SCALABILITY_FACTOR = 1.0; // N: Scalability Factor (Mocked to 1.0 for D demo)
+        const CORE_FORMULA_NUMERATOR = TARGET_USD_FEE; // Numerator is the Target USD Fee (0.0100 USD)
+        let D_STRATEGIC_DEFENSE_FACTOR = 1.0; 
+        // --- 🌟 End IP Core 🌟 ---
+
+        // --- 🌟 On-Chain TX Dynamic Share Variables (3-Tier Policy Applied) 🌟 ---
+        const PREVIOUS_DEV_RATE_FOR_SURPLUS = 0.10; // Original 10% rate for surplus calculation
+        
+        // 1. Initial Royalty: 0.50% of Work Cost
+        const CREATOR_SHARE_RATE_OF_WORK_INITIAL = 0.0050; 
+        
+        // 2. Mid Royalty (Reduced at 100M TX): 0.25% of Work Cost
+        const CREATOR_SHARE_RATE_OF_WORK_MID = 0.0025; 
+        
+        // 3. Final Royalty (Reduced at 1B TX): 0.20% of Work Cost (Final Policy Applied) 
+        // 🌟 [MODIFIED: 0.0010(0.10%) -> 0.0020(0.20%)] 🌟
+        const CREATOR_SHARE_RATE_OF_WORK_FINAL = 0.0020; 
+
+        // 🌟 Mock Thresholds (In production: 100 Million TX and 1 Billion TX)
+        const MOCK_TX_THRESHOLD = 100; // Mocked 100 TX Threshold (for 0.5% -> 0.25%)
+        const MOCK_TX_THRESHOLD_FINAL = 1000; // Mocked 1000 TX Threshold (for 0.25% -> 0.20%)
+        
+        const STABILIZER_RATE = 0.20; // 20% Base Stabilizer Fund Rate
+        const ACTIVATION_POOL_RATE = 0.20; // 20% Base AI Activation Pool Rate
+        const CORE_TEAM_BASE_RATE = 0.50; // 50% Core Team Share (Fixed Base)
+        let onChainTXCount = 0;
+        let stabilizerPoolBalance = 0.0; 
+
+        // --- AI League Failure Rates & Data Mock (For simple simulation only) ---
+        const MAJOR_AI_FAILURE_RATE = 0.20; // 20% Failure Chance (Increased for better demonstration)
+        const MAJOR_SC_MIN_COST = 2.0; 
+        let majorAICount = 2; // AI1, AI2 (UPDATED: 2 active AIs)
+
+        // 🌟 [DEFERRED] AI Rehabilitation Cost (Future Governance Feature) 🌟
+        // const AI_REHABILITATION_COST = 0.50000000;
+        
+        // 🌟 [NEW] Function to update Pi/USD Price and trigger Fee Recalculation 🌟
+        function updatePiUsdPrice(priceValue) {
+            PI_USD_PRICE = parseFloat(priceValue);
+            // Ensure PI_USD_PRICE is never zero to prevent division by zero
+            if (PI_USD_PRICE <= 0) {
+                PI_USD_PRICE = 0.01; // Set a minimal floor price for calculation safety
+                document.getElementById('piUsdPrice').value = 0.01;
+            }
+            // Recalculate fee using the current D-Factor slider position
+            const currentD = document.getElementById('p_factor_slider').value;
+            calculatePAdjustedFee(currentD);
+        }
+
+        // [MODIFIED] Function to calculate and display D-Adjusted Fee
+        function calculatePAdjustedFee(dFactor) {
+            // V Factor calculation: V = Pi Price / 1 USD (It's the inverse function factor)
+            const V_VALUE_STABILITY_FACTOR = PI_USD_PRICE; 
+
+            // Full VND Formula: CORE_FORMULA_NUMERATOR (TARGET_USD_FEE) / (V * N * D)
+            const finalFee_Pi = CORE_FORMULA_NUMERATOR / (V_VALUE_STABILITY_FACTOR * N_SCALABILITY_FACTOR * dFactor); 
+            
+            // Calculate the resulting USD fee value for demonstration
+            const finalFee_USD = finalFee_Pi * PI_USD_PRICE; 
+
+            // Update the D_STRATEGIC_DEFENSE_FACTOR global variable
+            D_STRATEGIC_DEFENSE_FACTOR = parseFloat(dFactor);
+
+            // Update UI elements - REMOVED ' Pi'
+            document.getElementById('p_adjusted_fee').textContent = 
+                `${finalFee_Pi.toFixed(8)} (USD Value: $${finalFee_USD.toFixed(4)})`; // 🌟 toFixed(8) applied 🌟
+        }
+
+        // [MODIFIED] Function triggered by slider movement
+        function updatePFactorAndFee(dFactorValue) {
+            document.getElementById('p_value_display').textContent = parseFloat(dFactorValue).toFixed(2);
+            calculatePAdjustedFee(dFactorValue);
+        }
+
+        // [MODIFIED] Initialization function to run the first calculation
+        function initializePFactorDemo() {
+            // Ensure initial PI_USD_PRICE is read from the input
+            const initialPrice = document.getElementById('piUsdPrice').value;
+            updatePiUsdPrice(initialPrice); // This calls calculatePAdjustedFee internally
+        }
+
+        // --- Ledger Update Functions (Unchanged) ---
+        // 🌟 [Apply logic to display latest transactions at the top] 🌟: Add new transaction to the top of the ledger.
+        function updateLedgerTable(ledgerRecords) {
+            const smartContractLedger = document.getElementById('smart_contract_ledger');
+            ledgerRecords.forEach(record => {
+                const rowHTML = generateLedgerRowHTML(record); 
+                // Insert new row at the beginning of the tbody using 'afterbegin'.
+                smartContractLedger.insertAdjacentHTML('afterbegin', rowHTML);
+            });
+        }
+
+        // 🌟 [Add SC_Code color logic] 🌟 - REMOVED ' Pi' FROM DISPLAY
+        function generateLedgerRowHTML(record) {
+            let amountClass = 'text-green-600 font-semibold';
+            if (record.Pi_Amount.startsWith('-')) {
+                amountClass = 'text-red-600 font-semibold';
+            } else if (record.SC_Code === 'FAILURE REPORT') {
+                amountClass = 'text-red-900 font-bold';
+            }
+            let scCodeClass = 'bg-gray-200 text-gray-700';
+            if (record.SC_Code.includes('COLLECTED')) scCodeClass = 'bg-yellow-200 text-yellow-800';
+            if (record.SC_Code.includes('ACCUMULATED')) scCodeClass = 'bg-purple-200 text-purple-800';
+            if (record.SC_Code.includes('SUCCESS')) scCodeClass = 'bg-green-200 text-green-800';
+            if (record.SC_Code.includes('FAILURE')) scCodeClass = 'bg-red-200 text-red-800';
+            if (record.SC_Code.includes('SENT')) scCodeClass = 'bg-blue-200 text-blue-800';
+            // [DEFERRED] Rehabilitation Color (Future Governance Feature)
+            // if (record.SC_Code.includes('REHABILITATION')) scCodeClass = 'bg-indigo-200 text-indigo-800'; 
+
+
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-2 py-2 text-xs text-gray-500">${record.ID}</td>
+                    <td class="px-2 py-2 text-xs text-gray-500">${record.Time}</td>
+                    <td class="px-2 py-2 text-xs pk-cell text-gray-800">${record.Sender}</td>
+                    <td class="px-2 py-2 text-xs text-gray-600">${record.Smart_Contract}</td>
+                    <td class="px-2 py-2 text-sm ${amountClass}">${record.Pi_Amount}</td> 
+                    <td class="px-2 py-2 text-xs text-gray-600">${record.Task}</td>
+                    <td class="px-2 py-2 text-xs font-bold ${scCodeClass} rounded-md">${record.SC_Code}</td>
+                </tr>
+            `;
+        }
+
+        // --- 3-Tier Royalty Policy Application Function (Unchanged logic) ---
+        function getDevWorkCostRate() { 
+            let workRate = CREATOR_SHARE_RATE_OF_WORK_INITIAL; // 0.50% (Initial High Rate)
+            
+            // 1. If on-chain TX reaches 1 Billion (Mock 1000), reduce to 0.20% (Final Stage)
+            if (onChainTXCount >= MOCK_TX_THRESHOLD_FINAL) {
+                workRate = CREATOR_SHARE_RATE_OF_WORK_FINAL; // 0.0020 (0.20%) 🌟 [MODIFIED VALUE] 🌟
+            } 
+            // 2. Else if on-chain TX reaches 100 Million (Mock 100), reduce to 0.25% (Mid Stage)
+            else if (onChainTXCount >= MOCK_TX_THRESHOLD) {
+                workRate = CREATOR_SHARE_RATE_OF_WORK_MID; // 0.0025 (0.25%)
+            }
+            // 3. Otherwise, maintain 0.50%
+            
+            const rateAsPercent = workRate * 100; // 0.50%, 0.25%, or 0.20%
+            const t3PoolRate = workRate / SYSTEM_FUND_RATE; // T3 Fund (5%) Standard Rate
+            
+            return {
+                workRate: workRate, 
+                t3PoolRate: t3PoolRate, 
+                displayPercent: rateAsPercent.toFixed(2), 
+            };
+        }
+        
+        function getDevShareRate() {
+            // Returns T3 Pool Rate (0.10, 0.05, or 0.04) 🌟 0.04 (0.20% / 5%) Reflected 🌟
+            return getDevWorkCostRate().t3PoolRate; 
+        }
+        // --- END MODIFIED Helper Function ---
+
+        function updateT3ScalingFactorDisplay() {
+            const devRates = getDevWorkCostRate(); 
+            const currentDevRate = devRates.t3PoolRate; // Use T3 Pool rate for distribution calculation
+
+            const devSurplus = PREVIOUS_DEV_RATE_FOR_SURPLUS - currentDevRate; 
+            const coreTeamDisplay = `${(CORE_TEAM_BASE_RATE * 100).toFixed(2)}% (Base)`; 
+
+            const stabilizerRateNew = STABILIZER_RATE + devSurplus; 
+            const activationRateNew = ACTIVATION_POOL_RATE; 
+
+            const stabilizerDisplay = `${(stabilizerRateNew * 100).toFixed(2)}%`; 
+            const activationDisplay = `${(activationRateNew * 100).toFixed(2)}%`; 
+            
+            let factorDisplay = `${devRates.displayPercent}% (Work Cost) / ${ (currentDevRate * 100).toFixed(2)}% (T3 Pool)`;
+            
+            // Display logic for showing the dynamic policy
+            if (onChainTXCount >= MOCK_TX_THRESHOLD_FINAL) {
+                 factorDisplay += ` (FINAL: Reduced after ${MOCK_TX_THRESHOLD_FINAL} TX - MAX STABILIZER ALLOCATION)`;
+            } else if (onChainTXCount >= MOCK_TX_THRESHOLD) {
+                 factorDisplay += ` (MID: Reduced after ${MOCK_TX_THRESHOLD} TX - MAX STABILIZER ALLOCATION)`;
+            } else {
+                 factorDisplay += ' (Initial)'; 
+            }
+            
+            document.getElementById('scaling_factor').innerHTML = `${factorDisplay}<br>(Core Team Share: ${coreTeamDisplay})<br>(Stabilizer: ${stabilizerDisplay} / Activation: ${activationDisplay})`;
+        }
+
+
+        // --- Monthly Distribution (Modified for Display) ---
+        function executeMonthlyDistribution() {
+            const devRates = getDevWorkCostRate(); 
+            const currentDevRate = devRates.t3PoolRate; // Use T3 Pool rate for distribution calculation
+
+            if (publicFundPool < 0.00000001) { // 🌟 Minimum comparison value changed 🌟
+                document.getElementById('message_box').textContent = '🚨 T3 Pool is empty. Cannot distribute.';
+                document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
+                return;
+            }
+            
+            document.getElementById('message_box').textContent = `💰 Executing Monthly T3 Settlement of ${publicFundPool.toFixed(8)}...`; // 🌟 toFixed(8) applied 🌟
+            document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+
+            // Calculate surplus (0.05 when reduced)
+            const devSurplus = PREVIOUS_DEV_RATE_FOR_SURPLUS - currentDevRate; 
+            const coreTeamRate = CORE_TEAM_BASE_RATE; 
+
+            // Stabilizer Pool receives 100% of the surplus
+            const stabilizerRateNew = STABILIZER_RATE + devSurplus; // 0.20 + 0.05 = 0.25 (If reduced to 0.25%)
+            
+            // Activation Pool receives 0% of the surplus (remains at base 0.20)
+            const activationRateNew = ACTIVATION_POOL_RATE; 
+
+            // Calculate final distribution amounts
+            const devAmount = publicFundPool * currentDevRate;
+            const stabilizerAmount = publicFundPool * stabilizerRateNew;
+            const activationAmount = publicFundPool * activationRateNew;
+            const coreTeamAmount = publicFundPool * coreTeamRate;
+
+            // Simple check (should be near zero)
+            let totalCheck = devAmount + stabilizerAmount + activationAmount + coreTeamAmount;
+            if (Math.abs(totalCheck - publicFundPool) > 0.00000001) { // 🌟 Minimum comparison value changed 🌟
+                console.error(`Distribution Error: Sum ${totalCheck.toFixed(8)} != Pool ${publicFundPool.toFixed(8)}`);
+            }
+
+            let distributionLedger = []; 
+            const distTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+
+            // 1. Developer Share
+            transactionID++; 
+            distributionLedger.push({
+                ID: transactionID,
+                Time: distTime,
+                // **UPDATED SENDER STRING** to show Work Cost Rate
+                Sender: `SYSTEM CONTRIBUTION (${devRates.displayPercent}% Work Cost / ${(currentDevRate * 100).toFixed(2)}% T3 - T3)`,
+                Smart_Contract: 'Monthly Fund Dist.',
+                Pi_Amount: (-devAmount).toFixed(8), // 🌟 toFixed(8) applied 🌟
+                Task: DEV_WALLET_ADDRESS.slice(0, 15) + 'SENT',
+                SC_Code: 'SUCCESS'
+            });
+
+            // 2. Stabilizer Share
+            transactionID++; 
+            distributionLedger.push({
+                ID: transactionID,
+                Time: distTime,
+                Sender: `STABILIZER (${(stabilizerRateNew * 100).toFixed(2)}% - T3 - **MAX ALLOCATED**)`,
+                Smart_Contract: 'Monthly Fund Dist.',
+                Pi_Amount: (-stabilizerAmount).toFixed(8), // 🌟 toFixed(8) applied 🌟
+                Task: STABILIZER_WALLET_ADDRESS.slice(0, 15) + 'SENT (VETO AI)',
+                SC_Code: 'SUCCESS'
+            });
+            stabilizerPoolBalance += stabilizerAmount; // Update Stabilizer Pool Balance
+
+            // 3. AI Activation Pool Share
+            transactionID++; 
+            distributionLedger.push({
+                ID: transactionID,
+                Time: distTime,
+                Sender: `ACTIVATION POOL (${(activationRateNew * 100).toFixed(2)}% - T3)`,
+                Smart_Contract: 'Monthly Fund Dist.',
+                Pi_Amount: (-activationAmount).toFixed(8), // 🌟 toFixed(8) applied 🌟
+                Task: 'AI Activation',
+                SC_Code: 'SUCCESS'
+            });
+
+            // 4. Core Team Share
+            transactionID++; 
+            distributionLedger.push({
+                ID: transactionID,
+                Time: distTime,
+                Sender: `CORE TEAM (${(coreTeamRate * 100).toFixed(2)}% - T3)`,
+                Smart_Contract: 'Monthly Fund Dist.',
+                Pi_Amount: (-coreTeamAmount).toFixed(8), // 🌟 toFixed(8) applied 🌟
+                Task: CORE_TEAM_WALLET_ADDRESS.slice(0, 15) + 'SENT',
+                SC_Code: 'SUCCESS'
+            });
+
+            // Final Update - REMOVED ' Pi'
+            publicFundPool = 0.0; // Reset T3 pool after distribution
+            updateLedgerTable(distributionLedger);
+            updateT3ScalingFactorDisplay();
+            document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(8)}`; // 🌟 toFixed(8) applied 🌟
+            document.getElementById('stabilizer_pool_display').textContent = `${stabilizerPoolBalance.toFixed(8)}`; // 🌟 toFixed(8) applied 🌟
+            
+            setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 3000);
+        }
+
+        // --- Pi SDK Mock Functions (Unchanged logic) ---
+        function piAuthenticate() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    authenticatedUser = {
+                        username: mockUsername,
+                        public_key: MOCK_PUBLIC_KEY_SHORT,
+                        kyc_status: true
+                    };
+                    document.getElementById('message_box').textContent = `✅ Pi Login Success: ${authenticatedUser.username}`;
+                    document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                    document.getElementById('login_button').disabled = true;
+                    document.getElementById('payment_button').disabled = false;
+                    setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
+                    resolve(authenticatedUser);
+                }, 500);
+            });
+        }
+
+        // [MAJOR MODIFIED] piRequestPayment() function with Hierarchical ID and AI Rehabilitation Logic
+        function piRequestPayment() {
+            if (!authenticatedUser) {
+                document.getElementById('message_box').textContent = '🚨 Login Required!';
+                document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
+                return;
+            }
+
+            // *** FIX: Disable button immediately to prevent double-click during processing ***
+            document.getElementById('payment_button').disabled = true; 
+
+            // --- 1. Get Inputs and Calculate V-Factor ---
+            const targetNetWorkCost = parseFloat(document.getElementById('piAmount').value); 
+            const taskType = document.getElementById('taskType').value;
+            const recipientType = document.getElementById('recipientType').value;
+            
+            // [NEW] Get V Factor dynamically
+            const V_VALUE_STABILITY_FACTOR = PI_USD_PRICE; 
+
+            // --- 2. T2 Fee (D-Adjusted, V-Stabilized) Calculation ---
+            // D_ADJUSTED_FEE = TARGET_USD_FEE / (V * N * D)
+            const D_ADJUSTED_FEE = CORE_FORMULA_NUMERATOR / (V_VALUE_STABILITY_FACTOR * N_SCALABILITY_FACTOR * D_STRATEGIC_DEFENSE_FACTOR); 
+            
+            // --- 3. T3 Exemption Check ---
+            const isT3Exempt = recipientType === '1'; 
+
+            // --- 4. T3 Public Fund (5% Additive Tax) Calculation ---
+            const publicFundContribution = isT3Exempt ? 0.0 : targetNetWorkCost * SYSTEM_FUND_RATE; 
+            
+            // --- 5. Total Charged Amount (Target Work Cost + T3 Tax + T2 Fee) ---
+            const totalChargedAmount = targetNetWorkCost + publicFundContribution + D_ADJUSTED_FEE;
+            
+            if (targetNetWorkCost < 0.00000001) { // 🌟 Minimum comparison value changed 🌟
+                document.getElementById('message_box').textContent = `🚨 Minimum Required: 0.00000001 (Target Work Cost)`;
+                document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+                // Re-enable button on error
+                document.getElementById('payment_button').disabled = false;
+                setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 3000);
+                return;
+            }
+
+            // Final TX Processing Variables
+            const rawAmount = totalChargedAmount; 
+            const netWorkCost = targetNetWorkCost; 
+            const workCost = targetNetWorkCost; 
+
+            // [MODIFIED] Hierarchical ID Setup
+            let scLedger = []; 
+            const rootID = ++transactionID; // Root ID for the user's payment
+            let subIdCounter = 1; 
+            
+            document.getElementById('message_box').textContent = `🚀 Initiating Smart Contract for ${rawAmount.toFixed(8)} (Charged to User - Root ID ${rootID})...`; // 🌟 toFixed(8) applied 🌟
+            document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+
+            const smartContractType = recipientType === '1' ? '1st SC (Survival)' : '2nd SC (Market)';
+            const T3Charged = isT3Exempt ? 'Exempt' : `${(SYSTEM_FUND_RATE * 100).toFixed(0)}%`;
+            const FeeInUSD = (D_ADJUSTED_FEE * PI_USD_PRICE).toFixed(4); // 🌟 T2 Fee USD Value Calculation 🌟
+
+            setTimeout(() => { 
+                
+                // 1. T1: User -> SC Call (Root Transaction)
+                const T1 = {
+                    ID: rootID,
+                    Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                    Sender: mockUsername,
+                    Smart_Contract: `${smartContractType} (T3 Charged: ${T3Charged} of Work Cost)`,
+                    Pi_Amount: (-rawAmount).toFixed(8), // Total amount charged to the user (negative) 🌟 toFixed(8) applied 🌟
+                    Task: MAPPING_TABLE[taskType] || taskType,
+                    SC_Code: 'CALLED'
+                };
+                scLedger.push(T1);
+
+                // T2: Fee Collection (Hierarchical ID 9x-1)
+                const T_Fee = {
+                    ID: `${rootID}-${subIdCounter++}`, 
+                    Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                    Sender: 'undefined', // Sender is the protocol, thus undefined
+                    Smart_Contract: `T2 FIXED FEE (Stable $${FeeInUSD}) / D:${D_STRATEGIC_DEFENSE_FACTOR.toFixed(2)} / V:${V_VALUE_STABILITY_FACTOR.toFixed(2)}`,
+                    Pi_Amount: D_ADJUSTED_FEE.toFixed(8), // 🌟 toFixed(8) applied 🌟
+                    Task: 'Network Op',
+                    SC_Code: 'COLLECTED & ACCUMULATED'
+                };
+                scLedger.push(T_Fee);
+                onChainTXCount++; // Mock On-Chain TX count increment
+
+                // T3: Public Fund Accumulation (Hierarchical ID 9x-2)
+                if (!isT3Exempt && publicFundContribution > 0.0) {
+                    publicFundPool += publicFundContribution; // T3 accumulation
+                    const T_System = {
+                        ID: `${rootID}-${subIdCounter++}`, 
+                        Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                        Sender: 'SYSTEM (Fund T3)',
+                        Smart_Contract: `SYSTEM CONTRIBUTION (${T3Charged} of Work Cost to Pool)`,
+                        Pi_Amount: publicFundContribution.toFixed(8), // T3 collected (positive entry to SC pool) 🌟 toFixed(8) applied 🌟
+                        Task: 'Activation Fund',
+                        SC_Code: 'COLLECTED & ACCUMULATED'
+                    };
+                    scLedger.push(T_System);
+                }
+                
+                // --- 4. T4: AI Settlement (SC -> AI/Robot) ---
+                const totalActiveAIs = majorAICount; 
+                const aiShare = netWorkCost / totalActiveAIs; 
+
+                let ai2FailedShare = 0.0; // Variable to hold AI2's share if it fails
+                // const AI_REHABILITATION_COST = 0.50000000; // AI Rehabilitation Cost (DEFERRED: T3 Pool Rehabilitation Cost Deduction)
+
+                // AI1 and AI2 (Active AIs) Distribution
+                for (let i = 1; i <= totalActiveAIs; i++) {
+                    let aiID = `AI${i}`;
+                    let scCode = 'SUCCESS';
+                    let currentShare = aiShare; // Start with the default share
+                    let isFailed = false;
+
+                    // 1. AI2 Failure Check (20% chance + not a survival TX)
+                    if (i === 2 && Math.random() < MAJOR_AI_FAILURE_RATE && netWorkCost > MAJOR_SC_MIN_COST) {
+                        scCode = 'FAILURE REPORT';
+                        ai2FailedShare = aiShare; // Save AI2's share for replacement distribution
+                        currentShare = 0.0; // AI2 receives 0
+                        isFailed = true;
+                    }
+
+                    // T4 transaction for the current active AI (AI1, AI2)
+                    const T4_Active = {
+                        ID: `${rootID}-${subIdCounter++}`, // Hierarchical ID
+                        Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                        Sender: `${aiID} (1/${totalActiveAIs} Net T4)`,
+                        Smart_Contract: `${smartContractType} Process`,
+                        Pi_Amount: currentShare.toFixed(8), // 🌟 toFixed(8) applied 🌟
+                        Task: `${taskType} Process`,
+                        // In the case of a failed AI, the Pi Amount is 0, but the FAILURE REPORT record remains.
+                        SC_Code: scCode
+                    };
+                    scLedger.push(T4_Active);
+
+                    // 🌟 [DEFERRED] AI Rehabilitation Logic (Only for AI2 failure) - Deferred Development 🌟
+                    // The AI rehabilitation cost deduction logic is not currently implemented.
+                    // This logic will be implemented later, after the policy for using funds from the AI Activation Pool has been determined.
+                    /*
+                    if (isFailed) {
+                        // A. AI Rehabilitation Cost Deduction (Hierarchical ID 9x-Y)
+                        if (publicFundPool >= AI_REHABILITATION_COST) {
+                            publicFundPool -= AI_REHABILITATION_COST; 
+
+                            const T_Rehab = {
+                                ID: `${rootID}-${subIdCounter++}`, 
+                                Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                                Sender: 'SYSTEM (AI ACTIVATION POOL)',
+                                Smart_Contract: `REHABILITATION DEBIT (AI2) / Cost: ${AI_REHABILITATION_COST.toFixed(8)}`,
+                                Pi_Amount: (-AI_REHABILITATION_COST).toFixed(8), // Debit entry (negative)
+                                Task: `AI2 Re-training/Upgrade (Rehabilitation)`,
+                                SC_Code: 'REHABILITATION' // Rehabilitation Record
+                            };
+                            scLedger.push(T_Rehab);
+                        } else {
+                            // Record when Pool Balance is Insufficient (Rehabilitation Failure Record)
+                            const T_Rehab_Fail = {
+                                ID: `${rootID}-${subIdCounter++}`, 
+                                Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                                Sender: 'SYSTEM (AI ACTIVATION POOL)',
+                                Smart_Contract: 'REHABILITATION FAILED',
+                                Pi_Amount: (0.00000000).toFixed(8),
+                                Task: `AI2 Re-training/Upgrade (No Funds)`,
+                                SC_Code: 'FAILURE'
+                            };
+                            scLedger.push(T_Rehab_Fail);
+                        }
+                    }
+                    */
+                }
+
+                // AI3 (Replacement AI) - Only appears if AI2 failed (Hierarchical ID 9x-Z)
+                if (ai2FailedShare > 0.0) {
+                    const T4_Replacement = {
+                        ID: `${rootID}-${subIdCounter++}`, 
+                        Time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                        Sender: `AI3 (Replacement T4)`,
+                        Smart_Contract: `${smartContractType} Process`,
+                        Pi_Amount: ai2FailedShare.toFixed(8), // 🌟 toFixed(8) applied 🌟
+                        Task: `${taskType} Process`,
+                        SC_Code: 'SUCCESS (REPLACEMENT)'
+                    };
+                    scLedger.push(T4_Replacement);
+                }
+
+                updateLedgerTable(scLedger);
+                updateT3ScalingFactorDisplay(); // Update display for potential threshold change
+                document.getElementById('public_tax_display').textContent = `${publicFundPool.toFixed(8)}`; // 🌟 toFixed(8) applied 🌟
+                document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
+                
+                // *** FIX: Re-enable button after all ledger operations are complete ***
+                document.getElementById('payment_button').disabled = false;
+                
+                // Hide message box after all operations
+                setTimeout(() => { document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)'; }, 2000);
+            }, 1000);
+        }
+
+
+        // --- Ledger Download (Unchanged) ---
+        function downloadLedger() {
+            const table = document.getElementById('ledger_table');
+            let csv = [];
+            for (let i = 0; i < table.rows.length; i++) {
+                let row = [];
+                let cells = table.rows[i].querySelectorAll('th, td');
+                for (let j = 0; j < cells.length; j++) {
+                    row.push(cells[j].innerText.trim());
+                }
+                csv.push(row.join(','));
+            }
+
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', 'AI_Governance_Ledger.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            document.getElementById('message_box').textContent = '💾 CSV Downloaded!';
+            document.getElementById('message_box').style.transform = 'translateX(-50%) scale(1)';
+            setTimeout(() => {
+                document.getElementById('message_box').style.transform = 'translateX(-50%) scale(0)';
+            }, 2000);
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
+            updateT3ScalingFactorDisplay();
+            initializePFactorDemo(); // Call the V-Factor setup
+        });
+    </script>
+</body>
+</html>
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('on_chain_tx_count').textContent = onChainTXCount.toLocaleString();
